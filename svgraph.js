@@ -131,5 +131,5 @@ var gr = document.createElementNS("http://www.w3.org/2000/svg","g");
 gr.id = "nodegroup";
 document.getElementById("thesvg").appendChild(gr);
 // add a node when the user clicks the page
-document.getElementById("heading").onclick = function(){console.log(randomNode())};
-document.getElementById("heading").onauxclick = function(e){if(e.which==2)console.log(removeNode())}; // middle-click only, not right-click
+document.getElementById("thesvg").onclick = function(){console.log(randomNode())};
+document.getElementById("thesvg").onauxclick = function(e){if(e.which==2)console.log(removeNode())}; // middle-click only, not right-click

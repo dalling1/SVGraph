@@ -17,19 +17,20 @@
     user-select: none;
    }
    h1 {
+    position: relative;
+    z-index: 100;
     font-style: italic;
     font-weight: normal;
     font-size: 64px;
     margin: 0 20px;
     padding: 0;
-    z-index: 100;
     text-shadow: #f90 0px 0px 1px;
    }
    #thesvg {
     position: absolute;
+    z-index: 10;
     left: 0;
     top: 0;
-    z-index: -100;
     width: 100vw;
     height: 100vh;
     background-color: #ff6;
@@ -39,14 +40,15 @@
    }
    #helptext {
     position: absolute;
+    z-index: 100;
     bottom: 0;
     margin: 0;
     padding: 5px;
     font-size: 12px;
-    z-index: 100;
    }
    .controlboxes {
     position: absolute;
+    z-index: 100;
     font-family: "Englebert", sans-serif;
     font-size: 16px;
     color: #000;
@@ -65,7 +67,6 @@
     margin: 5px;
     padding: 5px;
     cursor: pointer;
-    z-index: 100;
    }
   </style>
  </head>
