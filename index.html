@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+ <head>
+  <meta charset="utf-8">
+  <title>SVGraph</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400;1,700&family=Englebert&display=swap" rel="stylesheet">
+  <style>
+   body {
+    width: 100vw;
+    height: 100vh;
+    font-family: "EB Garamond", serif;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    color: #777;
+   }
+   body * {
+    user-select: none;
+   }
+   h1 {
+    font-style: italic;
+    font-weight: normal;
+    font-size: 64px;
+    margin: 0 20px;
+    padding: 0;
+    z-index: 100;
+    text-shadow: #f90 0px 0px 1px;
+   }
+   #thesvg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -100;
+    width: 100vw;
+    height: 100vh;
+    background-color: #ff6;
+   }
+   circle:last-child {
+    fill: #f00;
+   }
+   #helptext {
+    position: absolute;
+    bottom: 0;
+    margin: 0;
+    padding: 5px;
+    font-size: 12px;
+    z-index: 100;
+   }
+   .controlboxes {
+    position: absolute;
+    font-family: "Englebert", sans-serif;
+    font-size: 16px;
+    color: #000;
+   }
+   #plusboxes {
+    right: 0;
+    top: 0;
+   }
+   #minusboxes {
+    right: 0;
+    bottom: 0;
+   }
+   .controlboxes div {
+    background-color: #090;
+    box-shadow: 1px 1px 2px #000;
+    margin: 5px;
+    padding: 5px;
+    cursor: pointer;
+    z-index: 100;
+   }
+  </style>
+ </head>
+ <body>
+  <h1 id="heading">SVGraph</h1>
+  <div id="plusboxes" class="controlboxes">
+   <div onclick="randomNodes(10);">+10</div>
+   <div onclick="randomNodes(100);">+100</div>
+   <div onclick="randomNodes(1000);">+1000</div>
+  </div>
+  <svg id="thesvg"></svg>
+  <div id="minusboxes" class="controlboxes">
+   <div onclick="removeNodes(10)">-10</div>
+   <div onclick="removeNodes(100);">-100</div>
+   <div onclick="removeNodes(1000);">-1000</div>
+  </div>
+  <div id="helptext">Left-click to add a node, middle-click to remove the last node added.</div>
+  <script src="svgraph.js"></script>
+ </body>
+</html>
