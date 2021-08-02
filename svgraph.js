@@ -18,7 +18,7 @@ function randomLocation(w=0,h=0,z=0){
  upperLimit[2] = (z>0? z : 100 + z);
 
  var P = Array(dim);
- for (d=0;d<dim;d++){
+ for (var d=0;d<dim;d++){
   if (lowerLimit[d]>upperLimit[d]) lowerLimit[d] = upperLimit[d];
   P[d] = Math.round(Math.random()*(upperLimit[d]-lowerLimit[d])+lowerLimit[d]);
  }
@@ -27,7 +27,7 @@ function randomLocation(w=0,h=0,z=0){
 
 function Circle(attributes){ // thanks Matt https://stackoverflow.com/a/21362202
  var cir = document.createElementNS("http://www.w3.org/2000/svg","circle");
- for (attr in attributes){
+ for (var attr in attributes){
   cir.setAttribute(attr,attributes[attr]);
  }
  return cir;
@@ -35,7 +35,7 @@ function Circle(attributes){ // thanks Matt https://stackoverflow.com/a/21362202
 
 function Line(attributes){
  var lin = document.createElementNS("http://www.w3.org/2000/svg","line");
- for (attr in attributes){
+ for (var attr in attributes){
   lin.setAttribute(attr,attributes[attr]);
  }
  return lin;
@@ -122,29 +122,10 @@ function addRandomNode(e=null){
    }
   }
 
-  // add lines for the edges
-  for (i in newEdgesFrom){
-   var edgeN = edgegrp.childElementCount;
-   var edgeid = "edge"+edgeN; // this id is not guaranteed to be unique...
-   var fromNode = newEdgesFrom[i];
-   var toNode = newEdgesTo[i];
-   var newedge = new Line({
-    "stroke": "#004",
-    "stroke-width": 1,
-    "x1": document.getElementById("nodegroup").children[fromNode].attributes.cx.value,
-    "y1": document.getElementById("nodegroup").children[fromNode].attributes.cy.value,
-    "x2": document.getElementById("nodegroup").children[toNode].attributes.cx.value,
-    "y2": document.getElementById("nodegroup").children[toNode].attributes.cy.value,
-    "id": edgeid,
-    "class": "anedge",
-   });
-   edgegrp.appendChild(newedge);
-  }
+  addEdges(newEdgesFrom,newEdgesTo);
  }
 
  // add the new nodes and edges to the global lists
- for (i in newEdgesFrom) edgesFrom.push(newEdgesFrom[i]);
- for (i in newEdgesTo) edgesTo.push(newEdgesTo[i]);
  vertices.push(nodeN);
 
  return true;
@@ -223,6 +204,74 @@ function distance(i,j){
  }
 }
 
+function addNode(position,radius,edgelist=[]){
+ // add a given node
+ var nodegrp = document.getElementById("nodegroup");
+ var nodeN = nodegrp.children.length;
+ var nodeid = "node"+nodeN; // not guaranteed to be unique, since nodes can be removed
+
+ var newnode = new Circle({
+   "fill": "#000",
+   "stroke": "none",
+   "r": radius,
+   "cx": position[0],
+   "cy": position[1],
+   "z-index": position[2],
+   "id": nodeid,
+   "class": "anode",
+ });
+ nodegrp.appendChild(newnode);
+ if (0) console.log("Added vertex "+nodeN+" with edgelist "+edgelist.toString());
+ // add the new node to the global list
+ vertices.push(nodeN);
+
+ for (var i=0;i<edgelist.length;i++){
+  if (edgelist[i]==1){
+   addEdges(nodeN,i);
+  }
+ }
+
+ return true;
+}
+
+function addEdges(fromnodes,tonodes){
+ // add lines for the given edges
+ var nodegrp = document.getElementById("nodegroup");
+ var edgegrp = document.getElementById("edgegroup");
+
+ if (typeof(tonodes)=="number") tonodes = [tonodes]; // convert to an array if a single entry is given
+ if (typeof(fromnodes)=="number") fromnodes = [fromnodes]; // convert to an array if a single entry is given
+ if (fromnodes.length==1 && tonodes.length>1) fromnodes = Array(tonodes.length).fill(fromnodes[0]); // clone the "fromnodes" node for longer "to" lists
+
+ // make sure the endpoints exist
+ for (var f=0;f<fromnodes.length;f++){
+  if (vertices.indexOf(fromnodes[f])>-1 && vertices.indexOf(tonodes[f])>-1){
+   var edgeN = edgegrp.childElementCount;
+   var edgeid = "edge"+edgeN; // this id is not guaranteed to be unique...
+   var fromNode = fromnodes[f];
+   var toNode = tonodes[f];
+   var newedge = new Line({
+    "stroke": "#004",
+    "stroke-width": 0.2,
+    "x1": document.getElementById("nodegroup").children[fromNode].attributes.cx.value,
+    "y1": document.getElementById("nodegroup").children[fromNode].attributes.cy.value,
+    "x2": document.getElementById("nodegroup").children[toNode].attributes.cx.value,
+    "y2": document.getElementById("nodegroup").children[toNode].attributes.cy.value,
+    "id": edgeid,
+    "class": "anedge",
+   });
+   edgegrp.appendChild(newedge);
+
+   // add the new edge to the global list
+   for (var i in fromnodes) edgesFrom.push(fromnodes[i]);
+   for (var i in tonodes) edgesTo.push(tonodes[i]);
+  } else {
+   if (0) console.log("Endpoints do not all exist "+fromnodes[f]+" to "+tonodes[f]);
+  }
+ }
+
+ return true;
+}
 
 /* ---------------------------------------------------------------------------------------------- */
 
@@ -234,21 +283,21 @@ function distance(i,j){
  Animate the movement of each node (and its connected edges) to its new location
 */
 
-/*
-var N = 16; // number of nodes
-var P = 0.2; // probability that each edge exists
+var N = 12; // number of nodes
+var P = 1.0; // probability that each edge exists
 var M = Array(N);
 for (var i=0;i<N;i++){
  M[i] = Array(N);
  for (var j=0;j<N;j++){
-  if (j>=i){
+  if (j==i){
+   M[i][j] = 0; // no self-edges
+  } else if (j>=i){
    M[i][j] = (Math.random()<P?1:0);
   } else {
    M[i][j] = M[j][i]; // symmetric adjacency matrix (ie. undirected)
   }
  }
 }
-*/
 
 // create an SVG group to put the edges into
 var gr = document.createElementNS("http://www.w3.org/2000/svg","g");
@@ -264,6 +313,13 @@ document.getElementById("thesvg").appendChild(gr);
 document.getElementById("thesvg").onclick = function(e){addRandomNode(e)};
 document.getElementById("thesvg").onauxclick = function(e){if(e.which==2)removeNode()}; // middle-click only, not right-click
 // create the logical list of nodes and edges
-var vertices = Array();
-var edgesFrom = Array();
-var edgesTo = Array();
+vertices = Array();
+edgesFrom = Array();
+edgesTo = Array();
+
+for (var i=0;i<N;i++){addNode(randomLocation(),randomRadius(),M[i])}
+//for (var i=0;i<N-1;i++){addNode(randomLocation(),randomRadius())}
+//for(var i=0;i<N;i++){addEdges(i,M[i])}
+
+
+// addNode(randomLocation(),randomRadius(),M[N-1]);
