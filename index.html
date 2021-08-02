@@ -25,6 +25,7 @@
     margin: 0 20px;
     padding: 0;
     text-shadow: #f90 0px 0px 1px;
+    pointer-events: none;
    }
    #thesvg {
     position: absolute;
@@ -52,6 +53,12 @@
     font-family: "Englebert", sans-serif;
     font-size: 16px;
     color: #000;
+    opacity: 0.1;
+    transition: 0.15s all ease;
+   }
+   .controlboxes:hover {
+    opacity: 1.0;
+    transition: 0.15s all ease;
    }
    #plusboxes {
     right: 0;

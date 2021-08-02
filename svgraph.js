@@ -72,6 +72,8 @@ function addRandomNode(e=null){
    "class": "anode",
  });
  nodegrp.appendChild(newnode);
+ // add the new nodes and edges to the global lists
+ vertices.push(nodeN);
 
  var addRandomEdges = true;
  // the first true one of these methods will be enacted:
@@ -81,23 +83,20 @@ function addRandomNode(e=null){
 
  if (addRandomEdges){
   var edgegrp = document.getElementById("edgegroup");
+  var newEdgesFrom = Array();
+  var newEdgesTo = Array();
+//  var newEdges = Array();
 
   // edges are stored as two lists, the "from" and "to" nodes
   // this makes it easier to find which nodes are contained in which edges, for removal
   if (binomialEdges){
    // add possible edges (from the new node to each existing node) with probability Pedge
-   var Pedge = 0.01; // probability
-   var N = nodegrp.childElementCount;
-//   var newEdges = Array();
-   var newEdgesFrom = Array();
-   var newEdgesTo = Array();
-   for (var i=0;i<N;i++){
+   var Pedge = 0.1; // probability
+   for (var i=0;i<nodeN;i++){
     if (Math.random()<Pedge){
-     if (nodeN != i){ // exclude self-edges
-//      newEdges.push([nodeN, i]); // store the edge list
-      newEdgesFrom.push(nodeN); // store the edge endpoints
-      newEdgesTo.push(i);
-     }
+//     newEdges.push([nodeN, i]); // store the edge list
+     newEdgesFrom.push(nodeN); // store the edge endpoints
+     newEdgesTo.push(i);
     }
    }
   } else if (fixedDegree){
@@ -106,11 +105,7 @@ function addRandomNode(e=null){
   } else if (localBinomialEdges){
    var Redge = 60; // only allow edges within this radius, with some probability
    var Pedge = 0.2; // probability
-   var N = nodegrp.childElementCount;
-//   var newEdges = Array();
-   var newEdgesFrom = Array();
-   var newEdgesTo = Array();
-   for (var i=0;i<N;i++){
+   for (var i=0;i<nodeN;i++){
     if (Math.random()<Pedge){
      var d = distance(nodeN,i);
      if (d>0 && d<=Redge){
@@ -124,9 +119,6 @@ function addRandomNode(e=null){
 
   addEdges(newEdgesFrom,newEdgesTo);
  }
-
- // add the new nodes and edges to the global lists
- vertices.push(nodeN);
 
  return true;
 }
@@ -153,17 +145,21 @@ function removeNode(youngestFirst=true){
   var delnodeN = parseInt(delnode.id.replace("node",""));
   indx = false;
   while ((indx = edgesFrom.indexOf(delnodeN)) > -1){
-   edgegrp.removeChild(edgechildren[indx]);
+   edgegrp.removeChild(document.getElementById(edgesLines[indx]));
    edgesFrom.splice(indx,1);
    edgesTo.splice(indx,1);
+   edgesLines.splice(indx,1);
   }
   while ((indx = edgesTo.indexOf(delnodeN)) > -1){
-   edgegrp.removeChild(indx);
+   edgegrp.removeChild(document.getElementById(edgesLines[indx]));
    edgesFrom.splice(indx,1);
    edgesTo.splice(indx,1);
+   edgesLines.splice(indx,1);
   }
 
   // now remove the node itself
+  var vindx = delnodeN;
+  vertices.splice(vindx,1);
   nodegrp.removeChild(delnode);
   count++;
  }
@@ -220,8 +216,8 @@ function addNode(position,radius,edgelist=[]){
    "id": nodeid,
    "class": "anode",
  });
+ // add the circle object to the page
  nodegrp.appendChild(newnode);
- if (0) console.log("Added vertex "+nodeN+" with edgelist "+edgelist.toString());
  // add the new node to the global list
  vertices.push(nodeN);
 
@@ -244,12 +240,12 @@ function addEdges(fromnodes,tonodes){
  if (fromnodes.length==1 && tonodes.length>1) fromnodes = Array(tonodes.length).fill(fromnodes[0]); // clone the "fromnodes" node for longer "to" lists
 
  // make sure the endpoints exist
- for (var f=0;f<fromnodes.length;f++){
-  if (vertices.indexOf(fromnodes[f])>-1 && vertices.indexOf(tonodes[f])>-1){
+ for (var i=0;i<fromnodes.length;i++){
+  if (vertices.indexOf(fromnodes[i])>-1 && vertices.indexOf(tonodes[i])>-1){
    var edgeN = edgegrp.childElementCount;
    var edgeid = "edge"+edgeN; // this id is not guaranteed to be unique...
-   var fromNode = fromnodes[f];
-   var toNode = tonodes[f];
+   var fromNode = fromnodes[i];
+   var toNode = tonodes[i];
    var newedge = new Line({
     "stroke": "#004",
     "stroke-width": 0.2,
@@ -260,13 +256,18 @@ function addEdges(fromnodes,tonodes){
     "id": edgeid,
     "class": "anedge",
    });
+   // add the line object to the page
    edgegrp.appendChild(newedge);
 
    // add the new edge to the global list
-   for (var i in fromnodes) edgesFrom.push(fromnodes[i]);
-   for (var i in tonodes) edgesTo.push(tonodes[i]);
+   edgesFrom.push(fromnodes[i]);
+   edgesTo.push(tonodes[i]);
+   // record the SVG line element's id, in case we want to remove it later
+   edgesLines.push(edgeid);
   } else {
-   if (0) console.log("Endpoints do not all exist "+fromnodes[f]+" to "+tonodes[f]);
+   console.log("Endpoints do not all exist "+fromnodes[i]+" to "+tonodes[i]);
+   console.log("  vertices.indexOf("+fromnodes[i]+") = "+vertices.indexOf(fromnodes[i]));
+   console.log("  vertices.indexOf("+tonodes[i]+") = "+vertices.indexOf(tonodes[i]));
   }
  }
 
@@ -316,10 +317,6 @@ document.getElementById("thesvg").onauxclick = function(e){if(e.which==2)removeN
 vertices = Array();
 edgesFrom = Array();
 edgesTo = Array();
+edgesLines = Array();
 
-for (var i=0;i<N;i++){addNode(randomLocation(),randomRadius(),M[i])}
-//for (var i=0;i<N-1;i++){addNode(randomLocation(),randomRadius())}
-//for(var i=0;i<N;i++){addEdges(i,M[i])}
-
-
-// addNode(randomLocation(),randomRadius(),M[N-1]);
+//for (var i=0;i<N;i++){addNode(randomLocation(),randomRadius(),M[i])}
