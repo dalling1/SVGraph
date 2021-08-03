@@ -44,23 +44,32 @@ function Line(attributes){
 function randomRadius(r1=-1,r2=-1){
  // default limits:
  if (r1<0) r1 = 2;
- if (r2<0) r2 = 8;
+ if (r2<0) r2 = 20;
  return Math.round(Math.random()*(r2-r1)+r1);
+}
+
+function randomName(L=8){
+ var rname = "";
+ const charset = "abcdefgh".split("");
+ for (var i=0;i<L;i++) rname += charset[parseInt(charset.length*Math.random())];
+ return rname;
 }
 
 function addRandomNode(e=null){
  var nodegrp = document.getElementById("nodegroup");
  var radius = randomRadius();
-// var position = randomLocation(-radius,-radius);
- var position = randomLocation(-100,-100);
+// var position = randomLocation(-radius,-radius); // nodes can (just) touch the edges of the window
+ var position = randomLocation(-100,-100); // leave a border of 100px
  var nodeN = nodegrp.children.length;
  var nodeid = "node"+nodeN; // not guaranteed to be unique, since nodes can be removed
 
  if (e!=null){
-  // a user click, not a function call (eg. using +100 button)
+  // a user click, not a function call (eg. using +100 button): use the clicked coordinates
   position[0] = event.clientX;
   position[1] = event.clientY;
  }
+
+// var node = new Node(
 
  var newnode = new Circle({
    "fill": "#000",
@@ -282,6 +291,15 @@ function appendSvgGroup(id,parent){
  return document.getElementById(id);
 }
 
+function appendSvgObject(obj,target){
+ if (document.getElementById(target.id)!=null){
+  target.appendChild(obj);
+  return true;
+ } else {
+  return false;
+ }
+}
+
 function removeElement(id){
  var el = document.getElementById(id);
  if (el!=null) el.parentNode.removeChild(el);
@@ -337,8 +355,7 @@ function duplicateSvg(){
   copyedgegrp.appendChild(newedge);
  }
 
-// var callback = function(){if (moveDuplicates(20)) clearInterval(timer);};
-// var timer = window.setInterval(callback,30);
+ // thanks Danil https://stackoverflow.com/a/12092526
  var timer = window.setInterval(function(){var done=moveDuplicates(10);if(done)clearInterval(timer);},20);
 }
 
@@ -349,12 +366,13 @@ function moveDuplicates(delta=20){
  var copynodegrp = document.getElementById("copynodegroup");
  var copyedgegrp = document.getElementById("copyedgegroup");
 
- var y0 = window.innerHeight-20; // move nodes to 20 pixels above the bottom of the window
+ var y0 = window.innerHeight; // move nodes to the bottom of the window
 
  var Nfinished = 0;
  for (var i=0;i<copynodegrp.childElementCount;i++){
   var cy = parseInt(copynodegrp.children[i].getAttribute("cy"));
-  var cynew = Math.min(cy+delta,y0);
+  var r = parseInt(copynodegrp.children[i].getAttribute("r"));
+  var cynew = Math.min(cy+delta,y0-r);
   // check that the movement is non-zero (otherwise, this node is finished)
   if (cy==cynew){
    Nfinished++;
