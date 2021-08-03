@@ -27,6 +27,9 @@
     text-shadow: #f90 0px 0px 1px;
     pointer-events: none;
    }
+   .plain {
+    font-family: "EB Garamond", serif;
+   }
    #thesvg {
     position: absolute;
     z-index: 10;
@@ -84,6 +87,7 @@
    <div onclick="addRandomNodes(10);">+10</div>
    <div onclick="addRandomNodes(100);">+100</div>
    <div onclick="addRandomNodes(1000);">+1000</div>
+   <div onclick="duplicateSvg();" class="plain">DROP</div>
   </div>
   <svg id="thesvg"></svg>
   <div id="minusboxes" class="controlboxes">

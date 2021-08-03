@@ -51,7 +51,8 @@ function randomRadius(r1=-1,r2=-1){
 function addRandomNode(e=null){
  var nodegrp = document.getElementById("nodegroup");
  var radius = randomRadius();
- var position = randomLocation(-radius,-radius);
+// var position = randomLocation(-radius,-radius);
+ var position = randomLocation(-100,-100);
  var nodeN = nodegrp.children.length;
  var nodeid = "node"+nodeN; // not guaranteed to be unique, since nodes can be removed
 
@@ -274,6 +275,108 @@ function addEdges(fromnodes,tonodes){
  return true;
 }
 
+function appendSvgGroup(id,parent){
+ var gr = document.createElementNS("http://www.w3.org/2000/svg","g");
+ gr.id = id;
+ document.getElementById(parent).appendChild(gr);
+ return document.getElementById(id);
+}
+
+function removeElement(id){
+ var el = document.getElementById(id);
+ if (el!=null) el.parentNode.removeChild(el);
+}
+
+function duplicateSvg(){
+ // duplicate the contents of object with id "thesvg", and put the copies back in with a coordinate offset [now zero offset]
+ // and then apply movement to them (the example is to drop them down to the bottom of the screen)
+ var thesvg = document.getElementById("thesvg");
+ var nodegrp = document.getElementById("nodegroup");
+ var edgegrp = document.getElementById("edgegroup");
+
+ removeElement("copyedgegroup");
+ removeElement("copynodegroup");
+ copyedgegrp = appendSvgGroup("copyedgegroup","thesvg");
+ copynodegrp = appendSvgGroup("copynodegroup","thesvg");
+
+ var offset = 0;
+
+ // loop through the existing nodes and duplicate them
+ for (var i=0;i<nodegrp.childElementCount;i++){
+  var thisnode = nodegrp.children[i];
+  var newnode = new Circle({
+    "fill": "#060", // differentiate the copies by colour
+    "stroke": "#800",
+    "r": parseFloat(thisnode.getAttribute("r")),
+    "cx": parseFloat(thisnode.getAttribute("cx"))+offset,
+    "cy": parseFloat(thisnode.getAttribute("cy"))+offset,
+    "z-index": parseFloat(thisnode.getAttribute("z-index")),
+    "id": "copy"+thisnode.getAttribute("id"),
+    "class": thisnode.getAttribute("class"),
+  });
+  copynodegrp.appendChild(newnode);
+ }
+
+ // add the new node to the global list
+// vertices.push(nodeN);
+
+ // loop through the existing edges and duplicate them
+ for (var i=0;i<edgegrp.childElementCount;i++){
+  var thisedge = edgegrp.children[i];
+  var newedge = new Line({
+//    "stroke": "#3f3",
+    "stroke": "#6af",
+    "stroke-width": parseFloat(thisedge.getAttribute("stroke-width")),
+    "x1": parseFloat(thisedge.getAttribute("x1"))+offset,
+    "x2": parseFloat(thisedge.getAttribute("x2"))+offset,
+    "y1": parseFloat(thisedge.getAttribute("y1"))+offset,
+    "y2": parseFloat(thisedge.getAttribute("y2"))+offset,
+    "id": "copy"+thisedge.getAttribute("id"),
+    "class": thisedge.getAttribute("class"),
+  });
+  copyedgegrp.appendChild(newedge);
+ }
+
+// var callback = function(){if (moveDuplicates(20)) clearInterval(timer);};
+// var timer = window.setInterval(callback,30);
+ var timer = window.setInterval(function(){var done=moveDuplicates(10);if(done)clearInterval(timer);},20);
+}
+
+function moveDuplicates(delta=20){
+ // example motion of the duplicated nodes and edges: move them towards the bottom of the screen
+ console.log("moving...");
+
+ var copynodegrp = document.getElementById("copynodegroup");
+ var copyedgegrp = document.getElementById("copyedgegroup");
+
+ var y0 = window.innerHeight-20; // move nodes to 20 pixels above the bottom of the window
+
+ var Nfinished = 0;
+ for (var i=0;i<copynodegrp.childElementCount;i++){
+  var cy = parseInt(copynodegrp.children[i].getAttribute("cy"));
+  var cynew = Math.min(cy+delta,y0);
+  // check that the movement is non-zero (otherwise, this node is finished)
+  if (cy==cynew){
+   Nfinished++;
+  } else {
+   copynodegrp.children[i].setAttribute("cy",cynew);
+  }
+ }
+
+ for (var i=0;i<copyedgegrp.childElementCount;i++){
+  var y1 = parseInt(copyedgegrp.children[i].getAttribute("y1"));
+  var y2 = parseInt(copyedgegrp.children[i].getAttribute("y2"));
+  var y1new = Math.min(y1+delta,y0);
+  var y2new = Math.min(y2+delta,y0);
+  copyedgegrp.children[i].setAttribute("y1",y1new);
+  copyedgegrp.children[i].setAttribute("y2",y2new);
+ }
+
+// if (Nfinished==copynodegrp.childElementCount) clearTimeout(timer);
+ return (Nfinished==copynodegrp.childElementCount); // == finished
+
+}
+
 /* ---------------------------------------------------------------------------------------------- */
 
 
@@ -284,8 +387,8 @@ function addEdges(fromnodes,tonodes){
  Animate the movement of each node (and its connected edges) to its new location
 */
 
-var N = 12; // number of nodes
-var P = 1.0; // probability that each edge exists
+var N = 16; // number of nodes
+var P = 0.25; // probability that each edge exists
 var M = Array(N);
 for (var i=0;i<N;i++){
  M[i] = Array(N);
@@ -300,19 +403,14 @@ for (var i=0;i<N;i++){
  }
 }
 
-// create an SVG group to put the edges into
-var gr = document.createElementNS("http://www.w3.org/2000/svg","g");
-gr.id = "edgegroup";
-document.getElementById("thesvg").appendChild(gr);
-
-// create an SVG group to put the nodes into
-var gr = document.createElementNS("http://www.w3.org/2000/svg","g");
-gr.id = "nodegroup";
-document.getElementById("thesvg").appendChild(gr);
+// create SVG groups to put the edges and nodes into (creation order determines drawing order)
+appendSvgGroup("edgegroup","thesvg");
+appendSvgGroup("nodegroup","thesvg");
 
 // add a node when the user clicks the page
 document.getElementById("thesvg").onclick = function(e){addRandomNode(e)};
 document.getElementById("thesvg").onauxclick = function(e){if(e.which==2)removeNode()}; // middle-click only, not right-click
+
 // create the logical list of nodes and edges
 vertices = Array();
 edgesFrom = Array();
