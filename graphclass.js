@@ -7,7 +7,8 @@ class Graph {
   this.name = name;
   this.nodes = [];
   this.edges = [];
-  this.svg = this.createSvg(); // the SVG group for this graph
+//  this.svg = this.createSvg(); // the SVG group for this graph
+  this.createSvg();
  }
 
  /*
@@ -32,7 +33,10 @@ class Graph {
  */
 
  createSvg(){
-  return appendSvgGroup(this.name,"thesvg");
+  // make an SVG group for the graph, and then append groups for the nodes and edges
+  this.svg = appendSvgGroup(this.name,"thesvg");
+  this.svgedges = appendSvgGroup(this.name+"edges",this.svg.id);
+  this.svgnodes = appendSvgGroup(this.name+"nodes",this.svg.id);
  }
 
  hide(){
@@ -56,9 +60,12 @@ class Graph {
   if (this.nodes.length){
    var delnode = (youngest? this.nodes.length-1 : 0);
    // remove the SVG object
-   this.svg.removeChild(this.nodes[delnode].svg);
+   this.svgnodes.removeChild(this.nodes[delnode].svg);
    // then remove this node from the graph
    this.nodes.splice(delnode,1);
+   //
+   // *** also need to remove edges attached to this node ***
+   //
   }
  }
 
@@ -88,7 +95,7 @@ class Graph {
  }
 
  randomNode(){
-  return this.nodes[Math.round(Math.random()*this.nodes.length)];
+  return this.nodes[Math.floor(Math.random()*this.nodes.length)];
  }
 
  addEdge(name,from,to){
@@ -137,7 +144,7 @@ class Node {
  }
 
  addToSvgGraph(){
-  appendSvgObject(this.svg,this.graph.svg);
+  appendSvgObject(this.svg,this.graph.svgnodes);
  }
 
  print(){
@@ -157,18 +164,11 @@ class Edge {
  ){
   this.type = this.constructor.name;
   this.name = name;
+  this.from = from;
+  this.to = to;
   this.graph = graph; // the parent graph object
-  this.linewidth = 0.25;
+  this.linewidth = 0.5;
   this.z = 0;
-
-  // from, to: test that the inputs are Node objects
-  if (from.type!="Node" || to.type!="Node"){
-   console.log("error: edge endpoint is not a Node object");
-   return false;
-  } else {
-   this.from = from;
-   this.to = to;
-  }
 
   this.svg = this.createSvg(); // the SVG object for this node
   this.addToSvgGraph();
@@ -180,7 +180,7 @@ class Edge {
 
  createSvg(){
   var L = Line({
-   "stroke": "#000",
+   "stroke": "#f00",
    "stroke-width": this.linewidth,
    "x1": this.from.x,
    "y1": this.from.y,
@@ -194,7 +194,7 @@ class Edge {
  }
 
  addToSvgGraph(){
-  appendSvgObject(this.svg,this.graph.svg);
+  appendSvgObject(this.svg,this.graph.svgedges);
  }
 
 }
