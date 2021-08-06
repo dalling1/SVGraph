@@ -78,26 +78,44 @@
     padding: 5px;
     cursor: pointer;
    }
+   .hidden {
+    display: none;
+   }
   </style>
  </head>
- <body>
+ <body onload="thegraph = new Graph('thegraph');">
   <h1 id="heading">SVGraph</h1>
   <div id="plusboxes" class="controlboxes">
+<!--
    <div onclick="addRandomNodes(1);">+1</div>
    <div onclick="addRandomNodes(10);">+10</div>
    <div onclick="addRandomNodes(100);">+100</div>
    <div onclick="addRandomNodes(1000);">+1000</div>
    <div onclick="duplicateSvg();" class="plain">DROP</div>
+-->
+   <div onclick="addRandomGraphNodes(thegraph,1);">+1</div>
+   <div onclick="addRandomGraphNodes(thegraph,10);">+10</div>
+   <div onclick="addRandomGraphNodes(thegraph,100);">+100</div>
+   <div onclick="addRandomGraphNodes(thegraph,1000);">+1000</div>
+   <div onclick="duplicateGraph(thegraph);" class="plain">DROP</div>
   </div>
-  <svg id="thesvg"></svg>
+  <svg id="thesvg" data-primary-graph="" data-secondary-graph=""></svg>
   <div id="minusboxes" class="controlboxes">
+<!--
    <div onclick="removeNodes(1)">-1</div>
    <div onclick="removeNodes(10)">-10</div>
    <div onclick="removeNodes(100);">-100</div>
    <div onclick="removeNodes(1000);">-1000</div>
+-->
+   <div onclick="removeGraphNodes(thegraph,1)">-1</div>
+   <div onclick="removeGraphNodes(thegraph,10)">-10</div>
+   <div onclick="removeGraphNodes(thegraph,100);">-100</div>
+   <div onclick="removeGraphNodes(thegraph,1000);">-1000</div>
   </div>
   <div id="helptext">Left-click to add a node, middle-click to remove the last node added.</div>
   <script src="graphclass.js"></script>
+  <script src="graphclassutils.js"></script>
   <script src="svgraph.js"></script>
+  <script src="makegraphs.js"></script>
  </body>
 </html>
