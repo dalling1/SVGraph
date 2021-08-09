@@ -29,6 +29,11 @@ class Graph {
    randomNode
    addEdge
    addEdges
+   findEdgesTo
+   findEdgesToMatch
+   excludeEdgesTo
+   removeEdge
+   removeEdges
 
  */
 
@@ -52,20 +57,27 @@ class Graph {
  }
 
  addNodes(n=1){
-  for (var i=0;i<n;i++) this.addNode(randomName(),randomLocation(),randomRadius());
+  for (var i=0;i<n;i++) this.addNode(randomName(),randomLocation(-50,-50),randomRadius());
  }
 
  removeNode(youngest=true){
   // by default, remove the last-added node
   if (this.nodes.length){
-   var delnode = (youngest? this.nodes.length-1 : 0);
+   var delnode = (youngest? this.nodes.length-1 : 0); // note that delnode is a number
+
+   // remove any edges attached to this node first
+   var deledges = this.findEdgesTo(this.nodes[delnode].name); // may include already deleted edges... (they still exist in the DOM)
+   for (var i=deledges.length;i>0;i--){
+    if (deledges[i-1].svg.parentElement==this.svgedges){ // the SVG edge elements persist after deletion: so check if they are "attached" to the graph
+     this.svgedges.removeChild(deledges[i-1].svg); // remove SVG line element
+     // use filter to remove edges: can't use splice since we don't know the indices of the elements
+     this.edges = this.excludeEdgesTo(this.nodes[delnode].name);
+    }
+   }
    // remove the SVG object
    this.svgnodes.removeChild(this.nodes[delnode].svg);
    // then remove this node from the graph
    this.nodes.splice(delnode,1);
-   //
-   // *** also need to remove edges attached to this node ***
-   //
   }
  }
 
@@ -104,6 +116,34 @@ class Graph {
 
  addEdges(n=1){
   for (var i=0;i<n;i++) this.addEdge(randomName(),this.randomNode(),this.randomNode());
+ }
+
+ findEdgesTo(name){
+  return this.edges.filter(function(edg){return edg.from.name==name||edg.to.name==name});
+ }
+
+ findEdgesToMatch(name_regexp){
+  return this.edges.filter(function(edg){var p=new RegExp("^"+name_regexp+"$","i");return p.test(edg.from.name)||p.test(edg.to.name)});
+ }
+
+ excludeEdgesTo(name){
+  return this.edges.filter(function(edg){return edg.from.name!=name&&edg.to.name!=name});
+ }
+
+ removeEdge(youngest=true){
+  // by default, remove the last-added edge
+  if (this.edges.length){
+   var deledge = (youngest? this.edges.length-1 : 0); // note that deledge is a number
+
+   // remove the SVG object
+   this.svgedges.removeChild(this.edges[deledge].svg);
+   // then remove this edge from the graph
+   this.edges.splice(deledge,1);
+  }
+ }
+
+ removeEdges(n=1,youngest=true){
+  for (var i=0;i<n;i++) this.removeEdge(youngest);
  }
 
 }
@@ -180,8 +220,7 @@ class Edge {
 
  createSvg(){
   if (this.from == this.to){
-   console.log("self-connecting edge");
-//   var L = selfEdge(this.from,this.to);
+//   console.log("self-connecting edge");
    var L = SelfEdge({
     "stroke": "#f00",
     "stroke-width": this.linewidth,
@@ -191,13 +230,6 @@ class Edge {
     "id": this.name,
     "class": "anedge",
    });
-/*
-   L.setAttribute("stroke": "#f00");
-   L.setAttribute("stroke-width": this.linewidth);
-   L.setAttribute("z-index": this.z);
-   L.setAttribute("id": this.name);
-   L.setAttribute("class": "anedge");
-*/
   } else {
    var L = Line({
     "stroke": "#f00",
@@ -207,6 +239,8 @@ class Edge {
     "x2": this.to.x,
     "y2": this.to.y,
     "z-index": this.z,
+    "from": this.from,
+    "to": this.to,
     "id": this.name,
     "class": "anedge",
    });

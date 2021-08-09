@@ -31,5 +31,12 @@ function removeGraphNodes(graph,n=1){
  graph.removeNodes(n);
 }
 
-function selfEdge(from,to){
+function addRandomGraphEdges(graph,n=1){
+ makePrimary(graph);
+ graph.addEdges(n);
+}
+
+function removeGraphEdges(graph,n=1){
+ makePrimary(graph);
+ graph.removeEdges(n);
 }
