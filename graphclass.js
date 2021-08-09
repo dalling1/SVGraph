@@ -179,17 +179,38 @@ class Edge {
  }
 
  createSvg(){
-  var L = Line({
-   "stroke": "#f00",
-   "stroke-width": this.linewidth,
-   "x1": this.from.x,
-   "y1": this.from.y,
-   "x2": this.to.x,
-   "y2": this.to.y,
-   "z-index": this.z,
-   "id": this.name,
-   "class": "anedge",
-  });
+  if (this.from == this.to){
+   console.log("self-connecting edge");
+//   var L = selfEdge(this.from,this.to);
+   var L = SelfEdge({
+    "stroke": "#f00",
+    "stroke-width": this.linewidth,
+    "from": this.from,
+    "to": this.to,
+    "z-index": this.z,
+    "id": this.name,
+    "class": "anedge",
+   });
+/*
+   L.setAttribute("stroke": "#f00");
+   L.setAttribute("stroke-width": this.linewidth);
+   L.setAttribute("z-index": this.z);
+   L.setAttribute("id": this.name);
+   L.setAttribute("class": "anedge");
+*/
+  } else {
+   var L = Line({
+    "stroke": "#f00",
+    "stroke-width": this.linewidth,
+    "x1": this.from.x,
+    "y1": this.from.y,
+    "x2": this.to.x,
+    "y2": this.to.y,
+    "z-index": this.z,
+    "id": this.name,
+    "class": "anedge",
+   });
+  }
   return L;
  }
 

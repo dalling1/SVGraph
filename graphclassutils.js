@@ -30,3 +30,6 @@ function addRandomGraphNodes(graph,n=1){
 function removeGraphNodes(graph,n=1){
  graph.removeNodes(n);
 }
+
+function selfEdge(from,to){
+}
