@@ -67,9 +67,9 @@
     right: 0;
     top: 0;
    }
-   #plusedgeboxes {
+   #functionboxes {
     left: 0;
-    top: 0;
+    bottom: 0;
    }
    #minusboxes {
     right: 0;
@@ -108,8 +108,12 @@
 -->
   </div>
   <svg id="thesvg" data-primary-graph="" data-secondary-graph=""></svg>
-  <div id="plusedgeboxes" class="controlboxes">
+
+  <div id="functionboxes" class="controlboxes">
+   <div onclick="shuffle(thegraph);">Shuffle</div>
+   <div onclick="toggle(thegraph);">Toggle</div>
   </div>
+
   <div id="minusboxes" class="controlboxes">
    <div onclick="addRandomGraphEdges(thegraph,1);">+1</div>
    <div onclick="addRandomGraphEdges(thegraph,10);">+10</div>

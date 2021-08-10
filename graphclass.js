@@ -7,8 +7,12 @@ class Graph {
   this.name = name;
   this.nodes = [];
   this.edges = [];
-//  this.svg = this.createSvg(); // the SVG group for this graph
-  this.createSvg();
+  this.createSvg(); // make an SVG group for this graph
+  this.border = [100,100,0]; // keep the centres of nodes this far from the boundary of the graph
+
+  // rules for creating edges (these could be controls on the page):
+  this.allowSelfEdges = true;
+  this.alwaysUseBezier = true;
  }
 
  /*
@@ -34,6 +38,9 @@ class Graph {
    excludeEdgesTo
    removeEdge
    removeEdges
+   shuffle
+   toggle
+   randomLocation
 
  */
 
@@ -57,7 +64,7 @@ class Graph {
  }
 
  addNodes(n=1){
-  for (var i=0;i<n;i++) this.addNode(randomName(),randomLocation(-50,-50),randomRadius());
+  for (var i=0;i<n;i++) this.addNode(randomName(),this.randomLocation(),randomRadius());
  }
 
  removeNode(youngest=true){
@@ -146,6 +153,33 @@ class Graph {
   for (var i=0;i<n;i++) this.removeEdge(youngest);
  }
 
+ shuffle(){
+  for (var i=0;i<thegraph.nodes.length;i++){
+   thegraph.nodes[i].setAltLocation(this.randomLocation());
+   thegraph.nodes[i].moveToAlt();
+  }
+ }
+
+ toggle(){
+  for (var i=0;i<thegraph.nodes.length;i++){
+   thegraph.nodes[i].moveToAlt();
+  }
+ }
+
+ randomLocation(){
+ // generate a random location within the bounds of this graph
+ var dim=3;
+ var lowerLimit = this.border;
+ var upperLimit = [window.innerWidth - this.border[0], window.innerHeight - this.border[1], 100 - this.border[2]]
+ var P = Array(dim);
+ for (var d=0;d<dim;d++){
+  if (lowerLimit[d]>upperLimit[d]) lowerLimit[d] = upperLimit[d];
+  P[d] = Math.round(Math.random()*(upperLimit[d]-lowerLimit[d])+lowerLimit[d]);
+ }
+ return P;
+}
+
+
 }
 
 // node class /////////////////////////////////////////////////////////////////////////////////////
@@ -167,6 +201,13 @@ class Node {
   this.graph = graph; // the parent graph object
   this.svg = this.createSvg(); // the SVG object for this node
   this.addToSvgGraph();
+  this.altx = this.x; // alternative location
+  this.alty = this.y;
+  this.altz = this.z;
+  this.oldx = this.x; // previous location
+  this.oldy = this.y;
+  this.oldz = this.z;
+  this.timer = null;
  }
 
  createSvg(){
@@ -191,6 +232,52 @@ class Node {
   console.log("The node \""+this.name+"\" has position (x,y,z) = ("+this.x+","+this.y+","+this.z+")");
  }
 
+ setLocation(position){
+  this.x = position[0];
+  this.y = position[1];
+  this.z = (position.length==3? position[2] : 0); // default to 0 if missing
+ }
+
+ setAltLocation(position){
+  this.altx = position[0];
+  this.alty = position[1];
+  this.altz = (position.length==3? position[2] : 0); // default to 0 if missing
+ }
+
+ setOldLocation(position){
+  this.oldx = position[0];
+  this.oldy = position[1];
+  this.oldz = (position.length==3? position[2] : 0); // default to 0 if missing
+ }
+
+ moveToAlt(){
+  // move the node to its alternative position (and swap its position and alt positions)
+  var percentage = 0.0;
+  var increment = 5.0;
+  var nodesvg = this.svg;
+  var oldPosition = [this.x, this.y, this.z];
+  var newPosition = [this.altx, this.alty, this.altz];
+  var thisnode = this;
+  var thistimer = window.setInterval(function(){
+   var intermediatePosition = linearPosition(oldPosition,newPosition,percentage);
+   nodesvg.setAttribute("cx", intermediatePosition[0]);
+   nodesvg.setAttribute("cy", intermediatePosition[1]);
+   nodesvg.setAttribute("z-index", intermediatePosition[2]);
+   var moveedges = thisnode.graph.findEdgesTo(thisnode.name);
+   for (var i=moveedges.length;i>0;i--) moveedges[i-1].movingUpdate();
+   // perform some actions when finished:
+   if (percentage>=100.0){
+    window.clearInterval(thistimer);
+    thisnode.setOldLocation(oldPosition);
+    thisnode.setAltLocation(oldPosition);
+    thisnode.setLocation(newPosition);
+    // here we assume that the edge exists in the graph's svgedges collection (unlike in removeEdge())
+//    for (var i=moveedges.length;i>0;i--) moveedges[i-1].update();
+   }
+   percentage += increment;
+  });
+ }
+
 }
 
 // edge class /////////////////////////////////////////////////////////////////////////////////////
@@ -210,7 +297,7 @@ class Edge {
   this.linewidth = 0.5;
   this.z = 0;
 
-  this.svg = this.createSvg(); // the SVG object for this node
+  this.svg = this.createSvg(this.graph.allowSelfEdges,this.graph.alwaysUseBezier); // the SVG object for this edge
   this.addToSvgGraph();
  }
 
@@ -218,21 +305,22 @@ class Edge {
   console.log("The edge \""+this.name+"\" goes from "+this.from.name+" to "+this.to.name);
  }
 
- createSvg(){
-  if (this.from == this.to){
+ createSvg(allowSelfEdges=true,alwaysUseBezier=true){
+  if ((alwaysUseBezier && this.from!=this.to) || (allowSelfEdges && this.from == this.to)){
 //   console.log("self-connecting edge");
    var L = SelfEdge({
-    "stroke": "#f00",
+    "stroke": "#f44",
     "stroke-width": this.linewidth,
     "from": this.from,
     "to": this.to,
     "z-index": this.z,
     "id": this.name,
-    "class": "anedge",
+    "class": "anedge"+(this.from==this.to?" selfedge":""),
    });
   } else {
+   // if self-edges are disallowed, a zero-length line will be created here: deal with it elsewhere
    var L = Line({
-    "stroke": "#f00",
+    "stroke": "#f44",
     "stroke-width": this.linewidth,
     "x1": this.from.x,
     "y1": this.from.y,
@@ -242,7 +330,7 @@ class Edge {
     "from": this.from,
     "to": this.to,
     "id": this.name,
-    "class": "anedge",
+    "class": "anedge"+(this.from==this.to?" selfedge":""),
    });
   }
   return L;
@@ -250,6 +338,32 @@ class Edge {
 
  addToSvgGraph(){
   appendSvgObject(this.svg,this.graph.svgedges);
+ }
+
+/*
+  This is a bit heavy really: no need to remove/add SVG lines, just update the x1,y1,x2,y2 values
+  -- except for SelfEdge objects....... need to recompute the path
+  -- but we could just track the node and add deltas to the path's elements (have to break down the path string, though)
+*/
+ update(){
+  // remove the existing SVG object
+  this.graph.svgedges.removeChild(this.svg);
+  // make a new one using the endpoints' updated positions
+  this.svg = this.createSvg();
+  // and add it to the graph
+  this.addToSvgGraph();
+ }
+
+ movingUpdate(){
+  if (this.svg.nodeName=="line"){ // "line" or "path"
+   // set the edge's endpoints according to the attached nodes' SVG objects' coordinates
+   this.svg.setAttribute("x1",this.from.svg.getAttribute("cx"));
+   this.svg.setAttribute("y1",this.from.svg.getAttribute("cy"));
+   this.svg.setAttribute("x2",this.to.svg.getAttribute("cx"));
+   this.svg.setAttribute("y2",this.to.svg.getAttribute("cy"));
+  } else {
+   this.update();
+  }
  }
 
 }

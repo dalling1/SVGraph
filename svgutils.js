@@ -1,4 +1,4 @@
-function randomLocation(w=0,h=0,z=0){
+function oldrandomLocation(w=0,h=0,z=0){
  // generate a random location
  // bounds are the box [0,w],[0,h],[0,z] or within the browser window by default (z limits 0-100)
  // -- but if any entry is negative, exclude the points from that boundary
@@ -38,31 +38,47 @@ function Line(attributes){
 }
 
 function SelfEdge(attributes){
- var selflin = document.createElementNS("http://www.w3.org/2000/svg","path");
+ var selfedg = document.createElementNS("http://www.w3.org/2000/svg","path");
  var from = [];
  var to = [];
  for (var attr in attributes){
   if (attr=="from"){
    from = attributes[attr];
-   selflin.setAttribute(attr,from.name);
+   selfedg.setAttribute(attr,from.name);
   } else if (attr=="to"){
    to = attributes[attr];
-   selflin.setAttribute(attr,attributes[attr].name);
+   selfedg.setAttribute(attr,attributes[attr].name);
   } else {
-   selflin.setAttribute(attr,attributes[attr]);
+   selfedg.setAttribute(attr,attributes[attr]);
   }
-  // add a "fill" attribute
-  selflin.setAttribute("fill","none");
-  // finally, calculate the path
-  var edgeRadius = 300;
-  var c1XY = [Math.round(from.x+(Math.random()-0.5)*edgeRadius), Math.round(from.y+(Math.random()-0.5)*edgeRadius)].join(","); // control point 1
-  var c2XY = [Math.round(from.x+(Math.random()-0.5)*edgeRadius), Math.round(from.y+(Math.random()-0.5)*edgeRadius)].join(","); // control point 2
-  var fromXY = [from.x, from.y].join(",");
-  var toXY = [to.x, to.y].join(",");
-  var d = "M "+fromXY+" C "+c1XY+" "+c2XY+" "+toXY;
-  selflin.setAttribute("d",d);
  }
- return selflin;
+
+ // add a "fill" attribute
+ selfedg.setAttribute("fill","none");
+ // finally, calculate the path
+ var edgeRadius = 300;
+
+ if (false){ // approach 1: use the node's logical position
+  var fromx = from.x;
+  var fromy = from.y;
+  var tox = to.x;
+  var toy = to.y;
+ } else { // approach 2: use the node's SVG object's position
+  var fromx = parseInt(from.svg.getAttribute("cx"));
+  var fromy = parseInt(from.svg.getAttribute("cy"));
+  var tox = parseInt(to.svg.getAttribute("cx"));
+  var toy = parseInt(to.svg.getAttribute("cy"));
+ }
+ // calculate the location of two control points, used to create a looping path with a cubic Bezier curve
+ var control1XY = [Math.round(fromx+(Math.random()-0.5)*edgeRadius), Math.round(fromy+(Math.random()-0.5)*edgeRadius)].join(","); // control point 1
+ var control2XY = [Math.round(fromx+(Math.random()-0.5)*edgeRadius), Math.round(fromy+(Math.random()-0.5)*edgeRadius)].join(","); // control point 2
+ var fromXY = [fromx, fromy].join(",");
+ var toXY = [tox, toy].join(",");
+
+ var d = "M "+fromXY+" C "+control1XY+" "+control2XY+" "+toXY; // "C" for cubic; higher orders are available but require more control points
+ selfedg.setAttribute("d",d);
+
+ return selfedg;
 }
 
 function randomRadius(r1=-1,r2=-1){
@@ -110,6 +126,18 @@ function appendSvgObject(obj,target){
 function removeElement(id){
  var el = document.getElementById(id);
  if (el!=null) el.parentNode.removeChild(el);
+}
+
+function linearPosition(from,to,percent){
+ var dim = from.length;
+ if (from.length<3){
+  from[2] = 0;
+  to[2] = 0;
+ }
+ var newx = from[0] + (percent/100.0)*(to[0]-from[0]);
+ var newy = from[1] + (percent/100.0)*(to[1]-from[1]);
+ var newz = from[2] + (percent/100.0)*(to[2]-from[2]);
+ return [newx, newy, newz];
 }
 
 /*

@@ -40,3 +40,13 @@ function removeGraphEdges(graph,n=1){
  makePrimary(graph);
  graph.removeEdges(n);
 }
+
+function shuffle(graph){
+ makePrimary(graph);
+ graph.shuffle();
+}
+
+function toggle(graph){
+ makePrimary(graph);
+ graph.toggle();
+}
