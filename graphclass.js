@@ -8,7 +8,7 @@ class Graph {
   this.nodes = [];
   this.edges = [];
   this.createSvg(); // make an SVG group for this graph
-  this.border = [100,100,0]; // keep the centres of nodes this far from the boundary of the graph
+  this.border = [200,200,0]; // keep the centres of nodes this far from the boundary of the graph
 
   // rules for creating edges (these could be controls on the page):
   this.allowSelfEdges = true;
@@ -41,6 +41,9 @@ class Graph {
    shuffle
    toggle
    randomLocation
+   randomCircleLocation
+   allowSelfEdges
+   alwaysUseBezier
 
  */
 
@@ -64,7 +67,7 @@ class Graph {
  }
 
  addNodes(n=1){
-  for (var i=0;i<n;i++) this.addNode(randomName(),this.randomLocation(),randomRadius());
+  for (var i=0;i<n;i++) this.addNode(randomName(),this.randomCircleLocation(),randomRadius([2,5]));
  }
 
  removeNode(youngest=true){
@@ -155,7 +158,7 @@ class Graph {
 
  shuffle(){
   for (var i=0;i<thegraph.nodes.length;i++){
-   thegraph.nodes[i].setAltLocation(this.randomLocation());
+   thegraph.nodes[i].setAltLocation(this.randomCircleLocation());
    thegraph.nodes[i].moveToAlt();
   }
  }
@@ -167,17 +170,37 @@ class Graph {
  }
 
  randomLocation(){
- // generate a random location within the bounds of this graph
- var dim=3;
- var lowerLimit = this.border;
- var upperLimit = [window.innerWidth - this.border[0], window.innerHeight - this.border[1], 100 - this.border[2]]
- var P = Array(dim);
- for (var d=0;d<dim;d++){
-  if (lowerLimit[d]>upperLimit[d]) lowerLimit[d] = upperLimit[d];
-  P[d] = Math.round(Math.random()*(upperLimit[d]-lowerLimit[d])+lowerLimit[d]);
+  // generate a random location within the border of this graph
+  var dim=3;
+  var lowerLimit = this.border;
+  var upperLimit = [window.innerWidth - this.border[0], window.innerHeight - this.border[1], 100 - this.border[2]]
+  var P = Array(dim);
+  for (var d=0;d<dim;d++){
+   if (lowerLimit[d]>upperLimit[d]) lowerLimit[d] = upperLimit[d];
+   P[d] = Math.round(Math.random()*(upperLimit[d]-lowerLimit[d])+lowerLimit[d]);
+  }
+  return P;
  }
- return P;
-}
+
+ randomCircleLocation(){
+  // generate a random location on the circle centred on the page and which fits within the graph's border
+  var X = 0.5*window.innerWidth;
+  var Y = 0.5*window.innerHeight;
+  var W = X - this.border[0];
+  var H = Y - this.border[0];
+  var R = Math.min(W,H);
+  return randomCircleLocation([X,Y],R);
+ }
+
+ setAllowSelfEdges(flag){
+  // note that this does not alter existing edges
+  this.allowSelfEdges = (flag?true:false);
+ }
+
+ setAlwaysUseBezier(flag){
+  // note that this does not alter existing edges
+  this.alwaysUseBezier = (flag?true:false);
+ }
 
 
 }

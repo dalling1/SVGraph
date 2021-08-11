@@ -85,6 +85,10 @@ function randomRadius(r1=-1,r2=-1){
  // default limits:
  if (r1<0) r1 = 2;
  if (r2<0) r2 = 20;
+ if (r1.length==2){
+  r2 = r1[1];
+  r1 = r1[0];
+ }
  return Math.round(Math.random()*(r2-r1)+r1);
 }
 
@@ -138,6 +142,14 @@ function linearPosition(from,to,percent){
  var newy = from[1] + (percent/100.0)*(to[1]-from[1]);
  var newz = from[2] + (percent/100.0)*(to[2]-from[2]);
  return [newx, newy, newz];
+}
+
+function randomCircleLocation(centre,radius){
+ const Pi = Math.acos(-1);
+ var angle = Math.random()*2*Pi;
+ var x = Math.round(centre[0] + radius*Math.sin(angle));
+ var y = Math.round(centre[1] + radius*Math.cos(angle));
+ return [x,y];
 }
 
 /*
