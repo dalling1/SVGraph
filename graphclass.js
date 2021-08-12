@@ -8,11 +8,11 @@ class Graph {
   this.nodes = [];
   this.edges = [];
   this.createSvg(); // make an SVG group for this graph
-  this.border = [200,200,0]; // keep the centres of nodes this far from the boundary of the graph
+  this.border = [100,100,0]; // keep the centres of nodes this far from the boundary of the graph
 
   // rules for creating edges (these could be controls on the page):
   this.allowSelfEdges = true;
-  this.alwaysUseBezier = true;
+  this.alwaysUseBezier = false;
  }
 
  /*
@@ -38,12 +38,14 @@ class Graph {
    excludeEdgesTo
    removeEdge
    removeEdges
-   shuffle
-   toggle
+   shuffleNodePositions
+   toggleNodePositions
    randomLocation
    randomCircleLocation
    allowSelfEdges
    alwaysUseBezier
+   setAllowSelfEdges
+   setAlwaysUseBezier
 
  */
 
@@ -67,7 +69,7 @@ class Graph {
  }
 
  addNodes(n=1){
-  for (var i=0;i<n;i++) this.addNode(randomName(),this.randomCircleLocation(),randomRadius([2,5]));
+  for (var i=0;i<n;i++) this.addNode(randomName(),this.randomLocation(),randomRadius([2,5]));
  }
 
  removeNode(youngest=true){
@@ -156,14 +158,14 @@ class Graph {
   for (var i=0;i<n;i++) this.removeEdge(youngest);
  }
 
- shuffle(){
+ shuffleNodePositions(){
   for (var i=0;i<thegraph.nodes.length;i++){
-   thegraph.nodes[i].setAltLocation(this.randomCircleLocation());
+   thegraph.nodes[i].setAltLocation(this.randomLocation());
    thegraph.nodes[i].moveToAlt();
   }
  }
 
- toggle(){
+ toggleNodePositions(){
   for (var i=0;i<thegraph.nodes.length;i++){
    thegraph.nodes[i].moveToAlt();
   }

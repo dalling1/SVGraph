@@ -3,6 +3,7 @@
   <meta charset="UTF-8">
   <title>SVGraph</title>
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400;1,700&family=Englebert&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="controls.css">
   <style>
    body {
     width: 100vw;
@@ -91,7 +92,7 @@
    }
   </style>
  </head>
- <body onload="thegraph = new Graph('thegraph');">
+ <body onload="thegraph = new Graph('thegraph'); document.getElementById('edgestyle').checked = thegraph.alwaysUseBezier;">
   <h1 id="heading">SVGraph</h1>
   <div id="plusboxes" class="controlboxes">
    <div onclick="addRandomGraphNodes(thegraph,1);">+1</div>
@@ -112,6 +113,29 @@
   <div id="functionboxes" class="controlboxes">
    <div onclick="shuffle(thegraph);">Shuffle</div>
    <div onclick="toggle(thegraph);">Toggle</div>
+
+
+  <!-- control for setting the graph's edge style -->
+  <div class="controlwrapper" style="pointer:initial;">
+    <span class="switchtext">straight</span>
+    <label class="switch">
+     <input type="checkbox" id="edgestyle" onclick="toggleEdgeStyle(thegraph);">
+     <span class="slider round"></span>
+    </label>
+    <span class="switchtext">Bezier</span>
+  </div>
+
+  <!-- control for setting whether self-edges are allowed -->
+  <div class="controlwrapper" style="pointer:initial;">
+    <span class="switchtext">self-edges</span>
+    <label class="switch">
+     <input type="checkbox" id="selfedges" onclick="toggleSelfEdges(thegraph);">
+     <span class="slider round"></span>
+    </label>
+    <span class="switchtext">not allowed</span>
+  </div>
+
+
   </div>
 
   <div id="minusboxes" class="controlboxes">

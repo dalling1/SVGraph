@@ -43,10 +43,20 @@ function removeGraphEdges(graph,n=1){
 
 function shuffle(graph){
  makePrimary(graph);
- graph.shuffle();
+ graph.shuffleNodePositions();
 }
 
 function toggle(graph){
  makePrimary(graph);
- graph.toggle();
+ graph.toggleNodePositions();
+}
+
+function toggleEdgeStyle(graph){
+ makePrimary(graph);
+ graph.setAlwaysUseBezier(!graph.alwaysUseBezier);
+}
+
+function toggleSelfEdges(graph){
+ makePrimary(graph);
+ graph.setAllowSelfEdges(!graph.allowSelfEdges);
 }
