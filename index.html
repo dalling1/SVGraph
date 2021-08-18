@@ -90,6 +90,23 @@
    .hidden {
     display: none;
    }
+   .selfedge {
+    stroke: #44d;
+    stroke-width: 2px;
+   }
+   .anedge {
+    transition: 0.5s all ease;
+   }
+   .anedge:hover {
+    stroke: #4d4;
+    stroke-width: 4px;
+    transition: none;
+   }
+   .highlightedge {
+    stroke: #4d4;
+    stroke-width: 4px;
+    transition: 1s all ease;
+   }
   </style>
  </head>
  <body onload="thegraph = new Graph('thegraph'); document.getElementById('edgestyle').checked = thegraph.alwaysUseBezier;">
@@ -104,9 +121,6 @@
    <div onclick="removeGraphNodes(thegraph,100);">-100</div>
    <div onclick="removeGraphNodes(thegraph,10)">-10</div>
    <div onclick="removeGraphNodes(thegraph,1)">-1</div>
-<!--
-   <div onclick="duplicateGraph(thegraph);" class="plain">DROP</div>
--->
   </div>
   <svg id="thesvg" data-primary-graph="" data-secondary-graph=""></svg>
 
@@ -116,7 +130,7 @@
 
 
   <!-- control for setting the graph's edge style -->
-  <div class="controlwrapper" style="pointer:initial;">
+  <div class="controlwrapper" style="pointer:initial;" title="Applies to new edges only">
     <span class="switchtext">straight</span>
     <label class="switch">
      <input type="checkbox" id="edgestyle" onclick="toggleEdgeStyle(thegraph);">
@@ -126,7 +140,7 @@
   </div>
 
   <!-- control for setting whether self-edges are allowed -->
-  <div class="controlwrapper" style="pointer:initial;">
+  <div class="controlwrapper" style="pointer:initial;" title="Applies to new edges only">
     <span class="switchtext">self-edges</span>
     <label class="switch">
      <input type="checkbox" id="selfedges" onclick="toggleSelfEdges(thegraph);">

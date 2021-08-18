@@ -60,3 +60,26 @@ function toggleSelfEdges(graph){
  makePrimary(graph);
  graph.setAllowSelfEdges(!graph.allowSelfEdges);
 }
+
+function sampleEdge(id){
+ console.log("Clicked edge "+id);
+}
+
+function oldshowConnections(id){
+ // test function to demonstrate acting on a given node, and specifically on the edges attached to a node:
+ var E = thegraph.findEdgesTo(id);
+ for(var i=0;i<E.length;i++){
+  E[i].svg.classList.add("highlightedge");
+ };
+
+}
+
+function showConnections(id){
+ // add the highlightedge class to this node's edges
+ var E = thegraph.findEdgesTo(id);
+ for (var i=0;i<E.length;i++){
+  E[i].svg.classList.add("highlightedge");
+ }
+ // and remove it after 4 seconds
+ setTimeout(function(){var E = thegraph.findEdgesTo(id);for(var i=0;i<E.length;i++){E[i].svg.classList.remove("highlightedge")}},4000);
+}

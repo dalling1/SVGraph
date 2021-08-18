@@ -2,6 +2,7 @@
 class Graph {
  constructor(
   name = "",
+  layout = "default",
  ){
   this.type = this.constructor.name;
   this.name = name;
@@ -12,7 +13,7 @@ class Graph {
 
   // rules for creating edges (these could be controls on the page):
   this.allowSelfEdges = true;
-  this.alwaysUseBezier = false;
+  this.alwaysUseBezier = true;
  }
 
  /*
@@ -46,6 +47,8 @@ class Graph {
    alwaysUseBezier
    setAllowSelfEdges
    setAlwaysUseBezier
+   findEdge
+   findEdges
 
  */
 
@@ -204,6 +207,13 @@ class Graph {
   this.alwaysUseBezier = (flag?true:false);
  }
 
+ findEdge(name){
+  return this.edges.filter(function(edg){return edg.name==name});
+ }
+
+ findEdges(name_regexp){
+  return this.edges.filter(function(edg){var p=new RegExp("^"+name_regexp+"$","i");return p.test(edg.name)});
+ }
 
 }
 
@@ -245,6 +255,7 @@ class Node {
    "z-index": this.z,
    "id": this.name,
    "class": "anode",
+   "onclick": "showConnections(this.id)",
   });
   return c;
  }
@@ -324,6 +335,7 @@ class Edge {
 
   this.svg = this.createSvg(this.graph.allowSelfEdges,this.graph.alwaysUseBezier); // the SVG object for this edge
   this.addToSvgGraph();
+
  }
 
  print(){
@@ -341,6 +353,7 @@ class Edge {
     "z-index": this.z,
     "id": this.name,
     "class": "anedge"+(this.from==this.to?" selfedge":""),
+    "onclick": "sampleEdge(this.id)",
    });
   } else {
    // if self-edges are disallowed, a zero-length line will be created here: deal with it elsewhere
@@ -356,6 +369,7 @@ class Edge {
     "to": this.to,
     "id": this.name,
     "class": "anedge"+(this.from==this.to?" selfedge":""),
+    "onclick": "sampleEdge(this.id)",
    });
   }
   return L;
@@ -400,4 +414,23 @@ class Automorphism {
  ){
   this.name = name;
  }
+}
+
+// layout class ///////////////////////////////////////////////////////////////////////////////////
+class Layout {
+ constructor(
+  name,
+ ){
+  this.name = name;
+ }
+
+ allowedLayouts(){
+  return ["default","randomRectangle","randomCircle"];
+ }
+
+ // eg. L.isAllowed("randomRectangle") is true
+ isAllowed(layout){
+  return (this.allowedLayouts().indexOf(layout)!=-1);
+ }
+
 }
