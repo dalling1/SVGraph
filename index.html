@@ -109,14 +109,14 @@
    }
   </style>
  </head>
- <body onload="thegraph = new Graph('thegraph'); document.getElementById('edgestyle').checked = thegraph.alwaysUseBezier;">
+ <body onload="thegraph = new Graph('thegraph'); document.getElementById('edgestyle').checked = thegraph.alwaysUseBezier; document.getElementById('graphlayout').selectedIndex=0;">
   <h1 id="heading">SVGraph</h1>
   <div id="plusboxes" class="controlboxes">
    <div onclick="addRandomGraphNodes(thegraph,1);">+1</div>
    <div onclick="addRandomGraphNodes(thegraph,10);">+10</div>
    <div onclick="addRandomGraphNodes(thegraph,100);">+100</div>
    <div onclick="addRandomGraphNodes(thegraph,1000);">+1000</div>
-   <div class="plain">Nodes</div>
+   <div class="plain">Vertices</div>
    <div onclick="removeGraphNodes(thegraph,1000);">-1000</div>
    <div onclick="removeGraphNodes(thegraph,100);">-100</div>
    <div onclick="removeGraphNodes(thegraph,10)">-10</div>
@@ -149,6 +149,15 @@
     <span class="switchtext">not allowed</span>
   </div>
 
+  <!-- control for setting the graph's layout -->
+  <div class="controlwrapper" style="pointer:initial;" title="Applies to new vertices only">
+   <span class="wrappertext">Layout</span>
+   <select id="graphlayout" onchange="thegraph.setLayout(document.getElementById('graphlayout').value);">
+    <option value="default" selected>default</option>
+    <option value="randomRectangle">rectangle</option>
+    <option value="randomCircle">circle</option>
+   </select>
+  </div>
 
   </div>
 

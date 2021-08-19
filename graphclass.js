@@ -2,7 +2,7 @@
 class Graph {
  constructor(
   name = "",
-  layout = "default",
+  layoutName = "",
  ){
   this.type = this.constructor.name;
   this.name = name;
@@ -10,6 +10,7 @@ class Graph {
   this.edges = [];
   this.createSvg(); // make an SVG group for this graph
   this.border = [100,100,0]; // keep the centres of nodes this far from the boundary of the graph
+  this.createLayout(layoutName);
 
   // rules for creating edges (these could be controls on the page):
   this.allowSelfEdges = true;
@@ -20,6 +21,7 @@ class Graph {
    Methods for the Graph class:
 
    createSvg
+   createLayout
    hide
    show
    addNode
@@ -30,7 +32,7 @@ class Graph {
    nameNodes (wanted?)
    findNode
    findNodes
-   listNodes
+   printNodes
    randomNode
    addEdge
    addEdges
@@ -49,6 +51,9 @@ class Graph {
    setAlwaysUseBezier
    findEdge
    findEdges
+   centralLocation
+   nodeLocation
+   setLayout
 
  */
 
@@ -57,6 +62,10 @@ class Graph {
   this.svg = appendSvgGroup(this.name,"thesvg");
   this.svgedges = appendSvgGroup(this.name+"edges",this.svg.id);
   this.svgnodes = appendSvgGroup(this.name+"nodes",this.svg.id);
+ }
+
+ createLayout(layoutName){
+  this.layout = new Layout(this.name+"Layout",layoutName);
  }
 
  hide(){
@@ -72,7 +81,7 @@ class Graph {
  }
 
  addNodes(n=1){
-  for (var i=0;i<n;i++) this.addNode(randomName(),this.randomLocation(),randomRadius([2,5]));
+  for (var i=0;i<n;i++) this.addNode(randomName(),this.nodeLocation(),randomRadius([4,10]));
  }
 
  removeNode(youngest=true){
@@ -117,7 +126,7 @@ class Graph {
   return this.nodes.filter(function(nod){var p=new RegExp("^"+name_regexp+"$","i");return p.test(nod.name)});
  }
 
- listNodes(){
+ printNodes(){
   for (var i=0;i<this.nodes.length;i++) console.log(this.nodes[i].name);
  }
 
@@ -163,7 +172,7 @@ class Graph {
 
  shuffleNodePositions(){
   for (var i=0;i<thegraph.nodes.length;i++){
-   thegraph.nodes[i].setAltLocation(this.randomLocation());
+   thegraph.nodes[i].setAltLocation(this.nodeLocation());
    thegraph.nodes[i].moveToAlt();
   }
  }
@@ -213,6 +222,29 @@ class Graph {
 
  findEdges(name_regexp){
   return this.edges.filter(function(edg){var p=new RegExp("^"+name_regexp+"$","i");return p.test(edg.name)});
+ }
+
+ centralLocation(){
+  var dim=3;
+  var P = Array(dim);
+  P[0] = Math.round(window.innerWidth/2.0);
+  P[1] = Math.round(window.innerHeight/2.0);
+  P[2] = 0;
+  return P;
+ }
+
+ nodeLocation(){
+  if (this.layout.layoutName=="default" || this.layout.layoutName=="randomRectangle"){
+   return this.randomLocation();
+  } else if (this.layout.layoutName=="randomCircle") {
+   return this.randomCircleLocation();
+  } else {
+   return this.centralLocation();
+  }
+ }
+
+ setLayout(layoutName){
+  this.layout.setLayout(layoutName);
  }
 
 }
@@ -335,7 +367,6 @@ class Edge {
 
   this.svg = this.createSvg(this.graph.allowSelfEdges,this.graph.alwaysUseBezier); // the SVG object for this edge
   this.addToSvgGraph();
-
  }
 
  print(){
@@ -344,7 +375,6 @@ class Edge {
 
  createSvg(allowSelfEdges=true,alwaysUseBezier=true){
   if ((alwaysUseBezier && this.from!=this.to) || (allowSelfEdges && this.from == this.to)){
-//   console.log("self-connecting edge");
    var L = SelfEdge({
     "stroke": "#f44",
     "stroke-width": this.linewidth,
@@ -420,8 +450,10 @@ class Automorphism {
 class Layout {
  constructor(
   name,
+  layoutName
  ){
   this.name = name;
+  this.setLayout(layoutName);
  }
 
  allowedLayouts(){
@@ -429,8 +461,16 @@ class Layout {
  }
 
  // eg. L.isAllowed("randomRectangle") is true
- isAllowed(layout){
-  return (this.allowedLayouts().indexOf(layout)!=-1);
+ isAllowed(layoutName){
+  return (this.allowedLayouts().indexOf(layoutName)!=-1);
+ }
+
+ setLayout(layoutName){
+  if (this.isAllowed(layoutName)){
+   this.layoutName = layoutName;
+  } else {
+   this.layoutName = "default";
+  }
  }
 
 }
