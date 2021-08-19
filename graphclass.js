@@ -369,6 +369,17 @@ class Edge {
   this.addToSvgGraph();
  }
 
+ /*
+   Methods for the Edge class:
+
+   print
+   createSvg
+   addToSvgGraph
+   update
+   movingUpdate
+
+ */
+
  print(){
   console.log("The edge \""+this.name+"\" goes from "+this.from.name+" to "+this.to.name);
  }
@@ -442,6 +453,7 @@ class Automorphism {
  constructor(
   name,
  ){
+  this.type = this.constructor.name;
   this.name = name;
  }
 }
@@ -450,14 +462,30 @@ class Automorphism {
 class Layout {
  constructor(
   name,
-  layoutName
+  layoutName,
+  focusObject = "",
  ){
+  this.type = this.constructor.name;
   this.name = name;
+  this.setFocus(focusObject);
   this.setLayout(layoutName);
  }
 
+ /*
+   Methods for the Layout class:
+
+   allowedLayouts
+   isAllowed
+   setLayout
+   setFocus
+
+ */
+
  allowedLayouts(){
-  return ["default","randomRectangle","randomCircle"];
+  var layoutList = ["default","randomRectangle","randomCircle"];
+  if (this.focus.type=="Node") layoutList.push("vertexFocused");
+  if (this.focus.type=="Edge") layoutList.push("edgeFocused");
+  return layoutList;
  }
 
  // eg. L.isAllowed("randomRectangle") is true
@@ -465,7 +493,7 @@ class Layout {
   return (this.allowedLayouts().indexOf(layoutName)!=-1);
  }
 
- setLayout(layoutName){
+ setLayout(layoutName="default"){
   if (this.isAllowed(layoutName)){
    this.layoutName = layoutName;
   } else {
@@ -473,4 +501,7 @@ class Layout {
   }
  }
 
+ setFocus(focusObject=""){
+  this.focus = ((focusObject.type=="Node" || focusObject.type=="Edge")? focusObject : "none");
+ }
 }
