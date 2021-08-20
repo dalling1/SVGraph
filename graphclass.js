@@ -45,6 +45,7 @@ class Graph {
    toggleNodePositions
    randomLocation
    randomCircleLocation
+   randomGridLocations
    allowSelfEdges
    alwaysUseBezier
    setAllowSelfEdges
@@ -183,6 +184,30 @@ class Graph {
   }
  }
 
+ randomNormal(mean,variance){
+  // The Box-Muller transformation yields two normal random numbers, but this function only returns one
+  // mean and variance must be scalar
+  var r1 = Math.random();
+  var r2 = Math.random();
+  var z1 = Math.pow(-2.0*Math.log(r1),0.5)*Math.cos(2.0*Pi*r1);
+  // omit z1
+  var R1 = mean+z1*Math.pow(variance,0.5);
+  // omit R2
+  return R1;
+ }
+
+ randomNormal2(mean,variance){
+  // The Box-Muller transformation yields two normal random numbers, return them both (handy for 2D coordinates)
+  // mean and variance must be vectors of length 2
+  var r1 = Math.random();
+  var r2 = Math.random();
+  var z1 = Math.pow(-2.0*Math.log(r1),0.5)*Math.cos(2.0*Pi*r2);
+  var z2 = Math.pow(-2.0*Math.log(r1),0.5)*Math.sin(2.0*Pi*r2);
+  var R1 = mean[0]+z1*Math.pow(variance[0],0.5);
+  var R2 = mean[1]+z2*Math.pow(variance[1],0.5);
+  return [R1, R2];
+ }
+
  randomLocation(){
   // generate a random location within the border of this graph
   var dim=3;
@@ -204,6 +229,36 @@ class Graph {
   var H = Y - this.border[0];
   var R = Math.min(W,H);
   return randomCircleLocation([X,Y],R);
+ }
+
+ randomGridLocations(n){
+  // generate a random location on a grid (within the border of this graph), jittered
+  var Ncols = 10; //make a 10x6 grid (this could be user-selected later on)
+  var Nrows = 6;
+  var Ngrid = Ncols*Nrows;
+  var Lvar = 100; // variance of the locations about the grid points (jitter)
+  var dim=3;
+  var P=new Array(n);
+/*
+  var lowerLimit = this.border;
+  var upperLimit = [window.innerWidth - this.border[0], window.innerHeight - this.border[1], 100 - this.border[2]]
+  var P = Array(dim);
+*/
+  // 1. determine the grid point locations
+//....
+//....
+//....
+
+  // select n points at those locations
+  for (var i=0;i<n;i++){
+   // 2. choose a grid point at random
+   var usegridX = Math.floor(Ncols*Math.random()); // use this one across (zero-indexed)
+   var usegridY = Math.floor(Nrows*Math.random()); // use this one down (zero-indexed)
+   // 3. get jittered coordinates around that point
+   P[i] = randomNormal2([gridX[usegridX],gridY[usegridY]],[Lvar,Lvar]);
+   P[i][2] = 0; // z-coordinate
+  }
+  return P;
  }
 
  setAllowSelfEdges(flag){
@@ -234,12 +289,16 @@ class Graph {
  }
 
  nodeLocation(){
-  if (this.layout.layoutName=="default" || this.layout.layoutName=="randomRectangle"){
+  if (this.layout.layoutName=="default"){ /////////////////////////////// default is randomRectangle
    return this.randomLocation();
-  } else if (this.layout.layoutName=="randomCircle") {
+  } else if (this.layout.layoutName=="randomRectangle"){ //////////////// randomRectangle
+   return this.randomLocation();
+  } else if (this.layout.layoutName=="randomCircle") { ////////////////// randomCircle
    return this.randomCircleLocation();
+  } else if (this.layout.layoutName=="randomGrid") { //////////////////// randomGrid
+   return this.randomGridLocation();
   } else {
-   return this.centralLocation();
+   return this.centralLocation(); /////////////////////////////////////// not specified: put nodes at the centre
   }
  }
 
