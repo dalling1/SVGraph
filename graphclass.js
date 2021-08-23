@@ -32,7 +32,7 @@ class Graph {
    nameNodes (wanted?)
    findNode
    findNodes
-   printNodes
+   showNodeDetails
    randomNode
    addEdge
    addEdges
@@ -41,6 +41,7 @@ class Graph {
    excludeEdgesTo
    removeEdge
    removeEdges
+   removeDuplicateEdges
    shuffleNodePositions
    toggleNodePositions
    randomLocation
@@ -127,7 +128,7 @@ class Graph {
   return this.nodes.filter(function(nod){var p=new RegExp("^"+name_regexp+"$","i");return p.test(nod.name)});
  }
 
- printNodes(){
+ showNodeDetails(){
   for (var i=0;i<this.nodes.length;i++) console.log(this.nodes[i].name);
  }
 
@@ -143,12 +144,24 @@ class Graph {
   for (var i=0;i<n;i++) this.addEdge(randomName(),this.randomNode(),this.randomNode());
  }
 
+ findEdge(name){
+  // find an edge object with the given name
+  return this.edges.filter(function(edg){return edg.name==name});
+ }
+
  findEdgesTo(name){
+  // find edges which connect to the vertex with the given name
   return this.edges.filter(function(edg){return edg.from.name==name||edg.to.name==name});
  }
 
  findEdgesToMatch(name_regexp){
+  // find edges which connect to vertices whose names match the given regular expression
   return this.edges.filter(function(edg){var p=new RegExp("^"+name_regexp+"$","i");return p.test(edg.from.name)||p.test(edg.to.name)});
+ }
+
+ findEdgesFromTo(from,to){
+  // find edges which connect to the named vertices
+  return this.edges.filter(function(edg){return (edg.from.name==from && edg.to.name==to) || (edg.from.name==to && edg.to.name==from)});
  }
 
  excludeEdgesTo(name){
@@ -156,7 +169,7 @@ class Graph {
  }
 
  removeEdge(youngest=true){
-  // by default, remove the last-added edge
+  // by default, remove the last-added edge; otherwise, remove the first-added edge
   if (this.edges.length){
    var deledge = (youngest? this.edges.length-1 : 0); // note that deledge is a number
 
@@ -171,6 +184,19 @@ class Graph {
   for (var i=0;i<n;i++) this.removeEdge(youngest);
  }
 
+ removeDuplicateEdges(){
+  for (var i=this.edges.length;i>0;i--){ // work from the end back to the start
+   var duplicates = this.findEdgesFromTo(this.edges[i-1].from.name,this.edges[i-1].to.name);
+   // if there are duplicates, remove this edge
+   if (duplicates.length>1){
+    // remove the SVG object
+    this.svgedges.removeChild(this.edges[i-1].svg);
+    // then remove this edge from the graph
+    this.edges.splice(i-1,1);
+   }
+  }
+ }
+
  shuffleNodePositions(){
   for (var i=0;i<thegraph.nodes.length;i++){
    thegraph.nodes[i].setAltLocation(this.nodeLocation());
@@ -183,32 +209,6 @@ class Graph {
    thegraph.nodes[i].moveToAlt();
   }
  }
-
-/*
- randomNormal(mean,variance){
-  // The Box-Muller transformation yields two normal random numbers, but this function only returns one
-  // mean and variance must be scalar
-  var r1 = Math.random();
-  var r2 = Math.random();
-  var z1 = Math.pow(-2.0*Math.log(r1),0.5)*Math.cos(2.0*Pi*r1);
-  // omit z1
-  var R1 = mean+z1*Math.pow(variance,0.5);
-  // omit R2
-  return R1;
- }
-
- randomNormal2(mean,variance){
-  // The Box-Muller transformation yields two normal random numbers, return them both (handy for 2D coordinates)
-  // mean and variance must be vectors of length 2
-  var r1 = Math.random();
-  var r2 = Math.random();
-  var z1 = Math.pow(-2.0*Math.log(r1),0.5)*Math.cos(2.0*Pi*r2);
-  var z2 = Math.pow(-2.0*Math.log(r1),0.5)*Math.sin(2.0*Pi*r2);
-  var R1 = mean[0]+z1*Math.pow(variance[0],0.5);
-  var R2 = mean[1]+z2*Math.pow(variance[1],0.5);
-  return [R1, R2];
- }
-*/
 
  randomLocation(){
   // generate a random location within the border of this graph
@@ -235,8 +235,8 @@ class Graph {
 
  randomGridLocations(n=1){
   // generate a random location on a grid (within the border of this graph), jittered
-  var Ncols = 10; //make a 10x6 grid (this could be user-selected later on)
-  var Nrows = 6;
+  var Ncols = 8; //make a 10x6 grid (this could be user-selected later on)
+  var Nrows = 4;
   var Ngrid = Ncols*Nrows;
   var Lvar = 100; // variance of the locations about the grid points (jitter)
   var dim=3;
@@ -349,7 +349,9 @@ class Node {
    "z-index": this.z,
    "id": this.name,
    "class": "anode",
-   "onclick": "showConnections(this.id)",
+//   "onclick": "showConnectionsFading(this.id)",
+   "onmouseover": "showConnections(this.id)",
+   "onmouseout": "hideConnections(this.id)",
   });
   return c;
  }
@@ -358,7 +360,7 @@ class Node {
   appendSvgObject(this.svg,this.graph.svgnodes);
  }
 
- print(){
+ showDetails(){
   console.log("The node \""+this.name+"\" has position (x,y,z) = ("+this.x+","+this.y+","+this.z+")");
  }
 
@@ -434,7 +436,7 @@ class Edge {
  /*
    Methods for the Edge class:
 
-   print
+   showDetails
    createSvg
    addToSvgGraph
    update
@@ -442,7 +444,7 @@ class Edge {
 
  */
 
- print(){
+ showDetails(){
   console.log("The edge \""+this.name+"\" goes from "+this.from.name+" to "+this.to.name);
  }
 

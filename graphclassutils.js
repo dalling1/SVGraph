@@ -82,8 +82,27 @@ function showConnections(id){
  for (var i=0;i<E.length;i++){
   E[i].svg.classList.add("highlightedge");
  }
- // and remove it after 4 seconds
- setTimeout(function(){var E = thegraph.findEdgesTo(id);for(var i=0;i<E.length;i++){E[i].svg.classList.remove("highlightedge")}},4000);
+ // highlighting is not removed in this function
+}
+
+function hideConnections(id){
+ // remove the highlightedge class to this node's edges
+ var E = thegraph.findEdgesTo(id);
+ for (var i=0;i<E.length;i++){
+  E[i].svg.classList.remove("highlightedge");
+ }
+ // highlighting is not removed in this function
+}
+
+function showConnectionsFading(id,highlightTime=1.0){
+ // add the highlightedge class to this node's edges
+ var E = thegraph.findEdgesTo(id);
+ for (var i=0;i<E.length;i++){
+  E[i].svg.classList.add("highlightedge");
+ }
+ // and remove it after some seconds
+// var highlightTime = 1; // seconds
+ setTimeout(function(){var E = thegraph.findEdgesTo(id);for(var i=0;i<E.length;i++){E[i].svg.classList.remove("highlightedge")}},highlightTime*1000.0);
 }
 
 function randomNormal(mean,variance){
