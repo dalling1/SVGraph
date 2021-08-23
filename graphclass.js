@@ -27,6 +27,8 @@ class Graph {
    addNode
    addNodes
    removeNode
+   removeNewestNode
+   removeOldestNode
    removeNodes
    numberNodes (wanted?)
    nameNodes (wanted?)
@@ -40,6 +42,8 @@ class Graph {
    findEdgesToMatch
    excludeEdgesTo
    removeEdge
+   removeNewestEdge
+   removeOldestEdge
    removeEdges
    removeDuplicateEdges
    shuffleNodePositions
@@ -86,29 +90,48 @@ class Graph {
   for (var i=0;i<n;i++) this.addNode(randomName(),this.nodeLocation(),randomRadius([4,10]));
  }
 
- removeNode(youngest=true){
-  // by default, remove the last-added node
-  if (this.nodes.length){
-   var delnode = (youngest? this.nodes.length-1 : 0); // note that delnode is a number
+ removeNode(node){
+  // input must be a node object or a node name
+  if (typeof(node)=="object"){
+   var name = node.name;
+  } else if (typeof(node)=="string"){
+   var name = node;
+  } else {
+   console.log("removeNode method requires a Node object or a string (the node name) as input")
+   return false;
+  }
 
-   // remove any edges attached to this node first
-   var deledges = this.findEdgesTo(this.nodes[delnode].name); // may include already deleted edges... (they still exist in the DOM)
-   for (var i=deledges.length;i>0;i--){
-    if (deledges[i-1].svg.parentElement==this.svgedges){ // the SVG edge elements persist after deletion: so check if they are "attached" to the graph
-     this.svgedges.removeChild(deledges[i-1].svg); // remove SVG line element
-     // use filter to remove edges: can't use splice since we don't know the indices of the elements
-     this.edges = this.excludeEdgesTo(this.nodes[delnode].name);
+  // we can't use indexOf to find the given node using its attributes, so just loop through them all:
+  for (var i=this.nodes.length;i>0;i--){
+   if (this.nodes[i-1].name == name){
+    // remove any edges attached to this node first
+    var deledges = this.findEdgesTo(name); // this is an array of Edge objects
+    for (var k=deledges.length;k>0;k--){
+     if (deledges[k-1].svg.parentElement==this.svgedges){ // the SVG edge elements persist after deletion: so check if they are "attached" to the graph
+      this.svgedges.removeChild(deledges[k-1].svg); // remove SVG line element
+      // use filter to remove edges: can't use splice since we don't know the indices of the elements
+      this.edges = this.excludeEdgesTo(name); // "name" here is the name of the node to be removed
+     }
     }
+    // now remove the node SVG object
+    this.svgnodes.removeChild(this.nodes[i-1].svg);
+    // then remove this node from the graph
+    this.nodes.splice(i-1,1);
    }
-   // remove the SVG object
-   this.svgnodes.removeChild(this.nodes[delnode].svg);
-   // then remove this node from the graph
-   this.nodes.splice(delnode,1);
   }
  }
 
- removeNodes(n=1,youngest=true){
-  for (var i=0;i<n;i++) this.removeNode(youngest);
+ removeNewestNode(){
+  if (this.nodes.length) this.removeNode(this.nodes[this.nodes.length-1]);
+ }
+
+ removeOldestNode(){
+  if (this.nodes.length) this.removeNode(this.nodes[0]);
+ }
+
+ removeNodes(n=1,newest=true){
+  if (newest) for (var i=0;i<n;i++) this.removeNewestNode();
+  else for (var i=0;i<n;i++) this.removeOldestNode();
  }
 
  numberNodes(){
@@ -168,20 +191,39 @@ class Graph {
   return this.edges.filter(function(edg){return edg.from.name!=name&&edg.to.name!=name});
  }
 
- removeEdge(youngest=true){
-  // by default, remove the last-added edge; otherwise, remove the first-added edge
-  if (this.edges.length){
-   var deledge = (youngest? this.edges.length-1 : 0); // note that deledge is a number
+ removeEdge(edge){
+  // input must be an edge object or an edge name
+  if (typeof(edge)=="object"){
+   var name = edge.name;
+  } else if (typeof(edge)=="string"){
+   var name = edge;
+  } else {
+   console.log("removeEdge method requires an Edge object or a string (the edge name) as input")
+   return false;
+  }
 
-   // remove the SVG object
-   this.svgedges.removeChild(this.edges[deledge].svg);
-   // then remove this edge from the graph
-   this.edges.splice(deledge,1);
+  // we can't use indexOf to find the given edge using its attributes, so just loop through them all:
+  for (var i=this.edges.length;i>0;i--){
+   if (this.edges[i-1].name == name){
+    // remove the SVG object
+    this.svgedges.removeChild(this.edges[i-1].svg);
+    // then remove this edge from the graph
+    this.edges.splice(i-1,1);
+   }
   }
  }
 
- removeEdges(n=1,youngest=true){
-  for (var i=0;i<n;i++) this.removeEdge(youngest);
+ removeNewestEdge(){
+  if (this.edges.length) this.removeEdge(this.edges[this.edges.length-1]);
+ }
+
+ removeOldestEdge(){
+  if (this.edges.length) this.removeEdge(this.edges[0]);
+ }
+
+ removeEdges(n=1,newest=true){
+  if (newest) for (var i=0;i<n;i++) this.removeNewestEdge();
+  else for (var i=0;i<n;i++) this.removeOldestEdge();
  }
 
  removeDuplicateEdges(){
@@ -189,10 +231,7 @@ class Graph {
    var duplicates = this.findEdgesFromTo(this.edges[i-1].from.name,this.edges[i-1].to.name);
    // if there are duplicates, remove this edge
    if (duplicates.length>1){
-    // remove the SVG object
-    this.svgedges.removeChild(this.edges[i-1].svg);
-    // then remove this edge from the graph
-    this.edges.splice(i-1,1);
+    this.removeEdge(this.edges[i-1]);
    }
   }
  }
@@ -338,6 +377,19 @@ class Node {
   this.oldz = this.z;
   this.timer = null;
  }
+
+ /*
+   Methods for the Node class:
+
+   createSvg
+   addToSvgGraph
+   showDetails
+   setLocation
+   setAltLocation
+   setOldLocation
+   moveToAlt
+
+ */
 
  createSvg(){
   var c = Circle({
