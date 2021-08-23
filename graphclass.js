@@ -160,7 +160,9 @@ class Graph {
  }
 
  addEdge(name,from,to){
-  this.edges.push(new Edge(name,from,to,this));
+  if (this.allowSelfEdges || from.name != to.name){
+   this.edges.push(new Edge(name,from,to,this));
+  }
  }
 
  addEdges(n=1){
