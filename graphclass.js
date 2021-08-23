@@ -30,7 +30,7 @@ class Graph {
    removeNewestNode
    removeOldestNode
    removeNodes
-   numberNodes (wanted?)
+   numberNodes
    nameNodes (wanted?)
    findNode
    findNodes
@@ -351,6 +351,15 @@ class Graph {
 
  setLayout(layoutName){
   this.layout.setLayout(layoutName);
+ }
+
+ degreeMatrix(){
+  var D = new Array(this.nodes.length);
+  for (var i=0;i<this.nodes.length;i++){
+   D[i] = new Array(this.nodes.length);
+   D[i][i] = this.findEdgesTo(this.nodes[i].name).length;
+  }
+  return D;
  }
 
 }

@@ -134,3 +134,7 @@ function randomNormal2(mean,variance){
 function removeDuplicateEdges(graph){
  graph.removeDuplicateEdges();
 }
+
+function printMatrix(M){
+ for (var i=0;i<M.length;i++) console.log(M[i].toString());
+}
