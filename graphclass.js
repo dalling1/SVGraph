@@ -162,6 +162,9 @@ class Graph {
  addEdge(name,from,to){
   if (this.allowSelfEdges || from.name != to.name){
    this.edges.push(new Edge(name,from,to,this));
+   return true;
+  } else {
+   return false;
   }
  }
 
