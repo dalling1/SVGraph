@@ -184,6 +184,7 @@ class Graph {
   }
  }
 
+/*
  randomNormal(mean,variance){
   // The Box-Muller transformation yields two normal random numbers, but this function only returns one
   // mean and variance must be scalar
@@ -207,6 +208,7 @@ class Graph {
   var R2 = mean[1]+z2*Math.pow(variance[1],0.5);
   return [R1, R2];
  }
+*/
 
  randomLocation(){
   // generate a random location within the border of this graph
@@ -231,7 +233,7 @@ class Graph {
   return randomCircleLocation([X,Y],R);
  }
 
- randomGridLocations(n){
+ randomGridLocations(n=1){
   // generate a random location on a grid (within the border of this graph), jittered
   var Ncols = 10; //make a 10x6 grid (this could be user-selected later on)
   var Nrows = 6;
@@ -239,24 +241,25 @@ class Graph {
   var Lvar = 100; // variance of the locations about the grid points (jitter)
   var dim=3;
   var P=new Array(n);
-/*
+
   var lowerLimit = this.border;
   var upperLimit = [window.innerWidth - this.border[0], window.innerHeight - this.border[1], 100 - this.border[2]]
-  var P = Array(dim);
-*/
-  // 1. determine the grid point locations
-//....
-//....
-//....
 
-  // select n points at those locations
+  // 1. determine the grid point locations
+  var gridX = new Array(Ncols);
+  var gridY = new Array(Nrows);
+  for (var i=0;i<Ncols;i++) gridX[i] = Math.round(lowerLimit[0] + i*(upperLimit[0]-lowerLimit[0])/(Ncols-1));
+  for (var i=0;i<Nrows;i++) gridY[i] = Math.round(lowerLimit[1] + i*(upperLimit[1]-lowerLimit[1])/(Nrows-1));
+
+  // select n points at those locations:
   for (var i=0;i<n;i++){
    // 2. choose a grid point at random
    var usegridX = Math.floor(Ncols*Math.random()); // use this one across (zero-indexed)
    var usegridY = Math.floor(Nrows*Math.random()); // use this one down (zero-indexed)
    // 3. get jittered coordinates around that point
-   P[i] = randomNormal2([gridX[usegridX],gridY[usegridY]],[Lvar,Lvar]);
-   P[i][2] = 0; // z-coordinate
+   var tmp = randomNormal2([gridX[usegridX],gridY[usegridY]],[Lvar,Lvar]);
+//   P[i] = Array(dim);
+   P[i] = [Math.round(tmp[0]), Math.round(tmp[1]), 0];
   }
   return P;
  }
@@ -296,7 +299,7 @@ class Graph {
   } else if (this.layout.layoutName=="randomCircle") { ////////////////// randomCircle
    return this.randomCircleLocation();
   } else if (this.layout.layoutName=="randomGrid") { //////////////////// randomGrid
-   return this.randomGridLocation();
+   return this.randomGridLocations()[0];
   } else {
    return this.centralLocation(); /////////////////////////////////////// not specified: put nodes at the centre
   }
@@ -541,7 +544,7 @@ class Layout {
  */
 
  allowedLayouts(){
-  var layoutList = ["default","randomRectangle","randomCircle"];
+  var layoutList = ["default","randomRectangle","randomCircle","randomGrid"];
   if (this.focus.type=="Node") layoutList.push("vertexFocused");
   if (this.focus.type=="Edge") layoutList.push("edgeFocused");
   return layoutList;

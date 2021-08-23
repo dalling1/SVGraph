@@ -1,3 +1,5 @@
+//const Pi = Math.acos(-1);
+
 function oldrandomLocation(w=0,h=0,z=0){
  // generate a random location
  // bounds are the box [0,w],[0,h],[0,z] or within the browser window by default (z limits 0-100)
@@ -145,7 +147,6 @@ function linearPosition(from,to,percent){
 }
 
 function randomCircleLocation(centre,radius){
- const Pi = Math.acos(-1);
  var angle = Math.random()*2*Pi;
  var x = Math.round(centre[0] + radius*Math.sin(angle));
  var y = Math.round(centre[1] + radius*Math.cos(angle));
