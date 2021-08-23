@@ -130,3 +130,7 @@ function randomNormal2(mean,variance){
  var R2 = mean[1]+z2*Math.pow(variance[1],0.5);
  return [R1, R2];
 }
+
+function removeDuplicateEdges(graph){
+ graph.removeDuplicateEdges();
+}
