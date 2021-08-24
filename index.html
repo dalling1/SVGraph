@@ -109,7 +109,7 @@
    }
   </style>
  </head>
- <body onload="thegraph = new Graph('thegraph'); document.getElementById('edgestyle').checked = thegraph.alwaysUseBezier; document.getElementById('graphlayout').selectedIndex=0;">
+ <body onload="thegraph = new Graph('thegraph'); document.getElementById('edgestyle').checked = !thegraph.alwaysUseBezier; document.getElementById('graphlayout').selectedIndex=0;">
   <h1 id="heading">SVGraph</h1>
   <div id="plusboxes" class="controlboxes">
    <div onclick="addRandomGraphNodes(thegraph,1);">+1</div>
