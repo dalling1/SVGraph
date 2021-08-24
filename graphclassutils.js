@@ -162,3 +162,17 @@ function showNodeDetails(nodes){
  // convenience function for arrays of Node objects
  for (var i=0;i<nodes.length;i++) nodes[i].showDetails();
 }
+
+function multiplyMatrices(A,B){
+ // initialise the resulting matrix, AB
+ var AB = new Array(A.length).fill(Array(B[0].length).fill(0));
+ // loop through the elements of AB
+ for (var i=0;i<AB.length;i++){
+  AB[i] = Array(B[0].length).fill(0);
+  for (var j=0;j<AB[i].length;j++){
+   // for this element of AB, sum up the product of the ith row of A and the jth column of B
+   for (k=0;k<A[i].length;k++) AB[i][j] += A[i][k]*B[k][j];
+  }
+ }
+ return AB;
+}
