@@ -157,3 +157,8 @@ function addMatrices(A,B){
  }
  return C;
 }
+
+function showNodeDetails(nodes){
+ // convenience function for arrays of Node objects
+ for (var i=0;i<nodes.length;i++) nodes[i].showDetails();
+}

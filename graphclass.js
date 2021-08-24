@@ -193,7 +193,7 @@ class Graph {
  }
 
  findEdgesFromTo(from,to){
-  // find edges which connect to the named vertices
+  // find edges which connect to the named vertices (undirected)
   return this.edges.filter(function(edg){return (edg.from.name==from && edg.to.name==to) || (edg.from.name==to && edg.to.name==from)});
  }
 
@@ -422,6 +422,7 @@ class Node {
    setAltLocation
    setOldLocation
    moveToAlt
+   neighbours
 
  */
 
@@ -494,6 +495,21 @@ class Node {
    }
    percentage += increment;
   });
+ }
+
+ neighbours(){
+  var edges = this.graph.findEdgesTo(this.name);
+  var neighbours = new Array();
+  for (var i=0;i<edges.length;i++){
+   if (edges[i].from.name != this.name){
+    // add the "from" node to the neighbour list if it is not this node AND is not already in the list
+    if (neighbours.indexOf(edges[i].from)==-1) neighbours.push(edges[i].from);
+   } else {
+    // otherwise, add the "to" node IF it is not already in the list
+    if (neighbours.indexOf(edges[i].to)==-1) neighbours.push(edges[i].to);
+   }
+  }
+  return neighbours;
  }
 
 }
