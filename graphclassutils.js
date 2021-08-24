@@ -138,3 +138,22 @@ function removeDuplicateEdges(graph){
 function printMatrix(M){
  for (var i=0;i<M.length;i++) console.log(M[i].toString());
 }
+
+function addMatrices(A,B){
+ if (A.length != B.length){
+  console.log("addMatrices: matrix sizes do not match (rows)");
+  return false;
+ }
+ var C = new Array(A.length);
+ for (var i=0;i<A.length;i++){
+  if (A[i].length != B[i].length){
+   console.log("addMatrices: matrix sizes do not match (columns)");
+   return false;
+  }
+  C[i] = new Array(A[i].length);
+  for (var j=0;j<A[i].length;j++){
+   C[i][j] = A[i][j] + B[i][j];
+  }
+ }
+ return C;
+}
