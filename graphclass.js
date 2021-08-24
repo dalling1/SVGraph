@@ -171,7 +171,7 @@ class Graph {
  }
 
  addEdges(n=1){
-  for (var i=0;i<n;i++) this.addEdge(randomName(),this.randomNode(),this.randomNode());
+  if (this.nodes.length) for (var i=0;i<n;i++) this.addEdge(randomName(),this.randomNode(),this.randomNode());
  }
 
  findEdge(name){
