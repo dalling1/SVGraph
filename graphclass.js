@@ -60,6 +60,8 @@ class Graph {
    centralLocation
    nodeLocation
    setLayout
+   degreeMatrix
+   adjacencyMatrix
 
  */
 
@@ -83,7 +85,7 @@ class Graph {
  }
 
  addNode(name,position,radius){
-  this.nodes.push(new Node(name,position,radius,this,this.nodes.length+1));
+  this.nodes.push(new Node(name,position,radius,this,this.nodes.length)); // zero-index the node.n values
  }
 
  addNodes(n=1){
@@ -360,6 +362,21 @@ class Graph {
    D[i][i] = this.findEdgesTo(this.nodes[i].name).length;
   }
   return D;
+ }
+
+ adjacencyMatrix(){
+  var A = new Array(this.nodes.length);
+  for (var i=0;i<this.nodes.length;i++){
+   A[i] = new Array(this.nodes.length).fill(0);
+   var edges = this.findEdgesTo(this.nodes[i].name);
+   for (var j=0;j<edges.length;j++){
+    // use the "from" or "to" node?
+    if (edges[j].from.name == this.nodes[i].name) var otherNodeN = edges[j].to.n;
+    else var otherNodeN = edges[j].from.n;
+    A[i][otherNodeN] += 1;
+   }
+  }
+  return A;
  }
 
 }
