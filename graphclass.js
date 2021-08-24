@@ -121,6 +121,9 @@ class Graph {
     this.nodes.splice(i-1,1);
    }
   }
+
+  // finished: re-number the remaining nodes
+  this.numberNodes();
  }
 
  removeNewestNode(){
