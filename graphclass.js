@@ -387,14 +387,11 @@ class Graph {
  distanceMatrix(){
   var A = this.adjacencyMatrix();
   var N = A.length;
-  // initialise the distance matrix (all zeros)
-//  var D = new Array(N);
-//  for (var i=0;i<N;i++) D[i] = new Array(N).fill(0);
   var D = multiplyMatricesUsingOnes(A,identityMatrix(N)); // initial distances are 1 if there is an edge between nodes
   var P = multiplyMatricesUsingOnes(A,identityMatrix(N)); // path-length matrix
 
   for (var n=2;n<N;n++){
-   // set P = A^i: P's entries are the number of paths of length n between nodes
+   // set P = A^i: P's entries are the number of paths of length n between nodes (even when "usingOnes"?)
    if (n>0) P = multiplyMatrices(A,P);
    // for two nodes, i and j:
    //  if there is a zero entry in D (no shorter path exists) and a non-zero entry in P, set D[i][j] to n
@@ -405,14 +402,22 @@ class Graph {
      if (i!=j) if (D[i][j] == 0 && P[i][j] != 0) D[i][j] = n;
     }
    }
-
   }
+  // now re-work the distance matrix to indicate infinite path lengths for nodes which are not connected
+  for (var i=0;i<N;i++){
+   for (var j=0;j<N;j++){
+    if (D[i][j]==0 && i!=j){
+     D[i][j] = Infinity;
+    }
+   }
+  }
+
   return D;
  }
 
  connectivityMatrix(steps){
   // entries are true if there is a path between nodes i and j
-  return this.distanceMatrix().map(function(x){return x.map(function(z){return z>0;})});
+  return this.distanceMatrix().map(function(x){return x.map(function(z){return z<Infinity;})});
  }
 
 }
