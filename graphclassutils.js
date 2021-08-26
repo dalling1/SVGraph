@@ -165,7 +165,7 @@ function showNodeDetails(nodes){
 
 function multiplyMatrices(A,B){
  // initialise the resulting matrix, AB
- var AB = new Array(A.length).fill(Array(B[0].length).fill(0));
+ var AB = new Array(A.length);
  // loop through the elements of AB
  for (var i=0;i<AB.length;i++){
   AB[i] = Array(B[0].length).fill(0);
@@ -175,4 +175,54 @@ function multiplyMatrices(A,B){
   }
  }
  return AB;
+}
+
+function matrixPower(A,n){
+ // multiply a matrix by itself n times (n should be an integer)
+ if (A.length != A[0].length){ // must be a square matrix
+  console.log("matrixPower: matrix is not square");
+  return false;
+ } else {
+  if (n==0){ // A^0 is the identity matrix:
+   B = identityMatrix(A.length);
+  } else {
+   var B = A;
+   for (var i=1;i<n;i++) B = multiplyMatrices(A,B);
+  }
+  return B;
+ }
+}
+
+function matrixNonzero(A){
+ // returns an array of booleans the same size as A, true where A's elements are not zero
+ return A.map(function(s){return s.map(function(t){return (t!=0?1:0);})});
+}
+
+function multiplyMatricesUsingOnes(A,B){
+ // for multiplying adjacency matrices: we only care if values are non-zero, not their value (the number of paths between nodes)
+ // this will allow us to multiply adjacency matrices together many times without the resulting matrix elements becoming large
+
+ // initialise the resulting matrix, AB
+ var AB = new Array(A.length);
+ // loop through the elements of AB
+ for (var i=0;i<AB.length;i++){
+  AB[i] = Array(B[0].length).fill(0);
+  for (var j=0;j<AB[i].length;j++){
+   // for this element of AB, test the usual element value, replacing non-zero values with "1"
+   for (k=0;k<A[i].length;k++) if (A[i][k]*B[k][j]!=0){
+    AB[i][j]=1;
+    break; // this element of the product is non-zero, so we can stop calculating it
+   }
+  }
+ }
+ return AB;
+}
+
+function identityMatrix(n){
+ var I = new Array(n);
+ for (var i=0;i<I.length;i++){
+  I[i] = new Array(n).fill(0); // all zeros
+  I[i][i] = 1; // put ones on the diagonal
+ }
+ return I;
 }
