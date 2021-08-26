@@ -416,8 +416,32 @@ class Graph {
  }
 
  connectivityMatrix(steps){
-  // entries are true if there is a path between nodes i and j
+  // entries are true if there is a finite-length path between nodes i and j
   return this.distanceMatrix().map(function(x){return x.map(function(z){return z<Infinity;})});
+ }
+
+ connectedComponents(){
+  // returns an array of arrays, each containing nodes connected to each other
+  var M = this.connectivityMatrix();
+  var C = new Array();
+  // loop over all nodes
+  for (var i=0;i<this.nodes.length;i++){
+   // test whether this node is in an already-identified connected component
+   var foundNodeInComponent = false;
+   for (var k=0;k<C.length;k++){
+    if (C[k].indexOf(this.nodes[i])!=-1){
+     foundNodeInComponent=true;
+     break; // found, stop looking (nodes cannot be in more than one connected component)
+    }
+   }
+   if (!foundNodeInComponent){
+    // not found: this is the first node in a new connected component:
+    C[C.length] = new Array(); // don't add this node yet, it will come with the rest below
+    // add the nodes connected to this one:
+    for (var j=0;j<M[i].length;j++) if (M[i][j]) C[C.length-1].push(this.nodes[j]);
+   }
+  }
+  return C;
  }
 
 }
