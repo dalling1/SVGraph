@@ -62,6 +62,8 @@ class Graph {
    setLayout
    degreeMatrix
    adjacencyMatrix
+   distanceMatrix
+   connectivityMatrix
 
  */
 
@@ -380,6 +382,37 @@ class Graph {
    }
   }
   return A;
+ }
+
+ distanceMatrix(){
+  var A = this.adjacencyMatrix();
+  var N = A.length;
+  // initialise the distance matrix (all zeros)
+//  var D = new Array(N);
+//  for (var i=0;i<N;i++) D[i] = new Array(N).fill(0);
+  var D = multiplyMatricesUsingOnes(A,identityMatrix(N)); // initial distances are 1 if there is an edge between nodes
+  var P = multiplyMatricesUsingOnes(A,identityMatrix(N)); // path-length matrix
+
+  for (var n=2;n<N;n++){
+   // set P = A^i: P's entries are the number of paths of length n between nodes
+   if (n>0) P = multiplyMatrices(A,P);
+   // for two nodes, i and j:
+   //  if there is a zero entry in D (no shorter path exists) and a non-zero entry in P, set D[i][j] to n
+   // Note: a node is always 0 distance from itself, that is, when i=j
+   // Note: the value in P is the number of paths of length n between the nodes i and j
+   for (var i=0;i<N;i++){
+    for (var j=0;j<N;j++){
+     if (i!=j) if (D[i][j] == 0 && P[i][j] != 0) D[i][j] = n;
+    }
+   }
+
+  }
+  return D;
+ }
+
+ connectivityMatrix(steps){
+  // entries are true if there is a path between nodes i and j
+  return this.distanceMatrix().map(function(x){return x.map(function(z){return z>0;})});
  }
 
 }
