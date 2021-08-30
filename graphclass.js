@@ -64,6 +64,7 @@ class Graph {
    adjacencyMatrix
    distanceMatrix
    connectivityMatrix
+   connectedComponents
 
  */
 
