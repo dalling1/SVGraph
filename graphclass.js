@@ -74,7 +74,7 @@ class Graph {
  }
 
  createLayout(layoutName){
-  this.layout = new Layout(this.name+"Layout",layoutName);
+  this.layout = new Layout(this.name+"Layout",layoutName,this);
  }
 
  hide(){
@@ -707,12 +707,14 @@ class Layout {
  constructor(
   name,
   layoutName,
+  graph,
   focusObject = "",
  ){
   this.type = this.constructor.name;
   this.name = name;
-  this.setFocus(focusObject);
+  this.setFocus(focusObject); // set focus object before specifying a layout which might need it
   this.setLayout(layoutName);
+  this.graph = graph;
  }
 
  /*
