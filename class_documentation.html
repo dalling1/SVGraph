@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<head>
+ <meta charset="UTF-8">
+ <title>SVGraph Class Documentation</title>
+ <style>
+  body {
+   padding-bottom: 100px;
+  }
+  tt {
+   color: #383;
+  }
+  h2 {
+   width: calc(90vw + 20px);
+   background: #555;
+   color: #ff5;
+   padding: 20px 10px;
+   border-radius: 0 100px 0 0;
+   box-sizing: border-box;
+  }
+  h2 tt {
+   color: inherit;
+  }
+  table {
+   border: 1px solid black;
+   margin-left: 20px;
+   max-width: 90vw;
+  }
+  th {
+   text-align: left;
+   padding: 0 10px;
+   min-width: 12vw;
+   border-bottom: 1px solid black;
+  }
+  tr:nth-child(even){
+   background: #e6e6e6;
+  }
+  tr:nth-child(odd) {
+   background: #fff;
+  }
+  tr:hover {
+   color: white;
+   background-color: black;
+  }
+  tr:hover tt {
+   color: orange;
+  }
+  td {
+   padding: 0 10px;
+   vertical-align: top;
+  }
+ </style>
+</head>
+<body>
+
+<h2><tt>Graph</tt> class</h2>
+<h3>Constructor</h3>
+<table>
+ <tr><th>Argument</th><th>Default value</th><th>Notes</th></tr>
+ <tr><td>name</td><td>""</td><td>The graph's name.</td></tr>
+ <tr><td>layoutName</td><td>"default"</td><td>The name of the layout to use for the graph.</td></tr>
+</table>
+
+<h3>Attributes</h3>
+<table>
+ <tr><th>Attribute</th><th>Class</th><th>Default value</th><th>Notes</th></tr>
+ <tr><td>type</td><td>String</td><td>"Graph"</td><td>The class name.</td></tr>
+ <tr><td>name</td><td>String</td><td>""</td><td>The Graph object's name.</td></tr>
+ <tr><td>nodes</td><td>Array of Nodes</td><td></td><td>An array of nodes in the graph.</td></tr>
+ <tr><td>edges</td><td>Array of Edges</td><td></td><td>An array of edges connecting nodes in the graph.</td></tr>
+ <tr><td>svg</td><td>SVG g</td><td></td><td>The SVG group object representing this graph on the HTML page.</td></tr>
+ <tr><td>border</td><td>Array of 3 Integers</td><td>[100, 100, 0]</td><td>Three-element array; nodes are not placed within this distance of the sides of the window.</td></tr>
+ <tr><td>layout</td><td>Layout</td><td></td><td>A Layout object.</td></tr>
+ <tr><td>allowSelfEdges</td><td>Boolean</td><td>True</td><td>Whether edges from a node to itself are allowed to be created.</td></tr>
+ <tr><td>alwaysUseBezier</td><td>Boolean</td><td>True</td><td>Whether new edges are straight lines or Bezier curves.</td></tr>
+</table>
+
+<h3>Methods</h3>
+<table>
+ <tr><th>Method</th><th>Arguments</th><th>Return class</th><th>Notes</th></tr>
+ <tr><td>createSvg</td><td>-</td><td>-</td><td>Creates an SVG group in the HTML DOM and sets the Graph object's <tt>svg</tt> attribute to it.</td></tr>
+ <tr><td>createLayout</td><td>layoutName [String]</td><td>-</td><td>Creates a Layout object and sets the Graph object's <tt>layout</tt> attribute to it. The layoutName must be a legal layout name (see Layout.allowedLayouts()).</td></tr>
+ <tr><td>hide</td><td>-</td><td>-</td><td>Applies the CSS class "hidden" to the graph's SVG object.</td></tr>
+ <tr><td>show</td><td>-</td><td>-</td><td>Removes the CSS class "hidden" from the graph's SVG object.</td></tr>
+ <tr><td>addNode</td><td>name [String]<br/>position [Array of 3 Integers]<br/>radius [Integer]</td><td>Boolean</td><td>Creates a new Node object and adds it to the graph's <tt>nodes</tt> attribute.</td></tr>
+ <tr><td>addNodes</td><td>n [Integer]</td><td>Integer</td><td>Adds n nodes to the graph, with random names, locations and radii; default n = 1.  Returns the number of nodes created.</td></tr>
+ <tr><td>removeNode</td><td>node [Node] <em>or</em> name [String]</td><td>Boolean</td><td>Removes the given Node object from the graph; the node name can be given instead. All nodes are renumbered following the removal.</td></tr>
+ <tr><td>removeNewestNode</td><td>-</td><td>Boolean</td><td>Removes the most recently added node from the graph.</td></tr>
+ <tr><td>removeOldestNode</td><td>-</td><td>Boolean</td><td>Removes the earliest added node from the graph.</td></tr>
+ <tr><td>removeNodes</td><td>n [Integer]<br/>newest [Boolean]</td><td>Integer</td><td>Removes the n newest or oldest nodes from the graph; default newest = true. Returns the number of nodes removed.</td></tr>
+ <tr><td>numberNodes</td><td>-</td><td>-</td><td>Loops through the graph's nodes and sets their <tt>n</tt> attribute in order.</td></tr>
+ <tr><td>nameNodes</td><td>-</td><td>-</td><td>Loops through the graph's nodes and sets their <tt>name</tt> attribute to a random name.</td></tr>
+ <tr><td>findNode</td><td>name [String]</td><td>Array of Nodes</td><td>Returns an array containing the Node objects matching the given name.</td></tr>
+ <tr><td>findNodes</td><td>name_regexp [String]</td><td>Array of Nodes</td><td>Returns an array containing the Node objects in the graph whose names match the given regular expression string.</td></tr>
+ <tr><td>showNodeDetails</td><td>-</td><td>-</td><td>Prints the names of all of the graph's nodes in the console.</td></tr>
+ <tr><td>randomNode</td><td>-</td><td>Node</td><td>Returns a single, randomly-chosen, node from the graph.</td></tr>
+ <tr><td>addEdge</td><td>name [String]<br/>from [Node]<br/>to [Node]</td><td>Boolean</td><td>Creates an Edge object and adds it to the graph.</td></tr>
+ <tr><td>addEdges</td><td>n [Integer]</td><td>Integer</td><td>Adds up to n edges between randomly-chosen nodes in the graph; default n = 1. Returns the number of edges actually created (consider, for example, the case where self-edges are not allowed).</td></tr>
+ <tr><td>findEdge</td><td>name [String]</td><td>Array of Edges</td><td>Returns the Edge object with the given name.</td></tr>
+ <tr><td>findEdges</td><td>name_regexp [String]</td><td>Array of Edges</td><td>Returns an array containing the Edge objects in the graph whose names match the given regular expression string.</td></tr>
+ <tr><td>findEdgesTo</td><td>name [String]</td><td>Array of Edges</td><td>Returns an array containing the Edge objects in the graph which are connected to the node with the given name.</td></tr>
+ <tr><td>findEdgesToMatch</td><td>name_regexp [String]</td><td>Array of Edges</td><td>Returns an array of Edges in the graph which are connected to any nodes matching the given regular expression string.</td></tr>
+ <tr><td>excludeEdgesTo</td><td>name [String]</td><td>Array of Edges</td><td>Returns a list of all edges in the graph which do not connect to the node with the given name.</td></tr>
+ <tr><td>removeEdge</td><td>edge [Edge] <em>or</em> name [String]</td><td>Boolean</td><td>Removes the given edge from the graph.</td></tr>
+ <tr><td>removeNewestEdge</td><td>-</td><td>Boolean</td><td>Removes the most recently added edge from the graph.</td></tr>
+ <tr><td>removeOldestEdge</td><td>-</td><td>Boolean</td><td>Removes the earliest added edge from the graph.</td></tr>
+ <tr><td>removeEdges</td><td>n [Integer]<br/>newest [Boolean]</td><td>Integer</td><td>Removes the n newest or oldest edges from the graph; default newest = true. Returns the number of edges removed.</td></tr>
+ <tr><td>removeDuplicateEdges</td><td>-</td><td>Integer</td><td>Removes all but one edge connecting any two nodes in the graph. Returns the number of edges removed.</td></tr>
+ <tr><td>shuffleNodePositions</td><td>-</td><td>-</td><td>Moves SVG objects representing nodes to new positions based on the graph Layout. The existing position is stored in the node's alternative coordinates.</td></tr>
+ <tr><td>toggleNodePositions</td><td>-</td><td>-</td><td>Moves nodes back and forth between their coordinates (<tt>x</tt>, <tt>y</tt>, <tt>z</tt> attributes) and their alternative coordinates (<tt>altx</tt>, <tt>alty</tt>, <tt>altz</tt> attributes).</td></tr>
+ <tr><td>randomLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns a random location within a rectangle defined by the HTML window and the graph's <tt>border</tt> attribute.</td></tr>
+ <tr><td>randomCircleLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns a random location on the circle within the HTML window bounded by the graph's <tt>border</tt> attribute.</td></tr>
+ <tr><td>randomGridLocations</td><td>n [Integer]</td><td>Array of Arrays of 3 Integers</td><td>Returns n locations, each close to points on an N-by-M grid within the graph's border, jittered to reduce co-incidence of the locations. Default n = 1; N and M are currently fixed.</td></tr>
+ <tr><td>setAllowSelfEdges</td><td>flag [Boolean]</td><td>-</td><td>Sets the <tt>allowSelfEdges</tt> attribute of the graph; does not affect existing edges.</td></tr>
+ <tr><td>setAlwaysUseBezier</td><td>flag [Boolean]</td><td>-</td><td>Sets the <tt>alwaysUseBezier</tt> attribute of the graph; does not affect existing edges.</td></tr>
+ <tr><td>centralLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns the coordinates of the centre of the HTML window.</td></tr>
+ <tr><td>nodeLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns coordinates for one node, dependant on the graph's <tt>layout</tt> attribute.</td></tr>
+ <tr><td>setLayout</td><td>layoutName [String]</td><td>Boolean</td><td>Sets the graph's <tt>layout</tt> attribute; returns true if a legal layout name was given, otherwise false.</td></tr>
+ <tr><td>degreeMatrix</td><td>-</td><td>Array of Integers</td><td>Returns a square array whose diagonal values contain the degree of each node in the graph. Other entries are undefined.</td></tr>
+ <tr><td>adjacencyMatrix</td><td>-</td><td>Array of Booleans</td><td>Returns a square array whose [i][j]th entry is true if the ith and jth nodes are connected by at least one edge.</td></tr>
+ <tr><td>distanceMatrix</td><td>-</td><td>Array of Integers</td><td>Returns a square array whose [i][j]th entry is the number of steps from the ith node to the jth node.</td></tr>
+ <tr><td>connectivityMatrix</td><td>-</td><td>Array of Booleans</td><td>Returns a square array whose [i][j]th entry is true if the jth node can be reached from the ith node.</td></tr>
+ <tr><td>connectedComponents</td><td>-</td><td>Array of Arrays of Nodes</td><td>Returns an array whose entries are arrays of connected components of the graph.</td></tr>
+</table>
+
+
+
+
+<h2><tt>Node</tt> class</h2>
+<h3>Constructor</h3>
+<table>
+ <tr><th>Argument</th><th>Default value</th><th>Notes</th></tr>
+ <tr><td>name</td><td></td><td>The node's name.</td></tr>
+ <tr><td>position</td><td></td><td>Three-element vector [x,y,z].</td></tr>
+ <tr><td>radius</td><td></td><td>Size of the SVG circle representing the node.</td></tr>
+ <tr><td>graph</td><td></td><td>The Graph-class object which this node belongs to.</td></tr>
+ <tr><td>number</td><td>-1</td><td>The node's number (index).</td></tr>
+</table>
+
+<h3>Attributes</h3>
+<table>
+ <tr><th>Attribute</th><th>Class</th><th>Default value</th><th>Notes</th></tr>
+ <tr><td>type</td><td>String</td><td>"Node"</td><td>The class name.</td></tr>
+ <tr><td>name</td><td>String</td><td>""</td><td>The Node object's name.</td></tr>
+ <tr><td>x</td><td>Integer</td><td></td><td>The node's x-coordinate.</td></tr>
+ <tr><td>y</td><td>Integer</td><td></td><td>The node's y-coordinate.</td></tr>
+ <tr><td>z</td><td>Integer</td><td>0</td><td>The node's z-coordinate.</td></tr>
+ <tr><td>r</td><td>Integer</td><td></td><td>The node's radius.</td></tr>
+ <tr><td>n</td><td>Integer</td><td>-1</td><td>The node's number (index).</td></tr>
+ <tr><td>graph</td><td>Graph</td><td></td><td>The Graph-class object which this node belongs to.</td></tr>
+ <tr><td>svg</td><td>SVG Circle</td><td></td><td>The SVG object representing this node on the HTML page.</td></tr>
+ <tr><td>altx</td><td>Integer</td><td>x</td><td>The node's alternative x-coordinate.</td></tr>
+ <tr><td>alty</td><td>Integer</td><td>y</td><td>The node's alternative y-coordinate.</td></tr>
+ <tr><td>altz</td><td>Integer</td><td>z</td><td>The node's alternative z-coordinate.</td></tr>
+ <tr><td>oldx</td><td>Integer</td><td>x</td><td>The node's old x-coordinate.</td></tr>
+ <tr><td>oldy</td><td>Integer</td><td>y</td><td>The node's old y-coordinate.</td></tr>
+ <tr><td>oldz</td><td>Integer</td><td>z</td><td>The node's old z-coordinate.</td></tr>
+ <tr><td>timer</td><td>Timer</td><td></td><td>Used to store a Javascript timer when the node position is being animated.</td></tr>
+</table>
+
+<h3>Methods</h3>
+<table>
+ <tr><th>Method</th><th>Arguments</th><th>Return class</th><th>Notes</th></tr>
+ <tr><td>createSvg</td><td>-</td><td>SVG Circle</td><td>Creates an SVG circle in the HTML DOM.</td></tr>
+ <tr><td>addToSvgGraph</td><td>-</td><td>-</td><td>Appends the node's SVG object to the graph's SVG object.</td></tr>
+ <tr><td>showDetails</td><td>-</td><td>-</td><td>Prints the node's name and position in the console.</td></tr>
+ <tr><td>setLocation</td><td>position [Array of 3 integers]</td><td>-</td><td>Sets the node's <tt>x</tt>, <tt>y</tt> and <tt>z</tt> attributes.</td></tr>
+ <tr><td>setAltLocation</td><td>position [Array of 3 integers]</td><td>-</td><td>Sets the node's <tt>altx</tt>, <tt>alty</tt> and <tt>altz</tt> attributes.</td></tr>
+ <tr><td>setOldLocation</td><td>position [Array of 3 integers]</td><td>-</td><td>Sets the node's <tt>oldx</tt>, <tt>oldy</tt> and <tt>oldz</tt> attributes.</td></tr>
+ <tr><td>moveToAlt</td><td>-</td><td>-</td><td>Move the node's SVG object to the node's alternative location, given by the <tt>x</tt>, <tt>y</tt> and <tt>z</tt> attributes.</td></tr>
+ <tr><td>neighbours</td><td>-</td><td>Array of Nodes</td><td>Returns an array of nodes which have edges connected to the node (excludes the node itself, even if it has a self-edge).</td></tr>
+</table>
+
+
+
+
+
+<h2><tt>Edge</tt> class</h2>
+<h3>Constructor</h3>
+<table>
+ <tr><th>Argument</th><th>Default value</th><th>Notes</th></tr>
+ <tr><td>name</td><td></td><td>The edge's name.</td></tr>
+ <tr><td>from</td><td></td><td>Node-class object which is one end of this edge.</td></tr>
+ <tr><td>to</td><td></td><td>Node-class object which is the other end of this edge.</td></tr>
+ <tr><td>graph</td><td></td><td>The Graph-class object which this edge belongs to.</td></tr>
+ <tr><td>number</td><td>-1</td><td>The edge's number (index).</td></tr>
+</table>
+
+<h3>Attributes</h3>
+<table>
+ <tr><th>Attribute</th><th>Class</th><th>Default value</th><th>Notes</th></tr>
+ <tr><td>type</td><td>String</td><td>"Edge"</td><td>The class name.</td></tr>
+ <tr><td>name</td><td>String</td><td></td><td>The Edge object's name.</td></tr>
+ <tr><td>from</td><td>Node</td><td></td><td>One end of this edge.</td></tr>
+ <tr><td>to</td><td>Node</td><td></td><td>The other end of this edge.</td></tr>
+ <tr><td>graph</td><td>Graph</td><td></td><td>The Graph-class object which this edge belongs to.</td></tr>
+ <tr><td>n</td><td>Integer</td><td>-1</td><td>The edge's number (index).</td></tr>
+ <tr><td>linewidth</td><td>Float</td><td>0.5</td><td>The edge's width.</td></tr>
+ <tr><td>z</td><td>Integer</td><td>0</td><td>The edge's z-coordinate [for future use].</td></tr>
+ <tr><td>svg</td><td>SVG Line <em>or</em> SVG Path</td><td></td><td>The SVG object representing this edge on the HTML page.</td></tr>
+</table>
+
+<h3>Methods</h3>
+<table>
+ <tr><th>Method</th><th>Arguments</th><th>Return class</th><th>Notes</th></tr>
+ <tr><td>showDetails</td><td>-</td><td>-</td><td>Prints the edge's name and end points' names in the console.</td></tr>
+ <tr><td>createSvg</td><td>-</td><td>SVG Line <em>or</em> SVG Path</td><td>Creates an SVG line or path in the HTML DOM, with end-point coordinates determined by the edge's nodes.</td></tr>
+ <tr><td>addToSvgGraph</td><td>-</td><td>-</td><td>Appends the edge's SVG object to the graph's SVG object.</td></tr>
+ <tr><td>update</td><td>-</td><td>-</td><td>Removes and recreates the edge's SVG object (currently used for SVG path animation).</td></tr>
+ <tr><td>movingUpdate</td><td>-</td><td>-</td><td>Set the endpoint coordinates of the edge. For straight lines, the lines' <tt>x1</tt>, <tt>y1</tt>, <tt>x2</tt> and <tt>y2</tt> attributes are set; for paths, a new path is created using the <tt>update()</tt> method.</td></tr>
+</table>
+
+
+
+
+
+<h2><tt>Automorphism</tt> class</h2>
+<h3>Constructor</h3>
+<table>
+ <tr><th>Argument</th><th>Default value</th><th>Notes</th></tr>
+ <tr><td>name</td><td></td><td>The automorphism's name.</td></tr>
+</table>
+
+<h3>Attributes</h3>
+<table>
+ <tr><th>Attribute</th><th>Class</th><th>Default value</th><th>Notes</th></tr>
+ <tr><td>type</td><td>String</td><td>"Automorphism"</td><td>The class name.</td></tr>
+ <tr><td>name</td><td>String</td><td></td><td>The Automorphism object's name.</td></tr>
+</table>
+
+<h3>Methods</h3>
+<table>
+ <tr><th>Method</th><th>Arguments</th><th>Return class</th><th>Notes</th></tr>
+ <tr style="text-align:center;"><td colspan="4">None yet.</td></tr>
+</table>
+
+
+
+
+
+<h2><tt>Layout</tt> class</h2>
+<h3>Constructor</h3>
+<table>
+ <tr><th>Argument</th><th>Default value</th><th>Notes</th></tr>
+ <tr><td>name</td><td></td><td>The Layout object's name.</td></tr>
+ <tr><td>layoutName</td><td></td><td>The name of the layout style.</td></tr>
+ <tr><td>focusObject</td><td>""</td><td>Optional object for use in determining node positions.</td></tr>
+</table>
+
+<h3>Attributes</h3>
+<table>
+ <tr><th>Attribute</th><th>Class</th><th>Default value</th><th>Notes</th></tr>
+ <tr><td>type</td><td>String</td><td>"Layout"</td><td>The class name.</td></tr>
+ <tr><td>name</td><td>String</td><td></td><td>The Layout object's name.</td></tr>
+ <tr><td>focusObject</td><td>Node <em>or</em> Edge</td><td>""</td><td>Object for use in determining the layout.</td></tr>
+</table>
+
+<h3>Methods</h3>
+<table>
+ <tr><th>Method</th><th>Arguments</th><th>Return class</th><th>Notes</th></tr>
+ <tr><td>allowedLayouts</td><td>-</td><td>Array of Strings</td><td>Returns an array containing the legal layout names.</td></tr>
+ <tr><td>isAllowed</td><td>layoutName [String]</td><td>Boolean</td><td>Returns true if the given name is a legal layout name.</td></tr>
+ <tr><td>setLayout</td><td>layoutName [String]</td><td>Boolean</td><td>Sets the Layout object's layout to the given one.</td></tr>
+ <tr><td>setFocus</td><td>focusObject [Edge <em>or</em> Node]</td><td>-</td><td>Sets the <tt>focusObject</tt> attribute of the Layout object.</td></tr>
+</table>
+
+</body>
+</html>
