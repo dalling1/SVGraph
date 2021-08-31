@@ -1,7 +1,7 @@
 // graph class ////////////////////////////////////////////////////////////////////////////////////
 class Graph {
  constructor(
-  name = "",
+  name,
   layoutName = "default",
  ){
   this.type = this.constructor.name;
