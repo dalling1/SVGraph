@@ -2,7 +2,7 @@
 class Graph {
  constructor(
   name = "",
-  layoutName = "",
+  layoutName = "default",
  ){
   this.type = this.constructor.name;
   this.name = name;
@@ -38,6 +38,8 @@ class Graph {
    randomNode
    addEdge
    addEdges
+   findEdge
+   findEdges
    findEdgesTo
    findEdgesToMatch
    excludeEdgesTo
@@ -51,12 +53,8 @@ class Graph {
    randomLocation
    randomCircleLocation
    randomGridLocations
-   allowSelfEdges
-   alwaysUseBezier
    setAllowSelfEdges
    setAlwaysUseBezier
-   findEdge
-   findEdges
    centralLocation
    nodeLocation
    setLayout
@@ -89,10 +87,13 @@ class Graph {
 
  addNode(name,position,radius){
   this.nodes.push(new Node(name,position,radius,this,this.nodes.length)); // zero-index the node.n values
+  return true;
  }
 
  addNodes(n=1){
-  for (var i=0;i<n;i++) this.addNode(randomName(),this.nodeLocation(),randomRadius([4,10]));
+  var counter = 0;
+  for (var i=0;i<n;i++) if (this.addNode(randomName(),this.nodeLocation(),randomRadius([4,10]))) counter++;
+  return counter;
  }
 
  removeNode(node){
@@ -127,19 +128,27 @@ class Graph {
 
   // finished: re-number the remaining nodes
   this.numberNodes();
+
+  return true;
  }
 
  removeNewestNode(){
-  if (this.nodes.length) this.removeNode(this.nodes[this.nodes.length-1]);
+  var counter = 0;
+  if (this.nodes.length) if (this.removeNode(this.nodes[this.nodes.length-1])) counter++;
+  return counter>0;
  }
 
  removeOldestNode(){
-  if (this.nodes.length) this.removeNode(this.nodes[0]);
+  var counter = 0;
+  if (this.nodes.length) if (this.removeNode(this.nodes[0])) counter++;
+  return counter>0;
  }
 
  removeNodes(n=1,newest=true){
-  if (newest) for (var i=0;i<n;i++) this.removeNewestNode();
-  else for (var i=0;i<n;i++) this.removeOldestNode();
+  var counter = 0;
+  if (newest) for (var i=0;i<n;i++) if (this.removeNewestNode()) counter++;
+  else for (var i=0;i<n;i++) if (this.removeOldestNode()) counter++;
+  return counter;
  }
 
  numberNodes(){
@@ -177,12 +186,19 @@ class Graph {
  }
 
  addEdges(n=1){
-  if (this.nodes.length) for (var i=0;i<n;i++) this.addEdge(randomName(),this.randomNode(),this.randomNode());
+  var counter = 0;
+  if (this.nodes.length) for (var i=0;i<n;i++) if (this.addEdge(randomName(),this.randomNode(),this.randomNode())) counter++;
+  return counter;
  }
 
  findEdge(name){
   // find an edge object with the given name
   return this.edges.filter(function(edg){return edg.name==name});
+ }
+
+ findEdges(name_regexp){
+  // find edge objects which match the given name regexp
+  return this.edges.filter(function(edg){var p=new RegExp("^"+name_regexp+"$","i");return p.test(edg.name)});
  }
 
  findEdgesTo(name){
@@ -224,29 +240,36 @@ class Graph {
     this.edges.splice(i-1,1);
    }
   }
+  return true;
  }
 
  removeNewestEdge(){
-  if (this.edges.length) this.removeEdge(this.edges[this.edges.length-1]);
+  var counter = 0;
+  if (this.edges.length) if (this.removeEdge(this.edges[this.edges.length-1])) counter++;
+  return counter>0;
  }
 
  removeOldestEdge(){
-  if (this.edges.length) this.removeEdge(this.edges[0]);
+  var counter = 0;
+  if (this.edges.length) if (this.removeEdge(this.edges[0])) counter++;
+  return counter>0;
  }
 
  removeEdges(n=1,newest=true){
-  if (newest) for (var i=0;i<n;i++) this.removeNewestEdge();
-  else for (var i=0;i<n;i++) this.removeOldestEdge();
+  var counter = 0;
+  if (newest) for (var i=0;i<n;i++) if (this.removeNewestEdge()) counter++;
+  else for (var i=0;i<n;i++) if (this.removeOldestEdge()) counter++;
+  return counter;
  }
 
  removeDuplicateEdges(){
+  var counter = 0;
   for (var i=this.edges.length;i>0;i--){ // work from the end back to the start
    var duplicates = this.findEdgesFromTo(this.edges[i-1].from.name,this.edges[i-1].to.name);
    // if there are duplicates, remove this edge
-   if (duplicates.length>1){
-    this.removeEdge(this.edges[i-1]);
-   }
+   if (duplicates.length>1) if (this.removeEdge(this.edges[i-1])) counter++;
   }
+  return counter;
  }
 
  shuffleNodePositions(){
@@ -326,14 +349,6 @@ class Graph {
   this.alwaysUseBezier = (flag?true:false);
  }
 
- findEdge(name){
-  return this.edges.filter(function(edg){return edg.name==name});
- }
-
- findEdges(name_regexp){
-  return this.edges.filter(function(edg){var p=new RegExp("^"+name_regexp+"$","i");return p.test(edg.name)});
- }
-
  centralLocation(){
   var dim=3;
   var P = Array(dim);
@@ -358,7 +373,7 @@ class Graph {
  }
 
  setLayout(layoutName){
-  this.layout.setLayout(layoutName);
+  return this.layout.setLayout(layoutName);
  }
 
  degreeMatrix(){
@@ -725,8 +740,10 @@ class Layout {
  setLayout(layoutName="default"){
   if (this.isAllowed(layoutName)){
    this.layoutName = layoutName;
+   return true;
   } else {
    this.layoutName = "default";
+   return false;
   }
  }
 
