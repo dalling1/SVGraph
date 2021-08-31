@@ -50,7 +50,7 @@ class Graph {
    removeDuplicateEdges
    shuffleNodePositions
    toggleNodePositions
-   randomLocation
+   randomRectangleLocation
    randomCircleLocation
    randomGridLocations
    setAllowSelfEdges
@@ -285,7 +285,7 @@ class Graph {
   }
  }
 
- randomLocation(){
+ randomRectangleLocation(){
   // generate a random location within the border of this graph
   var dim=3;
   var lowerLimit = this.border;
@@ -360,9 +360,9 @@ class Graph {
 
  nodeLocation(){
   if (this.layout.layoutName=="default"){ /////////////////////////////// default is randomRectangle
-   return this.randomLocation();
+   return this.randomRectangleLocation();
   } else if (this.layout.layoutName=="randomRectangle"){ //////////////// randomRectangle
-   return this.randomLocation();
+   return this.randomRectangleLocation();
   } else if (this.layout.layoutName=="randomCircle") { ////////////////// randomCircle
    return this.randomCircleLocation();
   } else if (this.layout.layoutName=="randomGrid") { //////////////////// randomGrid
