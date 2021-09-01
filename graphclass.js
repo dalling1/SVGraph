@@ -417,9 +417,9 @@ class Node {
    "z-index": this.z,
    "id": this.name,
    "class": "anode",
-//   "onclick": "showConnectionsFading(thegraph,this.id)",
-   "onmouseover": "showConnections(thegraph,this.id)",
-   "onmouseout": "hideConnections(thegraph,this.id)",
+//   "onclick": "showConnectionsFading(this.id)",
+   "onmouseover": "showConnections(this.id)",
+   "onmouseout": "hideConnections(this.id)",
   });
   return c;
  }
