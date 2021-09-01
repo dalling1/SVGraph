@@ -45,12 +45,12 @@ function removeGraphEdges(graph,n=1){
 
 function shuffle(graph){
  makePrimary(graph);
- graph.shuffleNodePositions();
+ graph.layout.shuffleNodePositions();
 }
 
 function toggle(graph){
  makePrimary(graph);
- graph.toggleNodePositions();
+ graph.layout.toggleNodePositions();
 }
 
 function toggleEdgeStyle(graph){
@@ -65,15 +65,6 @@ function toggleSelfEdges(graph){
 
 function sampleEdge(id){
  console.log("Clicked edge "+id);
-}
-
-function oldshowConnections(id){
- // test function to demonstrate acting on a given node, and specifically on the edges attached to a node:
- var E = thegraph.findEdgesTo(id);
- for(var i=0;i<E.length;i++){
-  E[i].svg.classList.add("highlightedge");
- };
-
 }
 
 function showConnections(id){

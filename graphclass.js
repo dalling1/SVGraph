@@ -48,15 +48,8 @@ class Graph {
    removeOldestEdge
    removeEdges
    removeDuplicateEdges
-   shuffleNodePositions
-   toggleNodePositions
-   randomRectangleLocation
-   randomCircleLocation
-   randomGridLocations
    setAllowSelfEdges
    setAlwaysUseBezier
-   centralLocation
-   nodeLocation
    setLayout
    degreeMatrix
    adjacencyMatrix
@@ -92,7 +85,7 @@ class Graph {
 
  addNodes(n=1){
   var counter = 0;
-  for (var i=0;i<n;i++) if (this.addNode(randomName(),this.nodeLocation(),randomRadius([4,10]))) counter++;
+  for (var i=0;i<n;i++) if (this.addNode(randomName(),this.layout.nodeLocation(),randomRadius([4,10]))) counter++;
   return counter;
  }
 
@@ -272,73 +265,6 @@ class Graph {
   return counter;
  }
 
- shuffleNodePositions(){
-  for (var i=0;i<thegraph.nodes.length;i++){
-   thegraph.nodes[i].setAltLocation(this.nodeLocation());
-   thegraph.nodes[i].moveToAlt();
-  }
- }
-
- toggleNodePositions(){
-  for (var i=0;i<thegraph.nodes.length;i++){
-   thegraph.nodes[i].moveToAlt();
-  }
- }
-
- randomRectangleLocation(){
-  // generate a random location within the border of this graph
-  var dim=3;
-  var lowerLimit = this.border;
-  var upperLimit = [window.innerWidth - this.border[0], window.innerHeight - this.border[1], 100 - this.border[2]]
-  var P = Array(dim);
-  for (var d=0;d<dim;d++){
-   if (lowerLimit[d]>upperLimit[d]) lowerLimit[d] = upperLimit[d];
-   P[d] = Math.round(Math.random()*(upperLimit[d]-lowerLimit[d])+lowerLimit[d]);
-  }
-  return P;
- }
-
- randomCircleLocation(){
-  // generate a random location on the circle centred on the page and which fits within the graph's border
-  var X = 0.5*window.innerWidth;
-  var Y = 0.5*window.innerHeight;
-  var W = X - this.border[0];
-  var H = Y - this.border[0];
-  var R = Math.min(W,H);
-  return randomCircleLocation([X,Y],R);
- }
-
- randomGridLocations(n=1){
-  // generate a random location on a grid (within the border of this graph), jittered
-  var Ncols = 8; //make a 10x6 grid (this could be user-selected later on)
-  var Nrows = 4;
-  var Ngrid = Ncols*Nrows;
-  var Lvar = 100; // variance of the locations about the grid points (jitter)
-  var dim=3;
-  var P=new Array(n);
-
-  var lowerLimit = this.border;
-  var upperLimit = [window.innerWidth - this.border[0], window.innerHeight - this.border[1], 100 - this.border[2]]
-
-  // 1. determine the grid point locations
-  var gridX = new Array(Ncols);
-  var gridY = new Array(Nrows);
-  for (var i=0;i<Ncols;i++) gridX[i] = Math.round(lowerLimit[0] + i*(upperLimit[0]-lowerLimit[0])/(Ncols-1));
-  for (var i=0;i<Nrows;i++) gridY[i] = Math.round(lowerLimit[1] + i*(upperLimit[1]-lowerLimit[1])/(Nrows-1));
-
-  // select n points at those locations:
-  for (var i=0;i<n;i++){
-   // 2. choose a grid point at random
-   var usegridX = Math.floor(Ncols*Math.random()); // use this one across (zero-indexed)
-   var usegridY = Math.floor(Nrows*Math.random()); // use this one down (zero-indexed)
-   // 3. get jittered coordinates around that point
-   var tmp = randomNormal2([gridX[usegridX],gridY[usegridY]],[Lvar,Lvar]);
-//   P[i] = Array(dim);
-   P[i] = [Math.round(tmp[0]), Math.round(tmp[1]), 0];
-  }
-  return P;
- }
-
  setAllowSelfEdges(flag){
   // note that this does not alter existing edges
   this.allowSelfEdges = (flag?true:false);
@@ -347,29 +273,6 @@ class Graph {
  setAlwaysUseBezier(flag){
   // note that this does not alter existing edges
   this.alwaysUseBezier = (flag?true:false);
- }
-
- centralLocation(){
-  var dim=3;
-  var P = Array(dim);
-  P[0] = Math.round(window.innerWidth/2.0);
-  P[1] = Math.round(window.innerHeight/2.0);
-  P[2] = 0;
-  return P;
- }
-
- nodeLocation(){
-  if (this.layout.layoutName=="default"){ /////////////////////////////// default is randomRectangle
-   return this.randomRectangleLocation();
-  } else if (this.layout.layoutName=="randomRectangle"){ //////////////// randomRectangle
-   return this.randomRectangleLocation();
-  } else if (this.layout.layoutName=="randomCircle") { ////////////////// randomCircle
-   return this.randomCircleLocation();
-  } else if (this.layout.layoutName=="randomGrid") { //////////////////// randomGrid
-   return this.randomGridLocations()[0];
-  } else {
-   return this.centralLocation(); /////////////////////////////////////// not specified: put nodes at the centre
-  }
  }
 
  setLayout(layoutName){
@@ -514,9 +417,9 @@ class Node {
    "z-index": this.z,
    "id": this.name,
    "class": "anode",
-//   "onclick": "showConnectionsFading(this.id)",
-   "onmouseover": "showConnections(this.id)",
-   "onmouseout": "hideConnections(this.id)",
+//   "onclick": "showConnectionsFading(thegraph,this.id)",
+   "onmouseover": "showConnections(thegraph,this.id)",
+   "onmouseout": "hideConnections(thegraph,this.id)",
   });
   return c;
  }
@@ -724,6 +627,13 @@ class Layout {
    isAllowed
    setLayout
    setFocus
+   randomRectangleLocation
+   randomCircleLocation
+   randomGridLocations
+   centralLocation
+   nodeLocation
+   shuffleNodePositions
+   toggleNodePositions
 
  */
 
@@ -752,4 +662,95 @@ class Layout {
  setFocus(focusObject=""){
   this.focus = ((focusObject.type=="Node" || focusObject.type=="Edge")? focusObject : "none");
  }
+
+ randomRectangleLocation(){
+  // generate a random location within the border of this graph
+  var dim=3;
+  var lowerLimit = this.graph.border;
+  var upperLimit = [window.innerWidth - this.graph.border[0], window.innerHeight - this.graph.border[1], 100 - this.graph.border[2]]
+  var P = Array(dim);
+  for (var d=0;d<dim;d++){
+   if (lowerLimit[d]>upperLimit[d]) lowerLimit[d] = upperLimit[d];
+   P[d] = Math.round(Math.random()*(upperLimit[d]-lowerLimit[d])+lowerLimit[d]);
+  }
+  return P;
+ }
+
+ randomCircleLocation(){
+  // generate a random location on the circle centred on the page and which fits within the graph's border
+  var X = 0.5*window.innerWidth;
+  var Y = 0.5*window.innerHeight;
+  var W = X - this.graph.border[0];
+  var H = Y - this.graph.border[0];
+  var R = Math.min(W,H);
+  return randomCircleLocation([X,Y],R);
+ }
+
+ randomGridLocations(n=1){
+  // generate a random location on a grid (within the border of this graph), jittered
+  var Ncols = 8; //make a 10x6 grid (this could be user-selected later on)
+  var Nrows = 4;
+  var Ngrid = Ncols*Nrows;
+  var Lvar = 100; // variance of the locations about the grid points (jitter)
+  var dim=3;
+  var P=new Array(n);
+
+  var lowerLimit = this.graph.border;
+  var upperLimit = [window.innerWidth - this.graph.border[0], window.innerHeight - this.graph.border[1], 100 - this.graph.border[2]]
+
+  // 1. determine the grid point locations
+  var gridX = new Array(Ncols);
+  var gridY = new Array(Nrows);
+  for (var i=0;i<Ncols;i++) gridX[i] = Math.round(lowerLimit[0] + i*(upperLimit[0]-lowerLimit[0])/(Ncols-1));
+  for (var i=0;i<Nrows;i++) gridY[i] = Math.round(lowerLimit[1] + i*(upperLimit[1]-lowerLimit[1])/(Nrows-1));
+
+  // select n points at those locations:
+  for (var i=0;i<n;i++){
+   // 2. choose a grid point at random
+   var usegridX = Math.floor(Ncols*Math.random()); // use this one across (zero-indexed)
+   var usegridY = Math.floor(Nrows*Math.random()); // use this one down (zero-indexed)
+   // 3. get jittered coordinates around that point
+   var tmp = randomNormal2([gridX[usegridX],gridY[usegridY]],[Lvar,Lvar]);
+//   P[i] = Array(dim);
+   P[i] = [Math.round(tmp[0]), Math.round(tmp[1]), 0];
+  }
+  return P;
+ }
+
+ centralLocation(){
+  var dim=3;
+  var P = Array(dim);
+  P[0] = Math.round(window.innerWidth/2.0);
+  P[1] = Math.round(window.innerHeight/2.0);
+  P[2] = 0;
+  return P;
+ }
+
+ nodeLocation(){
+  if (this.layoutName=="default"){ /////////////////////////////// default is randomRectangle
+   return this.randomRectangleLocation();
+  } else if (this.layoutName=="randomRectangle"){ //////////////// randomRectangle
+   return this.randomRectangleLocation();
+  } else if (this.layoutName=="randomCircle") { ////////////////// randomCircle
+   return this.randomCircleLocation();
+  } else if (this.layoutName=="randomGrid") { //////////////////// randomGrid
+   return this.randomGridLocations()[0];
+  } else {
+   return this.centralLocation(); /////////////////////////////////////// not specified: put nodes at the centre
+  }
+ }
+
+ shuffleNodePositions(){
+  for (var i=0;i<this.graph.nodes.length;i++){
+   this.graph.nodes[i].setAltLocation(this.nodeLocation());
+   this.graph.nodes[i].moveToAlt();
+  }
+ }
+
+ toggleNodePositions(){
+  for (var i=0;i<this.graph.nodes.length;i++){
+   this.graph.nodes[i].moveToAlt();
+  }
+ }
+
 }

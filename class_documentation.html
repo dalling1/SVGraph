@@ -105,15 +105,8 @@
  <tr><td>removeOldestEdge</td><td>-</td><td>Boolean</td><td>Removes the earliest added edge from the graph.</td></tr>
  <tr><td>removeEdges</td><td>n [Integer]<br/>newest [Boolean]</td><td>Integer</td><td>Removes the n newest or oldest edges from the graph; default newest = true. Returns the number of edges removed.</td></tr>
  <tr><td>removeDuplicateEdges</td><td>-</td><td>Integer</td><td>Removes all but one edge connecting any two nodes in the graph. Returns the number of edges removed.</td></tr>
- <tr><td>shuffleNodePositions</td><td>-</td><td>-</td><td>Moves SVG objects representing nodes to new positions based on the graph Layout. The existing position is stored in the node's alternative coordinates.</td></tr>
- <tr><td>toggleNodePositions</td><td>-</td><td>-</td><td>Moves nodes back and forth between their coordinates (<tt>x</tt>, <tt>y</tt>, <tt>z</tt> attributes) and their alternative coordinates (<tt>altx</tt>, <tt>alty</tt>, <tt>altz</tt> attributes).</td></tr>
- <tr><td>randomLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns a random location within a rectangle defined by the HTML window and the graph's <tt>border</tt> attribute.</td></tr>
- <tr><td>randomCircleLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns a random location on the circle within the HTML window bounded by the graph's <tt>border</tt> attribute.</td></tr>
- <tr><td>randomGridLocations</td><td>n [Integer]</td><td>Array of Arrays of 3 Integers</td><td>Returns n locations, each close to points on an N-by-M grid within the graph's border, jittered to reduce co-incidence of the locations. Default n = 1; N and M are currently fixed.</td></tr>
  <tr><td>setAllowSelfEdges</td><td>flag [Boolean]</td><td>-</td><td>Sets the <tt>allowSelfEdges</tt> attribute of the graph; does not affect existing edges.</td></tr>
  <tr><td>setAlwaysUseBezier</td><td>flag [Boolean]</td><td>-</td><td>Sets the <tt>alwaysUseBezier</tt> attribute of the graph; does not affect existing edges.</td></tr>
- <tr><td>centralLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns the coordinates of the centre of the HTML window.</td></tr>
- <tr><td>nodeLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns coordinates for one node, dependant on the graph's <tt>layout</tt> attribute.</td></tr>
  <tr><td>setLayout</td><td>layoutName [String]</td><td>Boolean</td><td>Sets the graph's <tt>layout</tt> attribute; returns true if a legal layout name was given, otherwise false.</td></tr>
  <tr><td>degreeMatrix</td><td>-</td><td>Array of Integers</td><td>Returns a square array whose diagonal values contain the degree of each node in the graph. Other entries are undefined.</td></tr>
  <tr><td>adjacencyMatrix</td><td>-</td><td>Array of Booleans</td><td>Returns a square array whose [i][j]th entry is true if the ith and jth nodes are connected by at least one edge.</td></tr>
@@ -261,6 +254,13 @@
  <tr><td>isAllowed</td><td>layoutName [String]</td><td>Boolean</td><td>Returns true if the given name is a legal layout name.</td></tr>
  <tr><td>setLayout</td><td>layoutName [String]</td><td>Boolean</td><td>Sets the Layout object's layout to the given one.</td></tr>
  <tr><td>setFocus</td><td>focusObject [Edge <em>or</em> Node]</td><td>-</td><td>Sets the <tt>focusObject</tt> attribute of the Layout object.</td></tr>
+ <tr><td>randomRectangleLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns a random location within a rectangle defined by the HTML window and the graph's <tt>border</tt> attribute.</td></tr>
+ <tr><td>randomCircleLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns a random location on the circle within the HTML window bounded by the graph's <tt>border</tt> attribute.</td></tr>
+ <tr><td>randomGridLocations</td><td>n [Integer]</td><td>Array of Arrays of 3 Integers</td><td>Returns n locations, each close to points on an N-by-M grid within the graph's border, jittered to reduce co-incidence of the locations. Default n = 1; N and M are currently fixed.</td></tr>
+ <tr><td>centralLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns the coordinates of the centre of the HTML window.</td></tr>
+ <tr><td>nodeLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns coordinates for one node, dependant on the graph's <tt>layout</tt> attribute.</td></tr>
+ <tr><td>shuffleNodePositions</td><td>-</td><td>-</td><td>Moves SVG objects representing nodes to new positions based on the graph Layout. The existing position is stored in the node's alternative coordinates.</td></tr>
+ <tr><td>toggleNodePositions</td><td>-</td><td>-</td><td>Moves nodes back and forth between their coordinates (<tt>x</tt>, <tt>y</tt>, <tt>z</tt> attributes) and their alternative coordinates (<tt>altx</tt>, <tt>alty</tt>, <tt>altz</tt> attributes).</td></tr>
 </table>
 
 </body>
