@@ -656,6 +656,8 @@ class Layout {
  }
 
  setLayout(layoutName="default"){
+  if (layoutName=="vertexFocused" && this.focus.type!="Node" && this.graph.nodes.length>0) this.setFocus(this.graph.nodes[0]);
+  if (layoutName=="edgeFocused" && this.focus.type!="Edge" && this.graph.edges.length>0) this.setFocus(this.graph.edges[0]);
   if (this.isAllowed(layoutName)){
    this.layoutName = layoutName;
    return true;
@@ -667,6 +669,11 @@ class Layout {
 
  setFocus(focusObject=""){
   this.focus = ((focusObject.type=="Node" || focusObject.type=="Edge")? focusObject : "none");
+  if (this.focus.type=="Node"){
+   this.focus.svg.classList.add("focusNode");
+  } else if (this.focus.type=="Edge"){
+   this.focus.svg.classList.add("focusEdge");
+  }
  }
 
  randomRectangleLocation(){
@@ -682,14 +689,15 @@ class Layout {
   return P;
  }
 
- randomCircleLocation(){
-  // generate a random location on the circle centred on the page and which fits within the graph's border
+ randomCircleLocation(s=1.0){
+  // generate a random location on the circle centred on the page and which fits within the graph's border,
+  // scaled by the factor s (ie. scale the circle's diameter)
   var X = 0.5*window.innerWidth;
   var Y = 0.5*window.innerHeight;
   var W = X - this.graph.border[0];
   var H = Y - this.graph.border[0];
   var R = Math.min(W,H);
-  return randomCircleLocation([X,Y],R);
+  return randomCircleLocation([X,Y],R*s);
  }
 
  randomGridLocations(n=1){
@@ -779,6 +787,40 @@ class Layout {
    for (var i=0;i<this.graph.nodes.length;i++){
     this.graph.nodes[i].setAltLocation(gridpos[i]);
    }
+
+
+  } else if (this.layoutName=="vertexFocused") { // vertexFocused
+   if (this.focus.type!="Node"){
+    console.log("Focus object not set");
+    alert("Vertex-focused layout requested but the focus vertex is not set");
+   } else {
+    // 1. put the focus object at the centre
+    // 2. loop through the other nodes:
+    //    - place each node on a concentric circle about the focus
+    //    - with the radius determined by the node's distance (in the graph) from the focus
+    //    ... need the distance matrix for that:
+    this.graph.numberNodes();
+    this.graph.updateDistanceMatrix();
+
+    this.focus.setAltLocation(this.centralLocation());
+    var dmax = maxFiniteElement(this.graph.distanceMatrix[this.focus.n]);
+console.log("Max distance = "+dmax);
+
+    for (var i=0;i<this.graph.nodes.length;i++){
+     if (this.graph.nodes[i].n!=this.focus.n){
+      // scale the circle according to the distance to the focus node:
+      var d = this.graph.distanceMatrix[this.focus.n][i];
+      var s = d/dmax;
+      if (s==Infinity){
+       this.graph.nodes[i].setAltLocation(this.randomCircleLocation(1.1)); // put detached nodes just outside the circle
+      } else {
+       this.graph.nodes[i].setAltLocation(this.randomCircleLocation(s));
+      }
+     }
+    }
+
+   }
+
 
 
   } else {
