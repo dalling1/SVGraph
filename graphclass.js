@@ -15,6 +15,11 @@ class Graph {
   // rules for creating edges (these could be controls on the page):
   this.allowSelfEdges = true;
   this.alwaysUseBezier = true;
+
+  this.degreeMatrix = new Array(); // initialise; diagonal, integers
+  this.adjacencyMatrix = new Array(); // initialise; boolean
+  this.distanceMatrix = new Array(); // initialise; integers
+  this.connectivityMatrix = new Array(); // initialise; boolean
  }
 
  /*
@@ -51,11 +56,11 @@ class Graph {
    setAllowSelfEdges
    setAlwaysUseBezier
    setLayout
-   degreeMatrix
-   adjacencyMatrix
-   distanceMatrix
-   connectivityMatrix
-   connectedComponents
+   updateDegreeMatrix
+   updateAdjacencyMatrix
+   updateDistanceMatrix
+   updateConnectivityMatrix
+   updateConnectedComponents
    draw
 
  */
@@ -280,88 +285,82 @@ class Graph {
   return this.layout.setLayout(layoutName);
  }
 
- degreeMatrix(){
-  var D = new Array(this.nodes.length);
+ updateDegreeMatrix(){
+  this.degreeMatrix = new Array(this.nodes.length);
   for (var i=0;i<this.nodes.length;i++){
-   D[i] = new Array(this.nodes.length);
-   D[i][i] = this.findEdgesTo(this.nodes[i].name).length;
+   this.degreeMatrix[i] = new Array(this.nodes.length);
+   this.degreeMatrix[i][i] = this.findEdgesTo(this.nodes[i].name).length;
   }
-  return D;
  }
 
- adjacencyMatrix(){
-  var A = new Array(this.nodes.length);
+ updateAdjacencyMatrix(){
+  this.adjacencyMatrix = new Array(this.nodes.length);
   for (var i=0;i<this.nodes.length;i++){
-   A[i] = new Array(this.nodes.length).fill(0);
+   this.adjacencyMatrix[i] = new Array(this.nodes.length).fill(0);
    var edges = this.findEdgesTo(this.nodes[i].name);
    for (var j=0;j<edges.length;j++){
     // use the "from" or "to" node?
     if (edges[j].from.name == this.nodes[i].name) var otherNodeN = edges[j].to.n;
     else var otherNodeN = edges[j].from.n;
-    A[i][otherNodeN] += 1;
+    this.adjacencyMatrix[i][otherNodeN] += 1;
    }
   }
-  return A;
  }
 
- distanceMatrix(){
-  var A = this.adjacencyMatrix();
-  var N = A.length;
-  var D = multiplyMatricesUsingOnes(A,identityMatrix(N)); // initial distances are 1 if there is an edge between nodes
-  var P = multiplyMatricesUsingOnes(A,identityMatrix(N)); // path-length matrix
+ updateDistanceMatrix(){
+  this.updateAdjacencyMatrix(); // we could test whether this is required or not
+  var N = this.nodes.length;
+  this.distanceMatrix = multiplyMatricesUsingOnes(this.adjacencyMatrix,identityMatrix(N)); // initial distances are 1 if there is an edge between nodes
+  var P = multiplyMatricesUsingOnes(this.adjacencyMatrix,identityMatrix(N)); // path-length matrix
 
   for (var n=2;n<N;n++){
    // set P = A^i: P's entries are the number of paths of length n between nodes (even when "usingOnes"?)
-   if (n>0) P = multiplyMatrices(A,P);
+   if (n>0) P = multiplyMatrices(this.adjacencyMatrix,P);
    // for two nodes, i and j:
    //  if there is a zero entry in D (no shorter path exists) and a non-zero entry in P, set D[i][j] to n
    // Note: a node is always 0 distance from itself, that is, when i=j
    // Note: the value in P is the number of paths of length n between the nodes i and j
    for (var i=0;i<N;i++){
     for (var j=0;j<N;j++){
-     if (i!=j) if (D[i][j] == 0 && P[i][j] != 0) D[i][j] = n;
+     if (i!=j) if (this.distanceMatrix[i][j] == 0 && P[i][j] != 0) this.distanceMatrix[i][j] = n;
     }
    }
   }
   // now re-work the distance matrix to indicate infinite path lengths for nodes which are not connected
   for (var i=0;i<N;i++){
    for (var j=0;j<N;j++){
-    if (D[i][j]==0 && i!=j){
-     D[i][j] = Infinity;
+    if (this.distanceMatrix[i][j]==0 && i!=j){
+     this.distanceMatrix[i][j] = Infinity;
     }
    }
   }
-
-  return D;
  }
 
- connectivityMatrix(steps){
+ updateConnectivityMatrix(steps){
   // entries are true if there is a finite-length path between nodes i and j
-  return this.distanceMatrix().map(function(x){return x.map(function(z){return z<Infinity;})});
+  this.updateDistanceMatrix(); // we could test whether this is required or not
+  this.connectivityMatrix = this.distanceMatrix.map(function(x){return x.map(function(z){return z<Infinity;})});
  }
 
- connectedComponents(){
-  // returns an array of arrays, each containing nodes connected to each other
-  var M = this.connectivityMatrix();
-  var C = new Array();
+ updateConnectedComponents(){
+  // computes an array of arrays, each containing nodes connected to each other
   // loop over all nodes
   for (var i=0;i<this.nodes.length;i++){
    // test whether this node is in an already-identified connected component
    var foundNodeInComponent = false;
-   for (var k=0;k<C.length;k++){
-    if (C[k].indexOf(this.nodes[i])!=-1){
+   for (var k=0;k<this.connectedComponents.length;k++){
+    if (this.connectedComponents[k].indexOf(this.nodes[i])!=-1){
      foundNodeInComponent=true;
      break; // found, stop looking (nodes cannot be in more than one connected component)
     }
    }
    if (!foundNodeInComponent){
     // not found: this is the first node in a new connected component:
-    C[C.length] = new Array(); // don't add this node yet, it will come with the rest below
+    this.connectedComponents[this.connectedComponents.length] = new Array(); // don't add this node yet, it will come with the rest below
     // add the nodes connected to this one:
-    for (var j=0;j<M[i].length;j++) if (M[i][j]) C[C.length-1].push(this.nodes[j]);
+    for (var j=0;j<this.connectivityMatrix[i].length;j++) if (this.connectivityMatrix[i][j]) this.connectedComponents[this.connectedComponents.length-1].push(this.nodes[j]);
    }
   }
-  return C;
  }
 
  draw(){
