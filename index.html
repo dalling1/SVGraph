@@ -107,6 +107,12 @@
     stroke-width: 4px;
     transition: 1s all ease;
    }
+   .focusNode {
+    fill: #00f;
+   }
+   .focusEdge {
+    stroke: #33f;
+   }
   </style>
  </head>
  <body onload="setup();">
@@ -157,6 +163,8 @@
     <option value="randomRectangle">rectangle</option>
     <option value="randomCircle">circle</option>
     <option value="randomGrid">grid</option>
+    <option value="vertexFocused">vertex-focused</option>
+    <option value="edgeFocused" disabled="disabled">edge-focused</option>
    </select>
   </div>
 
