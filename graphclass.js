@@ -56,6 +56,7 @@ class Graph {
    distanceMatrix
    connectivityMatrix
    connectedComponents
+   draw
 
  */
 
@@ -363,6 +364,11 @@ class Graph {
   return C;
  }
 
+ draw(){
+  // use the graph's layout to set the node positions and move them there:
+  this.layout.draw();
+ }
+
 }
 
 // node class /////////////////////////////////////////////////////////////////////////////////////
@@ -634,6 +640,7 @@ class Layout {
    nodeLocation
    shuffleNodePositions
    toggleNodePositions
+   draw
 
  */
 
@@ -751,6 +758,39 @@ class Layout {
   for (var i=0;i<this.graph.nodes.length;i++){
    this.graph.nodes[i].moveToAlt();
   }
+ }
+
+ draw(){
+  // set the alternative position of each node according to the this Layout object's layout, and move them there
+  if (this.layoutName=="default" || this.layoutName=="randomRectangle"){ // default ie. randomRectangle
+
+   for (var i=0;i<this.graph.nodes.length;i++){
+    this.graph.nodes[i].setAltLocation(this.randomRectangleLocation());
+   }
+
+
+  } else if (this.layoutName=="randomCircle") { // randomCircle
+   for (var i=0;i<this.graph.nodes.length;i++){
+    this.graph.nodes[i].setAltLocation(this.randomCircleLocation());
+   }
+
+
+  } else if (this.layoutName=="randomGrid") { // randomGrid
+   var gridpos = this.randomGridLocations(this.graph.nodes.length);
+   for (var i=0;i<this.graph.nodes.length;i++){
+    this.graph.nodes[i].setAltLocation(gridpos[i]);
+   }
+
+
+  } else {
+   for (var i=0;i<this.graph.nodes.length;i++){
+    this.graph.nodes[i].setAltLocation(this.centralLocation());
+   }
+
+  }
+
+  // now move the nodes to their newly-set alternative positions:
+  this.toggleNodePositions();
  }
 
 }
