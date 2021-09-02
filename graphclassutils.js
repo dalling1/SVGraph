@@ -45,7 +45,8 @@ function removeGraphEdges(graph,n=1){
 
 function shuffle(graph){
  makePrimary(graph);
- graph.layout.shuffleNodePositions();
+// graph.layout.shuffleNodePositions();
+ graph.draw();
 }
 
 function toggle(graph){
@@ -216,4 +217,10 @@ function identityMatrix(n){
   I[i][i] = 1; // put ones on the diagonal
  }
  return I;
+}
+
+function maxFiniteElement(array){
+ var M = -Infinity;
+ for (var i=0;i<array.length;i++) if (array[i]>M && array[i]!=Infinity) M = array[i];
+ return M;
 }
