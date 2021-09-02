@@ -72,6 +72,11 @@
  <tr><td>layout</td><td>Layout</td><td></td><td>A Layout object.</td></tr>
  <tr><td>allowSelfEdges</td><td>Boolean</td><td>True</td><td>Whether edges from a node to itself are allowed to be created.</td></tr>
  <tr><td>alwaysUseBezier</td><td>Boolean</td><td>True</td><td>Whether new edges are straight lines or Bezier curves.</td></tr>
+ <tr><td>degreeMatrix</td><td>Array of Integers</td><td>[]</td><td>A square array whose diagonal values contain the degree of each node in the graph (other entries are undefined); empty until updated.</td></tr>
+ <tr><td>adjacencyMatrix</td><td>Array of Booleans</td><td>[]</td><td>A square array whose [i][j]th entry is true if the ith and jth nodes are connected by at least one edge; empty until updated.</td></tr>
+ <tr><td>distanceMatrix</td><td>Array of Integers</td><td>[]</td><td>A square array whose [i][j]th entry is the number of steps from the ith node to the jth node; empty until updated.</td></tr>
+ <tr><td>connectivityMatrix</td><td>Array of Booleans</td><td>[]</td><td>A square array whose [i][j]th entry is true if the jth node can be reached from the ith node; empty until updated.</td></tr>
+ <tr><td>connectedComponents</td><td>Array of Arrays of Nodes</td><td>[]</td><td>An array whose entries are arrays of connected components of the graph; empty until updated.</td></tr>
 </table>
 
 <h3>Methods</h3>
@@ -108,11 +113,12 @@
  <tr><td>setAllowSelfEdges</td><td>flag [Boolean]</td><td>-</td><td>Sets the <tt>allowSelfEdges</tt> attribute of the graph; does not affect existing edges.</td></tr>
  <tr><td>setAlwaysUseBezier</td><td>flag [Boolean]</td><td>-</td><td>Sets the <tt>alwaysUseBezier</tt> attribute of the graph; does not affect existing edges.</td></tr>
  <tr><td>setLayout</td><td>layoutName [String]</td><td>Boolean</td><td>Sets the graph's <tt>layout</tt> attribute; returns true if a legal layout name was given, otherwise false.</td></tr>
- <tr><td>degreeMatrix</td><td>-</td><td>Array of Integers</td><td>Returns a square array whose diagonal values contain the degree of each node in the graph. Other entries are undefined.</td></tr>
- <tr><td>adjacencyMatrix</td><td>-</td><td>Array of Booleans</td><td>Returns a square array whose [i][j]th entry is true if the ith and jth nodes are connected by at least one edge.</td></tr>
- <tr><td>distanceMatrix</td><td>-</td><td>Array of Integers</td><td>Returns a square array whose [i][j]th entry is the number of steps from the ith node to the jth node.</td></tr>
- <tr><td>connectivityMatrix</td><td>-</td><td>Array of Booleans</td><td>Returns a square array whose [i][j]th entry is true if the jth node can be reached from the ith node.</td></tr>
- <tr><td>connectedComponents</td><td>-</td><td>Array of Arrays of Nodes</td><td>Returns an array whose entries are arrays of connected components of the graph.</td></tr>
+ <tr><td>updateDegreeMatrix</td><td>-</td><td>-</td><td>Calculates the graph's degree matrix and stores it in the <tt>degreeMatrix</tt> attribute.</td></tr>
+ <tr><td>updateAdjacencyMatrix</td><td>-</td><td>-</td><td>Calculates the graph's adjacency matrix and stores it in the <tt>adjacencyMatrix</tt> attribute.</td></tr>
+ <tr><td>updateDistanceMatrix</td><td>-</td><td>-</td><td>Calls the updateAdjacencyMatrix() method and then calculates the graph's distance matrix and stores it in the <tt>distanceMatrix</tt> attribute.</td></tr>
+ <tr><td>updateConnectivityMatrix</td><td>-</td><td>-</td><td>Calculates the graph's connectivity matrix and stores it in the <tt>connectivityMatrix</tt> attribute.</td></tr>
+ <tr><td>updateConnectedComponents</td><td>-</td><td>-</td><td>Computes an array of the graph's connected components and stores it in the <tt>connectedComponents</tt> attribute.</td></tr>
+ <tr><td>draw</td><td>-</td><td>-</td><td>Positions the graph's nodes and edges using the graph's layout (calls the draw() method for the Layout object).</td></tr>
 </table>
 
 
@@ -261,6 +267,7 @@
  <tr><td>nodeLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns coordinates for one node, dependant on the graph's <tt>layout</tt> attribute.</td></tr>
  <tr><td>shuffleNodePositions</td><td>-</td><td>-</td><td>Moves SVG objects representing nodes to new positions based on the graph Layout. The existing position is stored in the node's alternative coordinates.</td></tr>
  <tr><td>toggleNodePositions</td><td>-</td><td>-</td><td>Moves nodes back and forth between their coordinates (<tt>x</tt>, <tt>y</tt>, <tt>z</tt> attributes) and their alternative coordinates (<tt>altx</tt>, <tt>alty</tt>, <tt>altz</tt> attributes).</td></tr>
+ <tr><td>draw</td><td>-</td><td>-</td><td>Updates the alternative location for each node in this layout's graph and then moves them there. Positioning is done according to the layout name.</td></tr>
 </table>
 
 </body>
