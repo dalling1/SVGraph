@@ -87,6 +87,7 @@ function hideConnections(id){
  for (var i=0;i<E.length;i++){
   E[i].svg.classList.remove("highlightedge");
  }
+}
 
 function showConnectionsFading(id,highlightTime=1.0){
  // add the highlightedge class to this node's edges
