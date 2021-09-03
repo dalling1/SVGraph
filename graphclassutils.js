@@ -68,6 +68,10 @@ function sampleEdge(id){
  console.log("Clicked edge "+id);
 }
 
+function sampleNode(id){
+ console.log("Clicked node "+id);
+}
+
 function showConnections(id){
  // add the highlightedge class to this node's edges
  var E = thegraph.findEdgesTo(id);

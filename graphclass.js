@@ -422,7 +422,7 @@ class Node {
    "z-index": this.z,
    "id": this.name,
    "class": "anode",
-//   "onclick": "showConnectionsFading(this.id)",
+   "onclick": "sampleNode(this.id)",
    "onmouseover": "showConnections(this.id)",
    "onmouseout": "hideConnections(this.id)",
   });
