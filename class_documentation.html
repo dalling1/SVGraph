@@ -116,8 +116,8 @@
  <tr><td>updateDegreeMatrix</td><td>-</td><td>-</td><td>Calculates the graph's degree matrix and stores it in the <tt>degreeMatrix</tt> attribute.</td></tr>
  <tr><td>updateAdjacencyMatrix</td><td>-</td><td>-</td><td>Calculates the graph's adjacency matrix and stores it in the <tt>adjacencyMatrix</tt> attribute.</td></tr>
  <tr><td>updateDistanceMatrix</td><td>-</td><td>-</td><td>Calls the updateAdjacencyMatrix() method and then calculates the graph's distance matrix and stores it in the <tt>distanceMatrix</tt> attribute.</td></tr>
- <tr><td>updateConnectivityMatrix</td><td>-</td><td>-</td><td>Calculates the graph's connectivity matrix and stores it in the <tt>connectivityMatrix</tt> attribute.</td></tr>
- <tr><td>updateConnectedComponents</td><td>-</td><td>-</td><td>Computes an array of the graph's connected components and stores it in the <tt>connectedComponents</tt> attribute.</td></tr>
+ <tr><td>updateConnectivityMatrix</td><td>-</td><td>-</td><td>Calls the updateDistanceMatrix() method and then calculates the graph's connectivity matrix and stores it in the <tt>connectivityMatrix</tt> attribute.</td></tr>
+ <tr><td>updateConnectedComponents</td><td>-</td><td>-</td><td>Computes an array of the graph's connected components and stores it in the <tt>connectedComponents</tt> attribute. The graph's adjacency, distance and connectivity matrices are updated in the process.</td></tr>
  <tr><td>draw</td><td>-</td><td>-</td><td>Positions the graph's nodes and edges using the graph's layout (calls the draw() method for the Layout object).</td></tr>
 </table>
 
