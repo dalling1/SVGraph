@@ -668,12 +668,21 @@ class Layout {
  }
 
  setFocus(focusObject=""){
+  this.removeFocus();
   this.focus = ((focusObject.type=="Node" || focusObject.type=="Edge")? focusObject : "none");
   if (this.focus.type=="Node"){
    this.focus.svg.classList.add("focusNode");
   } else if (this.focus.type=="Edge"){
    this.focus.svg.classList.add("focusEdge");
   }
+ }
+
+ removeFocus(){
+  // clear the CSS class from an existing focus object, if any
+  var F = document.getElementsByClassName("focusNode");
+  for (var i=F.length;i>0;i--) F[i-1].classList.remove("focusNode");
+  F = document.getElementsByClassName("focusEdge");
+  for (i=F.length;i>0;i--) F[i-1].classList.remove("focusEdge");
  }
 
  randomRectangleLocation(){
