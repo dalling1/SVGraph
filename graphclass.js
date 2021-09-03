@@ -622,7 +622,7 @@ class Layout {
  ){
   this.type = this.constructor.name;
   this.name = name;
-  this.setFocus(focusObject); // set focus object before specifying a layout which might need it
+  this.setFocus(focusObject);
   this.setLayout(layoutName);
   this.graph = graph;
  }
@@ -646,9 +646,7 @@ class Layout {
  */
 
  allowedLayouts(){
-  var layoutList = ["default","randomRectangle","randomCircle","randomGrid"];
-  if (this.focus.type=="Node") layoutList.push("vertexFocused");
-  if (this.focus.type=="Edge") layoutList.push("edgeFocused");
+  var layoutList = ["default","randomRectangle","randomCircle","randomGrid","vertexFocused"];
   return layoutList;
  }
 
@@ -658,8 +656,6 @@ class Layout {
  }
 
  setLayout(layoutName="default"){
-  if (layoutName=="vertexFocused" && this.focus.type!="Node" && this.graph.nodes.length>0) this.setFocus(this.graph.nodes[0]);
-  if (layoutName=="edgeFocused" && this.focus.type!="Edge" && this.graph.edges.length>0) this.setFocus(this.graph.edges[0]);
   if (this.isAllowed(layoutName)){
    this.layoutName = layoutName;
    return true;
@@ -673,9 +669,9 @@ class Layout {
   this.removeFocus();
   this.focus = ((focusObject.type=="Node" || focusObject.type=="Edge")? focusObject : "none");
   if (this.focus.type=="Node"){
-   this.focus.svg.classList.add("focusNode");
+   this.focus.svg.classList.add("focusNode"); // highlight the focus node
   } else if (this.focus.type=="Edge"){
-   this.focus.svg.classList.add("focusEdge");
+   this.focus.svg.classList.add("focusEdge"); // highlight the focus edge
   }
  }
 
@@ -804,6 +800,7 @@ class Layout {
    if (this.focus.type!="Node" || this.graph.findNode(this.focus.name).length==0){ // test type and presence in the graph
     console.log("Focus object not set");
     alert("Vertex-focused layout requested but the focus vertex is not set");
+    this.setfocus(); // if there was an invalid (eg. removed) entry, unset it as the focus object
     return false;
    } else {
     // 1. put the focus object at the centre
@@ -815,18 +812,15 @@ class Layout {
     this.graph.updateDistanceMatrix();
 
     this.focus.setAltLocation(this.centralLocation());
-    var dmax = maxFiniteElement(this.graph.distanceMatrix[this.focus.n]);
+    var dmax = maxFiniteElement(this.graph.distanceMatrix[this.focus.n]); // this could be limited to the focus object's connected component...
 
     for (var i=0;i<this.graph.nodes.length;i++){
      if (this.graph.nodes[i].n!=this.focus.n){
       // scale the circle according to the distance to the focus node:
       var d = this.graph.distanceMatrix[this.focus.n][i];
       var s = d/dmax;
-      if (s==Infinity){
-       this.graph.nodes[i].setAltLocation(this.randomCircleLocation(1.1)); // put detached nodes just outside the circle
-      } else {
-       this.graph.nodes[i].setAltLocation(this.randomCircleLocation(s));
-      }
+      if (s==Infinity) s = 1.1; // put detached nodes just outside the circle
+      this.graph.nodes[i].setAltLocation(this.randomCircleLocation(s));
      }
     }
 

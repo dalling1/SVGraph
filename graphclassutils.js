@@ -65,10 +65,12 @@ function toggleSelfEdges(graph){
 }
 
 function sampleEdge(id){
+ thegraph.layout.setFocus(thegraph.findEdge(id)[0]);
  console.log("Clicked edge "+id);
 }
 
 function sampleNode(id){
+ thegraph.layout.setFocus(thegraph.findNode(id)[0]);
  console.log("Clicked node "+id);
 }
 
