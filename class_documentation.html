@@ -267,7 +267,7 @@
  <tr><td>nodeLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns coordinates for one node, dependant on the graph's <tt>layout</tt> attribute.</td></tr>
  <tr><td>shuffleNodePositions</td><td>-</td><td>-</td><td>Moves SVG objects representing nodes to new positions based on the graph Layout. The existing position is stored in the node's alternative coordinates.</td></tr>
  <tr><td>toggleNodePositions</td><td>-</td><td>-</td><td>Moves nodes back and forth between their coordinates (<tt>x</tt>, <tt>y</tt>, <tt>z</tt> attributes) and their alternative coordinates (<tt>altx</tt>, <tt>alty</tt>, <tt>altz</tt> attributes).</td></tr>
- <tr><td>draw</td><td>-</td><td>-</td><td>Updates the alternative location for each node in this layout's graph and then moves them there. Positioning is done according to the layout name.</td></tr>
+ <tr><td>draw</td><td>-</td><td>Boolean</td><td>Updates the alternative location for each node in this layout's graph and then moves them there. Positioning is done according to the layout name. Returns true if the draw was successful, false if not (for example, trying to draw a focus layout when the focus object is not set or has been removed).</td></tr>
 </table>
 
 </body>

@@ -801,9 +801,10 @@ class Layout {
 
 
   } else if (this.layoutName=="vertexFocused") { // vertexFocused
-   if (this.focus.type!="Node"){
+   if (this.focus.type!="Node" || this.graph.findNode(this.focus.name).length==0){ // test type and presence in the graph
     console.log("Focus object not set");
     alert("Vertex-focused layout requested but the focus vertex is not set");
+    return false;
    } else {
     // 1. put the focus object at the centre
     // 2. loop through the other nodes:
@@ -815,7 +816,6 @@ class Layout {
 
     this.focus.setAltLocation(this.centralLocation());
     var dmax = maxFiniteElement(this.graph.distanceMatrix[this.focus.n]);
-console.log("Max distance = "+dmax);
 
     for (var i=0;i<this.graph.nodes.length;i++){
      if (this.graph.nodes[i].n!=this.focus.n){
@@ -843,6 +843,8 @@ console.log("Max distance = "+dmax);
 
   // now move the nodes to their newly-set alternative positions:
   this.toggleNodePositions();
+
+  return true;
  }
 
 }
