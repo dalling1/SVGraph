@@ -337,7 +337,7 @@ class Graph {
   }
  }
 
- updateConnectivityMatrix(steps){
+ updateConnectivityMatrix(){
   // entries are true if there is a finite-length path between nodes i and j
   this.updateDistanceMatrix(); // we could test whether this is required or not
   this.connectivityMatrix = this.distanceMatrix.map(function(x){return x.map(function(z){return z<Infinity;})});
@@ -345,6 +345,7 @@ class Graph {
 
  updateConnectedComponents(){
   // computes an array of arrays, each containing nodes connected to each other
+  this.updateConnectivityMatrix();
   // loop over all nodes
   for (var i=0;i<this.nodes.length;i++){
    // test whether this node is in an already-identified connected component
