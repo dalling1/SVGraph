@@ -20,6 +20,7 @@ class Graph {
   this.adjacencyMatrix = new Array(); // initialise; boolean
   this.distanceMatrix = new Array(); // initialise; integers
   this.connectivityMatrix = new Array(); // initialise; boolean
+  this.connectedComponents = new Array(); // initialise; arrays of nodes
  }
 
  /*
