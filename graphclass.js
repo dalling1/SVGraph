@@ -800,7 +800,7 @@ class Layout {
    if (this.focus.type!="Node" || this.graph.findNode(this.focus.name).length==0){ // test type and presence in the graph
     console.log("Focus object not set");
     alert("Vertex-focused layout requested but the focus vertex is not set");
-    this.setfocus(); // if there was an invalid (eg. removed) entry, unset it as the focus object
+    this.setFocus(); // if there was an invalid (eg. removed) entry, unset it as the focus object
     return false;
    } else {
     // 1. put the focus object at the centre
