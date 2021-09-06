@@ -229,3 +229,49 @@ function maxFiniteElement(array){
  for (var i=0;i<array.length;i++) if (array[i]>M && array[i]!=Infinity) M = array[i];
  return M;
 }
+
+function treeSize(valency,depth){
+ // Note: depth of zero means a single node with no neighbours
+ var N = 0;
+ var Nnodes = 0;
+ for (var d=0;d<=depth;d++){
+  if (d==0){
+   N = 1;
+  } else if (d==1){
+   N = valency;
+  } else {
+   N = N*(valency-1);
+  }
+  Nnodes += N;
+ }
+ return Nnodes;
+}
+
+function makeTree(valency=0,depth=0){
+ var tree = new Graph('tree');
+ tree.allowSelfEdges = false;
+ tree.alwaysUseBezier = false;
+ tree.addNodes(1);
+ var N = treeSize(valency,depth);
+
+ for (var i=0;i<tree.nodes.length;i++){
+  // add V-1 children to each node and connect them to their parent with a new edge
+  // root node is a special case: it needs V children
+  // stop when we have the complete tree (ie. have N ndoes)
+  var branch = tree.nodes[i]; // this node (the "parent")
+  if (tree.findEdgesTo(branch).length==0){ // needed?
+   for (var v=0;v<valency;v++){
+    if (i==0 || v>0){ // skip v=0 unless this is the root node
+     tree.addNodes(1);
+     var leaf = tree.nodes[tree.nodes.length-1]
+     tree.addEdge(randomName(),branch,leaf);
+    }
+   }
+   if (tree.nodes.length>=N) break; // stop when enough nodes have been added
+  }
+ }
+
+ tree.layout.setLayout('vertexFocused');
+ tree.layout.setFocus(tree.nodes[0]); // set the root node as the focus for now
+ return tree;
+}
