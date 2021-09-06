@@ -370,6 +370,39 @@ class Graph {
   this.layout.draw();
  }
 
+ addTree(valency=0,depth=0){
+  this.allowSelfEdges = false;
+  this.alwaysUseBezier = false;
+  var N = treeSize(valency,depth);
+  var existingN = this.nodes.length;
+
+  this.addNodes(1);
+  var root = this.nodes[this.nodes.length-1];
+  var counter = 1; // for keeping track of how many nodes we have added
+
+  for (var i=0;i<N;i++){ // actually we will stop when the number of nodes added is N
+   // add V-1 children to each node and connect them to their parent with a new edge
+   // root node is a special case: it needs V children
+   // stop when we have the complete tree (ie. have N ndoes)
+   var branch = this.nodes[existingN+i]; // this node (the "parent")
+   if (this.findEdgesTo(branch).length==0){ // needed?
+    for (var v=0;v<valency;v++){
+     if (counter==1 || v>0){ // skip v=0 unless this is the root node
+      this.addNodes(1);
+      counter++;
+      var leaf = this.nodes[this.nodes.length-1]
+      this.addEdge(randomName(),branch,leaf);
+     }
+    }
+    if (counter>=N) break; // stop when enough nodes have been added
+   }
+  }
+
+//  this.layout.setLayout('vertexFocused');
+  this.layout.setFocus(root); // set the root node as the focus for now
+  return N;
+ }
+
 }
 
 // node class /////////////////////////////////////////////////////////////////////////////////////
