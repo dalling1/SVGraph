@@ -246,3 +246,23 @@ function moveDuplicates(delta=20){
 
 }
 */
+
+function circleLocation(centre,radius,angle){
+ var x = Math.round(centre[0] + radius*Math.sin(angle));
+ var y = Math.round(centre[1] + radius*Math.cos(angle));
+ return [x,y];
+}
+
+function spacedCircleLocation(centre,radius,valency,depth,n){
+ // Place nodes around a circle, evenly spaced; number is determined by valency and depth
+ // Return the nth of those positions
+ // if n is zero-indexed, n=0 will give the position at angle=0, otherwise n=N will be angle=2*Pi==0
+ var angleSpacing = 2*Pi/treeShellCount(valency,depth);
+ var angle = angleSpacing*n;
+ return circleLocation(centre,radius,angle);
+}
+
+function treeShellCount(valency,depth){
+ if (depth==0) return 1;
+ return valency*Math.pow(valency-1,depth-1);
+}

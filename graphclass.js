@@ -90,9 +90,9 @@ class Graph {
   return true;
  }
 
- addNodes(n=1){
+ addNodes(n=1,radiusRange=[4,10]){
   var counter = 0;
-  for (var i=0;i<n;i++) if (this.addNode(randomName(),this.layout.nodeLocation(),randomRadius([4,10]))) counter++;
+  for (var i=0;i<n;i++) if (this.addNode(randomName(),this.layout.nodeLocation(),randomRadius(radiusRange))) counter++;
   return counter;
  }
 
@@ -375,8 +375,9 @@ class Graph {
   this.alwaysUseBezier = false;
   var N = treeSize(valency,depth);
   var existingN = this.nodes.length;
+  var treeNodeRadiusRange = [3,3];
 
-  this.addNodes(1);
+  this.addNodes(1,treeNodeRadiusRange);
   var root = this.nodes[this.nodes.length-1];
   var counter = 1; // for keeping track of how many nodes we have added
 
@@ -384,11 +385,11 @@ class Graph {
    // add V-1 children to each node and connect them to their parent with a new edge
    // root node is a special case: it needs V children
    // stop when we have the complete tree (ie. have N ndoes)
-   var branch = this.nodes[existingN+i]; // this node (the "parent")
+   var branch = this.nodes[existingN+i]; // the "parent" of the tree (the node added above to start the tree)
    if (this.findEdgesTo(branch).length==0){ // needed?
     for (var v=0;v<valency;v++){
      if (counter==1 || v>0){ // skip v=0 unless this is the root node
-      this.addNodes(1);
+      this.addNodes(1,treeNodeRadiusRange);
       counter++;
       var leaf = this.nodes[this.nodes.length-1]
       this.addEdge(randomName(),branch,leaf);
@@ -398,7 +399,11 @@ class Graph {
    }
   }
 
-//  this.layout.setLayout('vertexFocused');
+  this.numberNodes();
+  this.updateDegreeMatrix();
+  this.updateDistanceMatrix();
+
+//  this.layout.setLayout('treeVertexFocused');
   this.layout.setFocus(root); // set the root node as the focus for now
   return N;
  }
@@ -679,7 +684,7 @@ class Layout {
  */
 
  allowedLayouts(){
-  var layoutList = ["default","randomRectangle","randomCircle","randomGrid","vertexFocused"];
+  var layoutList = ["default","randomRectangle","randomCircle","randomGrid","vertexFocused","treeVertexFocused"];
   return layoutList;
  }
 
@@ -738,6 +743,17 @@ class Layout {
   var H = Y - this.graph.border[0];
   var R = Math.min(W,H);
   return randomCircleLocation([X,Y],R*s);
+ }
+
+ spacedCircleLocation(s=1.0,valency,depth,n){
+  // generate a random location on the circle centred on the page and which fits within the graph's border,
+  // scaled by the factor s (ie. scale the circle's diameter)
+  var X = 0.5*window.innerWidth;
+  var Y = 0.5*window.innerHeight;
+  var W = X - this.graph.border[0];
+  var H = Y - this.graph.border[0];
+  var R = Math.min(W,H);
+  return spacedCircleLocation([X,Y],R*s,valency,depth,n);
  }
 
  randomGridLocations(n=1){
@@ -840,13 +856,16 @@ class Layout {
     // 2. loop through the other nodes:
     //    - place each node on a concentric circle about the focus
     //    - with the radius determined by the node's distance (in the graph) from the focus
-    //    ... need the distance matrix for that:
-    this.graph.numberNodes();
+
+    // do these every time, for now:
+    this.graph.updateDegreeMatrix();
     this.graph.updateDistanceMatrix();
 
+    // place the focus node
     this.focus.setAltLocation(this.centralLocation());
     var dmax = maxFiniteElement(this.graph.distanceMatrix[this.focus.n]); // this could be limited to the focus object's connected component...
 
+    // loop over other nodes and place them
     for (var i=0;i<this.graph.nodes.length;i++){
      if (this.graph.nodes[i].n!=this.focus.n){
       // scale the circle according to the distance to the focus node:
@@ -855,6 +874,53 @@ class Layout {
       if (s==Infinity) s = 1.1; // put detached nodes just outside the circle
       this.graph.nodes[i].setAltLocation(this.randomCircleLocation(s));
      }
+    }
+
+   }
+
+
+  } else if (this.layoutName=="treeVertexFocused") { // treeVertexFocused
+   if (this.focus.type!="Node" || this.graph.findNode(this.focus.name).length==0){ // test type and presence in the graph
+    console.log("Focus object not set");
+    alert("Vertex-focused tree layout requested but the focus vertex is not set");
+    this.setFocus(); // if there was an invalid (eg. removed) entry, unset it as the focus object
+    return false;
+   } else {
+    // 1. put the focus node at the centre,
+    // 2. compute dmax, the maximum distance of any connected node from the focus node
+    // 3. find the Nd nodes at distance d from the focus node
+    // 4. spread them around the circle with scale d/dmax
+    // Nb. if needed, we could approximate the degree of the tree by the maximum degree of any node connected to the focus node
+
+    // do these every time, for now:
+    this.graph.updateDegreeMatrix();
+    this.graph.updateDistanceMatrix();
+
+    // estimate the valency of the graph using the maximum degree
+    var valency = maxFiniteElement(matrixDiagonal(this.graph.degreeMatrix));
+
+    // put the focus node at the centre
+    this.focus.setAltLocation(this.centralLocation());
+    // find the distance to the furthest connected node from the focus node
+    var dmax = maxFiniteElement(this.graph.distanceMatrix[this.focus.n]); // this could be limited to the focus object's connected component...
+    // loop over the distances moving away from the focus node
+    for (var r=1;r<=dmax;r++){
+     // find the indices of nodes at distance r from the focus node
+     var distRnodes = this.graph.distanceMatrix[this.focus.n].map((val,indx) => val == r ? indx : undefined).filter(x => x !== undefined);
+     // loop over them and set their alt locations
+     for (var i=0;i<distRnodes.length;i++){
+      // these nodes belong on a circle of radius scale s = r/dmax from the centre, with position angles determined by the valency, r and their "n"
+      var s = r/dmax;
+      this.graph.nodes[distRnodes[i]].setAltLocation(   this.spacedCircleLocation(s,valency,r,i)  );
+     }
+    }
+
+    // finally, place nodes which are not connected to the focus node (distance is infinity)
+//    var r = Infinity;
+    var distRnodes = this.graph.distanceMatrix[this.focus.n].map((val,indx) => val == Infinity ? indx : undefined).filter(x => x !== undefined);
+    var s = 1.1; // put detached nodes just outside the outer circle
+    for (var i=0;i<distRnodes.length;i++){
+     this.graph.nodes[distRnodes[i]].setAltLocation(   this.spacedCircleLocation(s,valency,r+1,i)  );
     }
 
    }

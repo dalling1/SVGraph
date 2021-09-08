@@ -271,7 +271,15 @@ function makeTree(valency=0,depth=0){
   }
  }
 
- tree.layout.setLayout('vertexFocused');
+// tree.layout.setLayout('vertexFocused');
+ tree.layout.setLayout('treeVertexFocused');
  tree.layout.setFocus(tree.nodes[0]); // set the root node as the focus for now
  return tree;
+}
+
+function matrixDiagonal(M){
+ if (M.length>0) if (M.length != M[0].length) return false;
+ var diag = new Array(M.length);
+ for (var i=0;i<M.length;i++) diag[i] = M[i][i];
+ return diag;
 }
