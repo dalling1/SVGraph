@@ -719,6 +719,8 @@ class Layout {
   for (var i=F.length;i>0;i--) F[i-1].classList.remove("focusNode");
   F = document.getElementsByClassName("focusEdge");
   for (i=F.length;i>0;i--) F[i-1].classList.remove("focusEdge");
+  // and unset the layout's focus object
+  this.focus = "none";
  }
 
  randomRectangleLocation(){
@@ -746,8 +748,9 @@ class Layout {
  }
 
  spacedCircleLocation(s=1.0,valency,depth,n){
-  // generate a random location on the circle centred on the page and which fits within the graph's border,
+  // generate an incremental location on the circle centred on the page and which fits within the graph's border,
   // scaled by the factor s (ie. scale the circle's diameter)
+  // ie. work out the even spacing of nodes on the required circle, and return the coordinates of the nth of those locations
   var X = 0.5*window.innerWidth;
   var Y = 0.5*window.innerHeight;
   var W = X - this.graph.border[0];

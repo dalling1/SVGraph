@@ -102,8 +102,9 @@
  <tr><td>addEdges</td><td>n [Integer]</td><td>Integer</td><td>Adds up to n edges between randomly-chosen nodes in the graph; default n = 1. Returns the number of edges actually created (consider, for example, the case where self-edges are not allowed).</td></tr>
  <tr><td>findEdge</td><td>name [String]</td><td>Array of Edges</td><td>Returns the Edge object with the given name.</td></tr>
  <tr><td>findEdges</td><td>name_regexp [String]</td><td>Array of Edges</td><td>Returns an array containing the Edge objects in the graph whose names match the given regular expression string.</td></tr>
- <tr><td>findEdgesTo</td><td>name [String]</td><td>Array of Edges</td><td>Returns an array containing the Edge objects in the graph which are connected to the node with the given name.</td></tr>
+ <tr><td>findEdgesTo</td><td>name [String]</td><td>Array of Edges</td><td>Returns an array containing the Edge objects in the graph which are connected to the node with the given name (either <tt>from</tt> or <tt>to</tt> the node, undirected).</td></tr>
  <tr><td>findEdgesToMatch</td><td>name_regexp [String]</td><td>Array of Edges</td><td>Returns an array of Edges in the graph which are connected to any nodes matching the given regular expression string.</td></tr>
+ <tr><td>findEdgesFromTo</td><td>from [String]<br/>to [String]</td><td>Array of Edges</td><td>Returns an array of Edges in the graph which connect the nodes with the given names (undirected).</td></tr>
  <tr><td>excludeEdgesTo</td><td>name [String]</td><td>Array of Edges</td><td>Returns a list of all edges in the graph which do not connect to the node with the given name.</td></tr>
  <tr><td>removeEdge</td><td>edge [Edge] <em>or</em> name [String]</td><td>Boolean</td><td>Removes the given edge from the graph.</td></tr>
  <tr><td>removeNewestEdge</td><td>-</td><td>Boolean</td><td>Removes the most recently added edge from the graph.</td></tr>
@@ -119,6 +120,7 @@
  <tr><td>updateConnectivityMatrix</td><td>-</td><td>-</td><td>Calls the updateDistanceMatrix() method and then calculates the graph's connectivity matrix and stores it in the <tt>connectivityMatrix</tt> attribute.</td></tr>
  <tr><td>updateConnectedComponents</td><td>-</td><td>-</td><td>Computes an array of the graph's connected components and stores it in the <tt>connectedComponents</tt> attribute. The graph's adjacency, distance and connectivity matrices are updated in the process.</td></tr>
  <tr><td>draw</td><td>-</td><td>-</td><td>Positions the graph's nodes and edges using the graph's layout (calls the draw() method for the Layout object).</td></tr>
+ <tr><td>addTree</td><td>valency [Integer]<br/>depth [Integer]</td><td>Integer</td><td>Addes nodes and edges forming a tree to the graph, unconnected to any existing nodes. The root node is set as the graph's layout focus object.</td></tr>
 </table>
 
 
@@ -260,8 +262,10 @@
  <tr><td>isAllowed</td><td>layoutName [String]</td><td>Boolean</td><td>Returns true if the given name is a legal layout name.</td></tr>
  <tr><td>setLayout</td><td>layoutName [String]</td><td>Boolean</td><td>Sets the Layout object's layout to the given one.</td></tr>
  <tr><td>setFocus</td><td>focusObject [Edge <em>or</em> Node]</td><td>-</td><td>Sets the <tt>focusObject</tt> attribute of the Layout object.</td></tr>
+ <tr><td>removeFocus</td><td>-</td><td>-</td><td>Sets the <tt>focusObject</tt> attribute of the Layout object to "none", and removes the focus CSS class from any existing focus object.</td></tr>
  <tr><td>randomRectangleLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns a random location within a rectangle defined by the HTML window and the graph's <tt>border</tt> attribute.</td></tr>
  <tr><td>randomCircleLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns a random location on the circle within the HTML window bounded by the graph's <tt>border</tt> attribute.</td></tr>
+ <tr><td>spacedCircleLocation</td><td>s [Float]<br/>valency [Integer]<br/>depth [Integer]<br/>n [Integer]</td><td>Array of 3 Integers</td><td>Returns the nth location on a circle, containing the number of nodes at distance <tt>depth</tt> from the focus node, assuming that the graph is a tree with valency <tt>valency</tt>, whose radius is scaled by <tt>s</tt> and <tt>s=1</tt> corresponds to the circle which just fits within the HTML window bounded by the graph's <tt>border</tt> attribute.</td></tr>
  <tr><td>randomGridLocations</td><td>n [Integer]</td><td>Array of Arrays of 3 Integers</td><td>Returns n locations, each close to points on an N-by-M grid within the graph's border, jittered to reduce co-incidence of the locations. Default n = 1; N and M are currently fixed.</td></tr>
  <tr><td>centralLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns the coordinates of the centre of the HTML window.</td></tr>
  <tr><td>nodeLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns coordinates for one node, dependant on the graph's <tt>layout</tt> attribute.</td></tr>
