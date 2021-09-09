@@ -128,6 +128,48 @@
    <div onclick="removeGraphNodes(thegraph,100);">-100</div>
    <div onclick="removeGraphNodes(thegraph,10)">-10</div>
    <div onclick="removeGraphNodes(thegraph,1)">-1</div>
+
+   <!-- control for adding a tree subgraph -->
+   <div class="controlwrapper" style="pointer:initial;" title="Adds a tree subgraph">
+    <div class="onecontrol">
+     Valency<br/>
+     <select id="choosevalency">
+      <option value="0">valency</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3" selected>3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+      <option value="10">10</option>
+     </select>
+    </div>
+    <div class="onecontrol">
+     Depth<br/>
+     <select id="choosedepth">
+     <option value="0">depth</option>
+      <option value="1">1</option>
+      <option value="2" selected>2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+      <option value="10">10</option>
+     </select>
+    </div>
+
+    <div onclick="thegraph.addTree(parseInt(document.getElementById('choosevalency').value),parseInt(document.getElementById('choosedepth').value));";>
+     Add tree
+    </div>
+
+   </div>
+
   </div>
   <svg id="thesvg" data-primary-graph="" data-secondary-graph=""></svg>
 
