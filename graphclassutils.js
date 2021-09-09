@@ -283,3 +283,13 @@ function matrixDiagonal(M){
  for (var i=0;i<M.length;i++) diag[i] = M[i][i];
  return diag;
 }
+
+function isSymmetric(M){
+ if (M.length>0) if (M.length != M[0].length) return false; // not square so not symmetric
+ for (var i=0;i<M.length;i++){
+  for (var j=i+1;j<M[i].length;j++){
+   if (M[i][j] != M[j][i]) return false;
+  }
+ }
+ return true;
+}
