@@ -258,7 +258,7 @@ function spacedCircleLocation(centre,radius,valency,depth,n){
  // Return the nth of those positions
  // if n is zero-indexed, n=0 will give the position at angle=0, otherwise n=N will be angle=2*Pi==0
  var angleSpacing = 2*Pi/treeShellCount(valency,depth);
- var angle = angleSpacing*n;
+ var angle = angleSpacing*(n+0.5);
  return circleLocation(centre,radius,angle);
 }
 
