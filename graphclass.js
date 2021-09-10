@@ -316,17 +316,25 @@ class Graph {
 
   for (var n=2;n<N;n++){
    // set P = A^i: P's entries are the number of paths of length n between nodes (even when "usingOnes"?)
-   if (n>0) P = multiplyMatrices(this.adjacencyMatrix,P);
+   P = multiplyMatricesUsingOnes(this.adjacencyMatrix,P);
    // for two nodes, i and j:
-   //  if there is a zero entry in D (no shorter path exists) and a non-zero entry in P, set D[i][j] to n
+   //  - if there is a zero entry in D (no shorter path exists) and a non-zero entry in P, set D[i][j] to n
    // Note: a node is always 0 distance from itself, that is, when i=j
-   // Note: the value in P is the number of paths of length n between the nodes i and j
+   // Note: the value in P is the number of paths of length n between the nodes i and j [not when using the "UsingOnes" version of multiplication]
    for (var i=0;i<N;i++){
     for (var j=0;j<N;j++){
-     if (i!=j) if (this.distanceMatrix[i][j] == 0 && P[i][j] != 0) this.distanceMatrix[i][j] = n;
+     if (i!=j && this.distanceMatrix[i][j] == 0 && P[i][j] != 0){
+      this.distanceMatrix[i][j] = n;
+     }
     }
    }
   }
+
+  // nodes are 0 distance from themselves:
+  for (var i=0;i<this.distanceMatrix.length;i++){
+   this.distanceMatrix[i][i] = 0; // 999 during testing
+  }
+
   // now re-work the distance matrix to indicate infinite path lengths for nodes which are not connected
   for (var i=0;i<N;i++){
    for (var j=0;j<N;j++){
