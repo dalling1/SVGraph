@@ -206,9 +206,12 @@ function multiplyMatricesUsingOnes(A,B){
   AB[i] = Array(B[0].length).fill(0);
   for (var j=0;j<AB[i].length;j++){
    // for this element of AB, test the usual element value, replacing non-zero values with "1"
-   for (k=0;k<A[i].length;k++) if (A[i][k]*B[k][j]!=0){
-    AB[i][j]=1;
-    break; // this element of the product is non-zero, so we can stop calculating it
+   // this approach could fail if there are negative non-zero entries which result in zero-valued entries in the product...
+   for (k=0;k<A[i].length;k++){
+    if (A[i][k]*B[k][j]!=0){
+     AB[i][j]=1;
+     break; // this element of the summation for this element of the product is non-zero, so we can stop calculating it this i,j element
+    }
    }
   }
  }
