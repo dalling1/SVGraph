@@ -62,6 +62,7 @@ class Graph {
    updateDistanceMatrix
    updateConnectivityMatrix
    updateConnectedComponents
+   addTree
    draw
 
  */
