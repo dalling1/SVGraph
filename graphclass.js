@@ -288,11 +288,12 @@ class Graph {
  }
 
  updateDegreeMatrix(){
+  this.numberNodes;
   this.degreeMatrix = new Array(this.nodes.length);
-  for (var i=0;i<this.nodes.length;i++){
-   this.degreeMatrix[i] = new Array(this.nodes.length);
-   this.degreeMatrix[i][i] = this.findEdgesTo(this.nodes[i].name).length;
-  }
+  // initialise the degree matrix, filled with zeros
+  for (var i=0;i<this.nodes.length;i++) this.degreeMatrix[i] = new Array(this.nodes.length).fill(0);
+  // now work through the list of edges and increment the degree of their ends
+  for (var i=0;i<this.edges.length;i++) this.degreeMatrix[this.edges[i].from.n][this.edges[i].to.n]++;
  }
 
  updateAdjacencyMatrix(){
