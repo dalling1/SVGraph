@@ -301,15 +301,14 @@ class Graph {
 
  updateAdjacencyMatrix(){
   this.adjacencyMatrix = new Array(this.nodes.length);
+  // initialise adjacency matrix and fill with false
   for (var i=0;i<this.nodes.length;i++){
-   this.adjacencyMatrix[i] = new Array(this.nodes.length).fill(0);
-   var edges = this.findEdgesTo(this.nodes[i].name);
-   for (var j=0;j<edges.length;j++){
-    // use the "from" or "to" node?
-    if (edges[j].from.name == this.nodes[i].name) var otherNodeN = edges[j].to.n;
-    else var otherNodeN = edges[j].from.n;
-    this.adjacencyMatrix[i][otherNodeN] += 1;
-   }
+   this.adjacencyMatrix[i] = new Array(this.nodes.length).fill(false);
+  }
+  // loop over all edges in the graph and set the adjacency matrix entries according to their end-points
+  for (var i=0;i<this.edges.length;i++){
+   this.adjacencyMatrix[this.edges[i].from.n][this.edges[i].to.n] = true;
+   this.adjacencyMatrix[this.edges[i].to.n][this.edges[i].from.n] = true;
   }
  }
 
