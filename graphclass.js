@@ -60,7 +60,6 @@ class Graph {
    updateDegreeMatrix
    updateAdjacencyMatrix
    updateDistanceMatrix
-   updateConnectivityMatrix
    updateConnectedComponents
    draw
    addTree
@@ -316,53 +315,62 @@ class Graph {
   }
  }
 
- updateDistanceMatrix(){
-  this.updateAdjacencyMatrix(); // we could test whether this is required or not
-  var N = this.nodes.length;
-  this.distanceMatrix = multiplyMatricesUsingOnes(this.adjacencyMatrix,identityMatrix(N)); // initial distances are 1 if there is an edge between nodes
-  var P = multiplyMatricesUsingOnes(this.adjacencyMatrix,identityMatrix(N)); // path-length matrix
+ updateDistanceMatrix(forceUpdate=false){
+  // test whether the adjacency matrix is valid:
+  if (this.validAdjacencyMatrix() && !forceUpdate){
+   // yes, so assume the distance matrix is okay, unless we are forcing an update
+   // ie. do nothing
+   return false; // we DIDN'T update the distance matrix
+  } else {
+   console.log("Updating distance matrix");
+   this.updateAdjacencyMatrix(); // we could test whether this is required or not, but it is fast anyway
+   var N = this.nodes.length;
+   this.distanceMatrix = multiplyMatricesUsingOnes(this.adjacencyMatrix,identityMatrix(N)); // initial distances are 1 if there is an edge between nodes
+   var P = multiplyMatricesUsingOnes(this.adjacencyMatrix,identityMatrix(N)); // path-length matrix
 
-  for (var n=2;n<N;n++){
-   // set P = A^i: P's entries would be the number of paths of length n between nodes, but the "usingOnes" shortcut obviates this
-   // it is, however, 6 or 7 times faster than "regular" matrix multiplication [but does assume non-negative entries in the adjacency matrix, which could break if edges had negative weights, say]
-   P = multiplyMatricesUsingOnes(this.adjacencyMatrix,P);
-   // for two nodes, i and j:
-   //  - if there is a zero entry in D (no shorter path exists) and a non-zero entry in P, set D[i][j] to n
-   // Note: a node is always 0 distance from itself, that is, when i=j
-   // Note: the value in P is the number of paths of length n between the nodes i and j [not when using the "UsingOnes" version of multiplication]
-   for (var i=0;i<N;i++){
-    for (var j=0;j<N;j++){
-     if (i!=j && this.distanceMatrix[i][j] == 0 && P[i][j] != 0){
-      this.distanceMatrix[i][j] = n;
+   for (var n=2;n<N;n++){
+    // set P = A^i: P's entries would be the number of paths of length n between nodes, but the "usingOnes" shortcut obviates this
+    // it is, however, 6 or 7 times faster than "regular" matrix multiplication [but does assume non-negative entries in the adjacency matrix, which could break if edges had negative weights, say]
+    P = multiplyMatricesUsingOnes(this.adjacencyMatrix,P);
+    // for two nodes, i and j:
+    //  - if there is a zero entry in D (no shorter path exists) and a non-zero entry in P, set D[i][j] to n
+    // Note: a node is always 0 distance from itself, that is, when i=j
+    // Note: the value in P is the number of paths of length n between the nodes i and j [not when using the "UsingOnes" version of multiplication]
+    for (var i=0;i<N;i++){
+     for (var j=0;j<N;j++){
+      if (i!=j && this.distanceMatrix[i][j] == 0 && P[i][j] != 0){
+       this.distanceMatrix[i][j] = n;
+      }
      }
     }
    }
-  }
 
-  // nodes are 0 distance from themselves:
-  for (var i=0;i<this.distanceMatrix.length;i++){
-   this.distanceMatrix[i][i] = 0; // 999 during testing
-  }
+   // nodes are 0 distance from themselves:
+   for (var i=0;i<this.distanceMatrix.length;i++){
+    this.distanceMatrix[i][i] = 0; // 999 during testing
+   }
 
-  // now re-work the distance matrix to indicate infinite path lengths for nodes which are not connected
-  for (var i=0;i<N;i++){
-   for (var j=0;j<N;j++){
-    if (this.distanceMatrix[i][j]==0 && i!=j){
-     this.distanceMatrix[i][j] = Infinity;
+   // now re-work the distance matrix to indicate infinite path lengths for nodes which are not connected
+   for (var i=0;i<N;i++){
+    for (var j=0;j<N;j++){
+     if (this.distanceMatrix[i][j]==0 && i!=j){
+      this.distanceMatrix[i][j] = Infinity;
+     }
     }
    }
-  }
- }
 
- updateConnectivityMatrix(){
-  // entries are true if there is a finite-length path between nodes i and j
-  this.updateDistanceMatrix(); // we could test whether this is required or not
-  this.connectivityMatrix = this.distanceMatrix.map(function(x){return x.map(function(z){return z<Infinity;})});
+   // and, finally, update the connectivity matrix
+   // (we don't do anything with the connected components here, call that separately if needed)
+   this.connectivityMatrix = this.distanceMatrix.map(function(x){return x.map(function(z){return z<Infinity;})});
+
+   return true; // we DID update the distance matrix
+  }
+
  }
 
  updateConnectedComponents(){
   // computes an array of arrays, each containing nodes connected to each other
-  this.updateConnectivityMatrix();
+  this.updateDistanceMatrix();
   // loop over all nodes
   for (var i=0;i<this.nodes.length;i++){
    // test whether this node is in an already-identified connected component
@@ -437,6 +445,7 @@ class Graph {
    // 2. check that each row of the adjacency matrix is the right length
    for (var i=0;i<this.adjacencyMatrix.length;i++){
     if (this.adjacencyMatrix[i].length != this.nodes.length){
+console.log("fail1: wrong size");
      return false;
     }
    }
@@ -445,6 +454,7 @@ class Graph {
    // 3. count the number of 'true' entries in the adjacency matrix and test whether there are too many
    //    (too few is okay: it means that there are multi-edges) (recall that each undirected edge is present twice in the matrix)
    if (matrixSum(this.adjacencyMatrix) > 2*this.edges.length){
+console.log("fail2: too many entries");
     return false;
    }
 
@@ -454,6 +464,7 @@ class Graph {
     var n1 = this.edges[i].from.n;
     var n2 = this.edges[i].to.n;
     if (!(this.adjacencyMatrix[n1][n2] && this.adjacencyMatrix[n2][n1])){
+console.log("fail3: missing an edge");
      return false;
     }
    }
