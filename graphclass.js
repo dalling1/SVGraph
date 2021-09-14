@@ -213,7 +213,10 @@ class Graph {
  }
 
  findEdgesFromTo(from,to){
-  // find edges which connect to the named vertices (undirected)
+  // find edges which connect to the given vertices (undirected)
+  // 'from' and 'to' can be Node objects or node names (strings)
+  if (typeof(from)=="object") var from = from.name;
+  if (typeof(to)=="object") var to = to.name;
   return this.edges.filter(function(edg){return (edg.from.name==from && edg.to.name==to) || (edg.from.name==to && edg.to.name==from)});
  }
 
