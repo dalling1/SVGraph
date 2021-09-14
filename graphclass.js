@@ -319,7 +319,8 @@ class Graph {
   var P = multiplyMatricesUsingOnes(this.adjacencyMatrix,identityMatrix(N)); // path-length matrix
 
   for (var n=2;n<N;n++){
-   // set P = A^i: P's entries are the number of paths of length n between nodes (even when "usingOnes"?)
+   // set P = A^i: P's entries would be the number of paths of length n between nodes, but the "usingOnes" shortcut obviates this
+   // it is, however, 6 or 7 times faster than "regular" matrix multiplication [but does assume non-negative entries in the adjacency matrix, which could break if edges had negative weights, say]
    P = multiplyMatricesUsingOnes(this.adjacencyMatrix,P);
    // for two nodes, i and j:
    //  - if there is a zero entry in D (no shorter path exists) and a non-zero entry in P, set D[i][j] to n
