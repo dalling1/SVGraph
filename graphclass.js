@@ -62,8 +62,9 @@ class Graph {
    updateDistanceMatrix
    updateConnectivityMatrix
    updateConnectedComponents
-   addTree
    draw
+   addTree
+   validAdjacencyMatrix
 
  */
 
@@ -422,6 +423,44 @@ class Graph {
 //  this.layout.setLayout('treeVertexFocused');
   this.layout.setFocus(root); // set the root node as the focus for now
   return N;
+ }
+
+ validAdjacencyMatrix(){
+  // compare the graph's adjacency matrix to the number of nodes and the edge list and see if they agree
+  // this information can be used to decide whether to update the distance matrix (a slow operation)
+
+  // 1. test that the matrix size agrees with the number of nodes: (even if there are no nodes)
+  var isvalid = (this.adjacencyMatrix.length == this.nodes.length);
+
+  // if there are no nodes, we are finished; otherwise:
+  if (isvalid && this.nodes.length){
+   // 2. check that each row of the adjacency matrix is the right length
+   for (var i=0;i<this.adjacencyMatrix.length;i++){
+    if (this.adjacencyMatrix[i].length != this.nodes.length){
+     return false;
+    }
+   }
+
+   // if it hasn't failed yet, continue:
+   // 3. count the number of 'true' entries in the adjacency matrix and test whether there are too many
+   //    (too few is okay: it means that there are multi-edges) (recall that each undirected edge is present twice in the matrix)
+   if (matrixSum(this.adjacencyMatrix) > 2*this.edges.length){
+    return false;
+   }
+
+   // if it hasn't failed yet, continue:
+   // 4. check that each edge is present in the matrix: two entries to check (for undirected edges)
+   for (var i=0;i<this.edges.length;i++){
+    var n1 = this.edges[i].from.n;
+    var n2 = this.edges[i].to.n;
+    if (!(this.adjacencyMatrix[n1][n2] && this.adjacencyMatrix[n2][n1])){
+     return false;
+    }
+   }
+
+  }
+
+  return isvalid;
  }
 
 }
