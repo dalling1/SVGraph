@@ -296,3 +296,15 @@ function isSymmetric(M){
  }
  return true;
 }
+
+function matrixSum(M){
+ var sum = 0;
+ if (M.length==0) return sum;
+ // otherwise:
+ for (var i=0;i<M.length;i++){
+  for (var j=0;j<M[i].length;j++){
+   sum += M[i][j];
+  }
+ }
+ return sum;
+}
