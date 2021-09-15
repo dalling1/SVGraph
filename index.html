@@ -182,7 +182,7 @@
   <div class="controlwrapper" style="pointer:initial;" title="Applies to new edges only">
     <span class="switchtext">straight</span>
     <label class="switch">
-     <input type="checkbox" id="edgestyle" onclick="toggleEdgeStyle(thegraph);">
+     <input type="checkbox" id="edgestyle" onclick="setEdgeStyle(thegraph,this.checked);">
      <span class="slider round"></span>
     </label>
     <span class="switchtext">Bezier</span>
@@ -192,7 +192,7 @@
   <div class="controlwrapper" style="pointer:initial;" title="Applies to new edges only">
     <span class="switchtext">self-edges</span>
     <label class="switch">
-     <input type="checkbox" id="selfedges" onclick="toggleSelfEdges(thegraph);">
+     <input type="checkbox" id="selfedges" onclick="setSelfEdges(thegraph,!this.checked);">
      <span class="slider round"></span>
     </label>
     <span class="switchtext">not allowed</span>

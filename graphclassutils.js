@@ -54,14 +54,16 @@ function toggle(graph){
  graph.layout.toggleNodePositions();
 }
 
-function toggleEdgeStyle(graph){
+function setEdgeStyle(graph,val){
  makePrimary(graph);
- graph.setAlwaysUseBezier(!graph.alwaysUseBezier);
+// graph.setAlwaysUseBezier(!graph.alwaysUseBezier);
+ graph.setAlwaysUseBezier(val);
 }
 
-function toggleSelfEdges(graph){
+function setSelfEdges(graph,val){
  makePrimary(graph);
- graph.setAllowSelfEdges(!graph.allowSelfEdges);
+// graph.setAllowSelfEdges(!graph.allowSelfEdges);
+ graph.setAllowSelfEdges(val);
 }
 
 function sampleEdge(id){
