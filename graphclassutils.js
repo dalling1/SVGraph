@@ -308,3 +308,14 @@ function matrixSum(M){
  }
  return sum;
 }
+
+function duplicateMatrix(M){
+ var A = [];
+ for (var i=0;i<M.length;i++){
+  A[i] = [];
+  for (var j=0;j<M[i].length;j++){
+   A[i][j] = M[i][j];
+  }
+ }
+ return A;
+}

@@ -326,7 +326,8 @@ class Graph {
    this.updateAdjacencyMatrix(); // we could test whether this is required or not, but it is fast anyway
    var N = this.nodes.length;
    this.distanceMatrix = multiplyMatricesUsingOnes(this.adjacencyMatrix,identityMatrix(N)); // initial distances are 1 if there is an edge between nodes
-   var P = multiplyMatricesUsingOnes(this.adjacencyMatrix,identityMatrix(N)); // path-length matrix
+   var P = duplicateMatrix(this.distanceMatrix); // path-length matrix, we will examine its powers
+   var isSym = isSymmetric(P); // adding this check saves about 10% [multiplying is the slow part]; note: P^n is symmetric if P is symmetric
 
    for (var n=2;n<N;n++){
     // set P = A^i: P's entries would be the number of paths of length n between nodes, but the "usingOnes" shortcut obviates this
@@ -337,9 +338,10 @@ class Graph {
     // Note: a node is always 0 distance from itself, that is, when i=j
     // Note: the value in P is the number of paths of length n between the nodes i and j [not when using the "UsingOnes" version of multiplication]
     for (var i=0;i<N;i++){
-     for (var j=0;j<N;j++){
+     for (var j=(isSym?i+1:0);j<N;j++){
       if (i!=j && this.distanceMatrix[i][j] == 0 && P[i][j] != 0){
        this.distanceMatrix[i][j] = n;
+       if (isSym) this.distanceMatrix[j][i] = n;
       }
      }
     }
@@ -352,9 +354,10 @@ class Graph {
 
    // now re-work the distance matrix to indicate infinite path lengths for nodes which are not connected
    for (var i=0;i<N;i++){
-    for (var j=0;j<N;j++){
+    for (var j=(isSym?i+1:0);j<N;j++){
      if (this.distanceMatrix[i][j]==0 && i!=j){
       this.distanceMatrix[i][j] = Infinity;
+      if (isSym) this.distanceMatrix[j][i] = Infinity;
      }
     }
    }
@@ -445,7 +448,6 @@ class Graph {
    // 2. check that each row of the adjacency matrix is the right length
    for (var i=0;i<this.adjacencyMatrix.length;i++){
     if (this.adjacencyMatrix[i].length != this.nodes.length){
-console.log("fail1: wrong size");
      return false;
     }
    }
@@ -454,7 +456,6 @@ console.log("fail1: wrong size");
    // 3. count the number of 'true' entries in the adjacency matrix and test whether there are too many
    //    (too few is okay: it means that there are multi-edges) (recall that each undirected edge is present twice in the matrix)
    if (matrixSum(this.adjacencyMatrix) > 2*this.edges.length){
-console.log("fail2: too many entries");
     return false;
    }
 
@@ -464,7 +465,6 @@ console.log("fail2: too many entries");
     var n1 = this.edges[i].from.n;
     var n2 = this.edges[i].to.n;
     if (!(this.adjacencyMatrix[n1][n2] && this.adjacencyMatrix[n2][n1])){
-console.log("fail3: missing an edge");
      return false;
     }
    }
