@@ -447,10 +447,6 @@ class Graph {
    }
   }
 
-  this.numberNodes();
-  this.updateDegreeMatrix();
-  this.updateDistanceMatrix();
-
 //  this.layout.setLayout('treeVertexFocused');
   this.layout.setFocus(root); // set the root node as the focus for now
   return N;
@@ -952,7 +948,7 @@ class Layout {
 
     // place the focus node
     this.focus.setAltLocation(this.centralLocation());
-    var dmax = maxFiniteElement(this.graph.distanceMatrix[this.focus.n]); // this could be limited to the focus object's connected component...
+    var dmax = maxFiniteElement(this.graph.distanceMatrix[this.focus.n]);
 
     // loop over other nodes and place them
     for (var i=0;i<this.graph.nodes.length;i++){
