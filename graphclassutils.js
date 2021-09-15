@@ -321,3 +321,13 @@ function duplicateMatrix(M){
  }
  return A;
 }
+
+function matricesAreEqual(A,B){
+ if (A.length != B.length) return false;
+ for (var i=0;i<A.length;i++){
+  if (A[i].length != B[i].length) return false;
+  for (var j=0;j<A[i].length;j++) if (A[i][j] != B[i][j]) return false;
+ }
+ // no fails, so:
+ return true;
+}

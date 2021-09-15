@@ -322,6 +322,7 @@ class Graph {
    // ie. do nothing
    return false; // we DIDN'T update the distance matrix
   } else {
+   var t0 = performance.now();
    console.log("Updating distance matrix");
    this.updateAdjacencyMatrix(); // we could test whether this is required or not, but it is fast anyway
    var N = this.nodes.length;
@@ -337,7 +338,13 @@ class Graph {
     //  - if there is a zero entry in D (no shorter path exists) and a non-zero entry in P, set D[i][j] to n
     // Note: a node is always 0 distance from itself, that is, when i=j
     // Note: the value in P is the number of paths of length n between the nodes i and j [not when using the "UsingOnes" version of multiplication]
+
+    // keep a copy of the distance matrix so that we can check if it becomes static:
+    // when the distance matrix doesn't change from one power of P to the next, its construction is finished
+    var prevDistanceMatrix = duplicateMatrix(this.distanceMatrix);
+
     for (var i=0;i<N;i++){
+
      for (var j=(isSym?i+1:0);j<N;j++){
       if (i!=j && this.distanceMatrix[i][j] == 0 && P[i][j] != 0){
        this.distanceMatrix[i][j] = n;
@@ -345,6 +352,14 @@ class Graph {
       }
      }
     }
+
+    // when can we stop...?
+    if (matricesAreEqual(prevDistanceMatrix,this.distanceMatrix)){
+//     console.log("   Stopped calculating distance matrix after "+n+" step(s)");
+     break;
+    }
+
+
    }
 
    // nodes are 0 distance from themselves:
@@ -366,6 +381,8 @@ class Graph {
    // (we don't do anything with the connected components here, call that separately if needed)
    this.connectivityMatrix = this.distanceMatrix.map(function(x){return x.map(function(z){return z<Infinity;})});
 
+   var t1 = performance.now();
+   console.log("... in " + (t1 - t0) + " milliseconds")
    return true; // we DID update the distance matrix
   }
 
