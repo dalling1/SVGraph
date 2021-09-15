@@ -235,6 +235,16 @@ function maxFiniteElement(array){
  return M;
 }
 
+function matrixMaxFiniteElement(A){
+ var M = -Infinity;
+ for (var i=0;i<A.length;i++){
+  for (var j=0;j<A[i].length;j++){
+   if (A[i][j]>M && A[i][j]!=Infinity) M = A[i][j];
+  }
+ }
+ return M;
+}
+
 function treeSize(valency,depth){
  // Note: depth of zero means a single node with no neighbours
  var N = 0;

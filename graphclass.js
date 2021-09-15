@@ -12,6 +12,8 @@ class Graph {
   this.border = [100,100,0]; // keep the centres of nodes this far from the boundary of the graph
   this.createLayout(layoutName);
 
+  this.radius = 0; // maximum path length in the graph
+
   // rules for creating edges (these could be controls on the page):
   this.allowSelfEdges = true;
   this.alwaysUseBezier = true;
@@ -377,9 +379,10 @@ class Graph {
     }
    }
 
-   // and, finally, update the connectivity matrix
+   // and, finally, update the connectivity matrix and radius
    // (we don't do anything with the connected components here, call that separately if needed)
    this.connectivityMatrix = this.distanceMatrix.map(function(x){return x.map(function(z){return z<Infinity;})});
+   this.radius = matrixMaxFiniteElement(this.distanceMatrix);
 
    var t1 = performance.now();
    console.log("... in " + (t1 - t0) + " milliseconds")
