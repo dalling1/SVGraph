@@ -585,6 +585,9 @@ class Node {
   var oldPosition = [this.x, this.y, this.z];
   var newPosition = [this.altx, this.alty, this.altz];
   var thisnode = this;
+  if (this.graph.layout.animation=='none'){
+   increment = 100.0;
+  }
   var thistimer = window.setInterval(function(){
    var intermediatePosition = animationMotion(oldPosition,newPosition,percentage,thegraph.layout.animation);
    nodesvg.setAttribute("cx", intermediatePosition[0]);
@@ -774,7 +777,7 @@ class Layout {
  }
 
  allowedAnimations(){
-  var animationsList = ["default","linear","easeInOutBack","easeOutBack","easeOutQuint"];
+  var animationsList = ["none","default","linear","easeInOutBack","easeInSine","easeOutBack","easeOutQuint"];
   return animationsList;
  }
 

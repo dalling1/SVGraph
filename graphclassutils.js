@@ -345,7 +345,9 @@ function matricesAreEqual(A,B){
 function animationMotion(from,to,percent,method='default'){
  if (from.length<2 || to.length<2) console.log("error in animationMotion: coordinates are not (at least) two-dimensional");
 
- if (method=='default' || method=='linear'){
+ if (method=='none'){
+  var animationPosition = (percent<50.0 ? 0.0 : 1.0);
+ } else if (method=='default' || method=='linear'){
   var animationPosition = (percent/100.0);
  } else if (method=='easeInOutBack'){
   var animationPosition = easeInOutBack(percent/100.0);
@@ -353,6 +355,8 @@ function animationMotion(from,to,percent,method='default'){
   var animationPosition = easeOutBack(percent/100.0);
  } else if (method=='easeOutQuint'){
   var animationPosition = easeOutQuint(percent/100.0);
+ } else if (method=='easeInSine'){
+  var animationPosition = easeInSine(percent/100.0);
  }
  var newx = from[0] + animationPosition*(to[0]-from[0]);
  var newy = from[1] + animationPosition*(to[1]-from[1]);
@@ -380,4 +384,9 @@ function easeOutBack(x){ // https://easings.net
 function easeOutQuint(x){  // https://easings.net
  // x is the proportion of the way along the curve from 0 to 1 (start to finish)
  return 1 - Math.pow(1 - x, 5);
+}
+
+function easeInSine(x){  // https://easings.net
+ // x is the proportion of the way along the curve from 0 to 1 (start to finish)
+ return 1 - Math.cos((x * Pi) / 2);
 }

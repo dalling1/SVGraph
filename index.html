@@ -178,9 +178,11 @@
    <div class="controlwrapper" style="pointer:initial;" title="Sets the animation motion style">
     <span class="wrappertext">Animation</span>
     <select id="graphanimation" onchange="thegraph.layout.setAnimation(document.getElementById('graphanimation').value);">
-     <option value="default" selected>default</option>
-     <option value="linear">linear</option>
+     <option value="none">none</option>
+     <option value="default">default</option>
+     <option value="linear" selected>linear</option>
      <option value="easeInOutBack">ease in-out-back</option>
+     <option value="easeInSine">ease in-sine</option>
      <option value="easeOutBack">ease out-back</option>
      <option value="easeOutQuint">ease out-quint</option>
     </select>
@@ -215,12 +217,12 @@
    <span class="wrappertext">Layout</span>
    <select id="graphlayout" onchange="thegraph.setLayout(document.getElementById('graphlayout').value);">
     <option value="default" selected>default</option>
-    <option value="randomRectangle">rectangle</option>
-    <option value="randomCircle">circle</option>
-    <option value="randomGrid">grid</option>
+    <option value="randomRectangle">random inside rectangle</option>
+    <option value="randomCircle">random on circle</option>
+    <option value="randomGrid">random on grid</option>
     <option value="treeVertexFocused">vertex-focused tree</option>
     <option value="vertexFocused">vertex-focused</option>
-    <option value="edgeFocused" disabled="disabled">edge-focused</option>
+<!--    <option value="edgeFocused" disabled="disabled">edge-focused</option>-->
    </select>
   </div>
 
@@ -249,7 +251,9 @@
    function setup(){
     thegraph = new Graph('thegraph');
     document.getElementById('edgestyle').checked = thegraph.alwaysUseBezier;
-    document.getElementById('graphlayout').selectedIndex=0;
+    document.getElementById('selfedges').checked = !thegraph.allowSelfEdges;
+    document.getElementById('graphlayout').selectedIndex=1;
+    document.getElementById('graphanimation').selectedIndex=2;
    }
   </script>
  </body>
