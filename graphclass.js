@@ -586,7 +586,7 @@ class Node {
   var newPosition = [this.altx, this.alty, this.altz];
   var thisnode = this;
   var thistimer = window.setInterval(function(){
-   var intermediatePosition = linearPosition(oldPosition,newPosition,percentage);
+   var intermediatePosition = animationMotion(oldPosition,newPosition,percentage,thegraph.layout.animation);
    nodesvg.setAttribute("cx", intermediatePosition[0]);
    nodesvg.setAttribute("cy", intermediatePosition[1]);
    nodesvg.setAttribute("z-index", intermediatePosition[2]);
@@ -738,12 +738,14 @@ class Layout {
   name,
   layoutName,
   graph,
+  animation = "default",
   focusObject = "",
  ){
   this.type = this.constructor.name;
   this.name = name;
   this.setFocus(focusObject);
   this.setLayout(layoutName);
+  this.setAnimation(layoutName);
   this.graph = graph;
  }
 
@@ -751,7 +753,7 @@ class Layout {
    Methods for the Layout class:
 
    allowedLayouts
-   isAllowed
+   isAllowedLayout
    setLayout
    setFocus
    randomRectangleLocation
@@ -762,6 +764,7 @@ class Layout {
    shuffleNodePositions
    toggleNodePositions
    draw
+   setAnimation
 
  */
 
@@ -770,17 +773,36 @@ class Layout {
   return layoutList;
  }
 
- // eg. L.isAllowed("randomRectangle") is true
- isAllowed(layoutName){
+ allowedAnimations(){
+  var animationsList = ["default","linear","easeInOutBack","easeOutBack","easeOutQuint"];
+  return animationsList;
+ }
+
+ // eg. L.isAllowedLayout("randomRectangle") is true
+ isAllowedLayout(layoutName){
   return (this.allowedLayouts().indexOf(layoutName)!=-1);
  }
 
+ isAllowedAnimation(animationName){
+  return (this.allowedAnimations().indexOf(animationName)!=-1);
+ }
+
  setLayout(layoutName="default"){
-  if (this.isAllowed(layoutName)){
+  if (this.isAllowedLayout(layoutName)){
    this.layoutName = layoutName;
    return true;
   } else {
    this.layoutName = "default";
+   return false;
+  }
+ }
+
+ setAnimation(animationName="default"){
+  if (this.isAllowedAnimation(animationName)){
+   this.animation = animationName;
+   return true;
+  } else {
+   this.animation = "default";
    return false;
   }
  }

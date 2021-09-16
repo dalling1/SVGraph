@@ -341,3 +341,43 @@ function matricesAreEqual(A,B){
  // no fails, so:
  return true;
 }
+
+function animationMotion(from,to,percent,method='default'){
+ if (from.length<2 || to.length<2) console.log("error in animationMotion: coordinates are not (at least) two-dimensional");
+
+ if (method=='default' || method=='linear'){
+  var animationPosition = (percent/100.0);
+ } else if (method=='easeInOutBack'){
+  var animationPosition = easeInOutBack(percent/100.0);
+ } else if (method=='easeOutBack'){
+  var animationPosition = easeOutBack(percent/100.0);
+ } else if (method=='easeOutQuint'){
+  var animationPosition = easeOutQuint(percent/100.0);
+ }
+ var newx = from[0] + animationPosition*(to[0]-from[0]);
+ var newy = from[1] + animationPosition*(to[1]-from[1]);
+ var newz = 0;
+
+ return [newx, newy, newz];
+}
+
+function easeInOutBack(x){ // https://easings.net
+ // x is the proportion of the way along the curve from 0 to 1 (start to finish)
+ const c1 = 1.70158;
+ const c2 = c1 * 1.525;
+ return (x < 0.5)
+  ? (Math.pow(2 * x, 2) * ((c2 + 1) * 2 * x - c2)) / 2
+  : (Math.pow(2 * x - 2, 2) * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2;
+}
+
+function easeOutBack(x){ // https://easings.net
+ // x is the proportion of the way along the curve from 0 to 1 (start to finish)
+ const c1 = 1.70158;
+ const c3 = c1 + 1;
+ return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+}
+
+function easeOutQuint(x){  // https://easings.net
+ // x is the proportion of the way along the curve from 0 to 1 (start to finish)
+ return 1 - Math.pow(1 - x, 5);
+}

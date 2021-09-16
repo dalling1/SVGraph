@@ -174,6 +174,18 @@
   <svg id="thesvg" data-primary-graph="" data-secondary-graph=""></svg>
 
   <div id="functionboxes" class="controlboxes">
+   <!-- control for setting the animation motion -->
+   <div class="controlwrapper" style="pointer:initial;" title="Sets the animation motion style">
+    <span class="wrappertext">Animation</span>
+    <select id="graphanimation" onchange="thegraph.layout.setAnimation(document.getElementById('graphanimation').value);">
+     <option value="default" selected>default</option>
+     <option value="linear">linear</option>
+     <option value="easeInOutBack">ease in-out-back</option>
+     <option value="easeOutBack">ease out-back</option>
+     <option value="easeOutQuint">ease out-quint</option>
+    </select>
+   </div>
+
    <div onclick="shuffle(thegraph);">Shuffle</div>
    <div onclick="toggle(thegraph);">Toggle</div>
 
