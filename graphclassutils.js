@@ -362,6 +362,8 @@ function animationMotion(from,to,percent,method='default'){
   var animationPosition = easeOutQuint(percent/100.0);
  } else if (method=='easeInSine'){
   var animationPosition = easeInSine(percent/100.0);
+ } else if (method=='easeOutElastic'){
+  var animationPosition = easeOutElastic(percent/100.0);
  }
  var newx = from[0] + animationPosition*(to[0]-from[0]);
  var newy = from[1] + animationPosition*(to[1]-from[1]);
@@ -394,4 +396,14 @@ function easeOutQuint(x){  // https://easings.net
 function easeInSine(x){  // https://easings.net
  // x is the proportion of the way along the curve from 0 to 1 (start to finish)
  return 1 - Math.cos((x * Pi) / 2);
+}
+
+function easeOutElastic(x){  // https://easings.net
+ // x is the proportion of the way along the curve from 0 to 1 (start to finish)
+ const c4 = (2 * Pi) / 3;
+ return (x === 0)
+  ? 0
+  : (x === 1)
+  ? 1
+  : Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * c4) + 1;
 }

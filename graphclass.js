@@ -783,7 +783,7 @@ class Layout {
  }
 
  allowedAnimations(){
-  var animationsList = ["none","default","linear","easeInOutBack","easeInSine","easeOutBack","easeOutQuint"];
+  var animationsList = ["none","default","linear","easeInOutBack","easeInSine","easeOutBack","easeOutQuint","easeOutElastic"];
   return animationsList;
  }
 
