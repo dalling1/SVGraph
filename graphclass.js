@@ -939,7 +939,7 @@ class Layout {
   }
  }
 
- permuteNodePositions(reverse=False){
+ permuteNodePositions(reverse=false){
   // assigns each graph's position to the next one in numbering order, and the last to the first
   this.graph.numberNodes();
   var nodeCount = this.graph.nodes.length;
