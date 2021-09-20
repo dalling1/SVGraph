@@ -54,10 +54,9 @@ function toggle(graph){
  graph.layout.toggleNodePositions();
 }
 
-function permute(graph){
+function permute(graph,reverse){
  makePrimary(graph);
- graph.layout.permuteNodePositions();
-// graph.draw();
+ graph.layout.permuteNodePositions(reverse);
 }
 
 function setEdgeStyle(graph,val){

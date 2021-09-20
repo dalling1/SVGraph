@@ -939,15 +939,26 @@ class Layout {
   }
  }
 
- permuteNodePositions(){
+ permuteNodePositions(reverse=False){
   // assigns each graph's position to the next one in numbering order, and the last to the first
   this.graph.numberNodes();
   var nodeCount = this.graph.nodes.length;
-  for (var i=0;i<nodeCount;i++){
-   if (i==0){
-    this.graph.nodes[i].setAltLocation(this.graph.nodes[nodeCount-1].getLocation());
-   } else {
-    this.graph.nodes[i].setAltLocation(this.graph.nodes[i-1].getLocation());
+
+  if (reverse){
+   for (var i=nodeCount;i>0;i--){
+    if (i==nodeCount){
+     this.graph.nodes[i-1].setAltLocation(this.graph.nodes[0].getLocation());
+    } else {
+     this.graph.nodes[i-1].setAltLocation(this.graph.nodes[i].getLocation());
+    }
+   }
+  } else {
+   for (var i=0;i<nodeCount;i++){
+    if (i==0){
+     this.graph.nodes[i].setAltLocation(this.graph.nodes[nodeCount-1].getLocation());
+    } else {
+     this.graph.nodes[i].setAltLocation(this.graph.nodes[i-1].getLocation());
+    }
    }
   }
   this.toggleNodePositions();
