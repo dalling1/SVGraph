@@ -169,6 +169,7 @@
  <tr><td>createSvg</td><td>-</td><td>SVG Circle</td><td>Creates an SVG circle in the HTML DOM.</td></tr>
  <tr><td>addToSvgGraph</td><td>-</td><td>-</td><td>Appends the node's SVG object to the graph's SVG object.</td></tr>
  <tr><td>showDetails</td><td>-</td><td>-</td><td>Prints the node's name and position in the console.</td></tr>
+ <tr><td>getLocation</td><td>-</td><td>Array of 3 integers</td><td>Returns the node's <tt>x</tt>, <tt>y</tt> and <tt>z</tt> attributes.</td></tr>
  <tr><td>setLocation</td><td>position [Array of 3 integers]</td><td>-</td><td>Sets the node's <tt>x</tt>, <tt>y</tt> and <tt>z</tt> attributes.</td></tr>
  <tr><td>setAltLocation</td><td>position [Array of 3 integers]</td><td>-</td><td>Sets the node's <tt>altx</tt>, <tt>alty</tt> and <tt>altz</tt> attributes.</td></tr>
  <tr><td>setOldLocation</td><td>position [Array of 3 integers]</td><td>-</td><td>Sets the node's <tt>oldx</tt>, <tt>oldy</tt> and <tt>oldz</tt> attributes.</td></tr>
@@ -276,6 +277,7 @@
  <tr><td>nodeLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns coordinates for one node, dependant on the graph's <tt>layout</tt> attribute.</td></tr>
  <tr><td>shuffleNodePositions</td><td>-</td><td>-</td><td>Moves SVG objects representing nodes to new positions based on the graph Layout. The existing position is stored in the node's alternative coordinates.</td></tr>
  <tr><td>toggleNodePositions</td><td>-</td><td>-</td><td>Moves nodes back and forth between their coordinates (<tt>x</tt>, <tt>y</tt>, <tt>z</tt> attributes) and their alternative coordinates (<tt>altx</tt>, <tt>alty</tt>, <tt>altz</tt> attributes).</td></tr>
+ <tr><td>permtueNodePositions</td><td>reverse [Boolean]</td><td>-</td><td>Moves each node to the position of the "next" node (in Node.number order), or the "previous" node if <tt>reverse</tt> is true.</td></tr>
  <tr><td>draw</td><td>-</td><td>Boolean</td><td>Updates the alternative location for each node in this layout's graph and then moves them there. Positioning is done according to the layout name. Returns true if the draw was successful, false if not (for example, trying to draw a focus layout when the focus object is not set or has been removed).</td></tr>
 </table>
 
