@@ -9,7 +9,6 @@ class Graph {
   this.nodes = [];
   this.edges = [];
   this.createSvg(); // make an SVG group for this graph
-  this.border = [100,100,0]; // keep the centres of nodes this far from the boundary of the graph
   this.createLayout(layoutName);
 
   this.radius = 0; // maximum path length in the graph
@@ -755,6 +754,7 @@ class Layout {
   this.setLayout(layoutName);
   this.setAnimation(layoutName);
   this.graph = graph;
+  this.border = [100,100,0]; // keep the centres of nodes this far from the boundary of the page
  }
 
  /*
@@ -839,8 +839,8 @@ class Layout {
  randomRectangleLocation(){
   // generate a random location within the border of this graph
   var dim=3;
-  var lowerLimit = this.graph.border;
-  var upperLimit = [window.innerWidth - this.graph.border[0], window.innerHeight - this.graph.border[1], 100 - this.graph.border[2]]
+  var lowerLimit = this.border;
+  var upperLimit = [window.innerWidth - this.border[0], window.innerHeight - this.border[1], 100 - this.border[2]]
   var P = Array(dim);
   for (var d=0;d<dim;d++){
    if (lowerLimit[d]>upperLimit[d]) lowerLimit[d] = upperLimit[d];
@@ -854,8 +854,8 @@ class Layout {
   // scaled by the factor s (ie. scale the circle's diameter)
   var X = 0.5*window.innerWidth;
   var Y = 0.5*window.innerHeight;
-  var W = X - this.graph.border[0];
-  var H = Y - this.graph.border[0];
+  var W = X - this.border[0];
+  var H = Y - this.border[0];
   var R = Math.min(W,H);
   return randomCircleLocation([X,Y],R*s);
  }
@@ -866,8 +866,8 @@ class Layout {
   // ie. work out the even spacing of nodes on the required circle, and return the coordinates of the nth of those locations
   var X = 0.5*window.innerWidth;
   var Y = 0.5*window.innerHeight;
-  var W = X - this.graph.border[0];
-  var H = Y - this.graph.border[0];
+  var W = X - this.border[0];
+  var H = Y - this.border[0];
   var R = Math.min(W,H);
   return spacedCircleLocation([X,Y],R*s,valency,depth,n);
  }
@@ -881,8 +881,8 @@ class Layout {
   var dim=3;
   var P=new Array(n);
 
-  var lowerLimit = this.graph.border;
-  var upperLimit = [window.innerWidth - this.graph.border[0], window.innerHeight - this.graph.border[1], 100 - this.graph.border[2]]
+  var lowerLimit = this.border;
+  var upperLimit = [window.innerWidth - this.border[0], window.innerHeight - this.border[1], 100 - this.border[2]]
 
   // 1. determine the grid point locations
   var gridX = new Array(Ncols);
