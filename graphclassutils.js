@@ -54,6 +54,12 @@ function toggle(graph){
  graph.layout.toggleNodePositions();
 }
 
+function permute(graph){
+ makePrimary(graph);
+ graph.layout.permuteNodePositions();
+// graph.draw();
+}
+
 function setEdgeStyle(graph,val){
  makePrimary(graph);
 // graph.setAlwaysUseBezier(!graph.alwaysUseBezier);

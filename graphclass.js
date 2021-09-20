@@ -526,6 +526,7 @@ class Node {
    createSvg
    addToSvgGraph
    showDetails
+   getLocation
    setLocation
    setAltLocation
    setOldLocation
@@ -557,6 +558,10 @@ class Node {
 
  showDetails(){
   console.log("The node \""+this.name+"\" has position (x,y,z) = ("+this.x+","+this.y+","+this.z+")");
+ }
+
+ getLocation(){
+  return [this.x,this.y,this.z];
  }
 
  setLocation(position){
@@ -766,6 +771,7 @@ class Layout {
    nodeLocation
    shuffleNodePositions
    toggleNodePositions
+   permuteNodePositions
    draw
    setAnimation
 
@@ -931,6 +937,20 @@ class Layout {
   for (var i=0;i<this.graph.nodes.length;i++){
    this.graph.nodes[i].moveToAlt();
   }
+ }
+
+ permuteNodePositions(){
+  // assigns each graph's position to the next one in numbering order, and the last to the first
+  this.graph.numberNodes();
+  var nodeCount = this.graph.nodes.length;
+  for (var i=0;i<nodeCount;i++){
+   if (i==0){
+    this.graph.nodes[i].setAltLocation(this.graph.nodes[nodeCount-1].getLocation());
+   } else {
+    this.graph.nodes[i].setAltLocation(this.graph.nodes[i-1].getLocation());
+   }
+  }
+  this.toggleNodePositions();
  }
 
  draw(){
