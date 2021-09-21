@@ -1,5 +1,6 @@
 //const Pi = Math.acos(-1);
 
+/*
 function oldrandomLocation(w=0,h=0,z=0){
  // generate a random location
  // bounds are the box [0,w],[0,h],[0,z] or within the browser window by default (z limits 0-100)
@@ -22,6 +23,7 @@ function oldrandomLocation(w=0,h=0,z=0){
  }
  return P;
 }
+*/
 
 function Circle(attributes){ // thanks Matt https://stackoverflow.com/a/21362202
  var cir = document.createElementNS("http://www.w3.org/2000/svg","circle");
@@ -129,11 +131,14 @@ function appendSvgObject(obj,target){
  }
 }
 
+/*
 function removeElement(id){
  var el = document.getElementById(id);
  if (el!=null) el.parentNode.removeChild(el);
 }
+*/
 
+/*
 function linearPosition(from,to,percent){
  var dim = from.length;
  if (from.length<3){
@@ -145,9 +150,10 @@ function linearPosition(from,to,percent){
  var newz = from[2] + (percent/100.0)*(to[2]-from[2]);
  return [newx, newy, newz];
 }
+*/
 
 function randomCircleLocation(centre,radius){
- var angle = Math.random()*2*Pi;
+ var angle = Math.random()*2*Math.PI;
  var x = Math.round(centre[0] + radius*Math.sin(angle));
  var y = Math.round(centre[1] + radius*Math.cos(angle));
  return [x,y];
@@ -257,7 +263,7 @@ function spacedCircleLocation(centre,radius,valency,depth,n){
  // Place nodes around a circle, evenly spaced; number is determined by valency and depth
  // Return the nth of those positions
  // if n is zero-indexed, n=0 will give the position at angle=0, otherwise n=N will be angle=2*Pi==0
- var angleSpacing = 2*Pi/treeShellCount(valency,depth);
+ var angleSpacing = 2*Math.PI/treeShellCount(valency,depth);
  var angle = angleSpacing*(n+0.5);
  return circleLocation(centre,radius,angle);
 }

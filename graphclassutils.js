@@ -2,8 +2,6 @@
    Utility functions which facilitate display and manipulation of Javascript objects on the webpage.
 */
 
-const Pi = Math.acos(-1);
-
 function primaryGraph(){
  var g = document.getElementById("thesvg").getAttribute("data-primary-graph");
  if (g.length) return document.getElementById(g);
@@ -114,7 +112,7 @@ function randomNormal(mean,variance){
  // mean and variance must be scalar
  var r1 = Math.random();
  var r2 = Math.random();
- var z1 = Math.pow(-2.0*Math.log(r1),0.5)*Math.cos(2.0*Pi*r1);
+ var z1 = Math.pow(-2.0*Math.log(r1),0.5)*Math.cos(2.0*Math.PI*r1);
  // omit z1
  var R1 = mean+z1*Math.pow(variance,0.5);
  // omit R2
@@ -128,8 +126,8 @@ function randomNormal2(mean,variance){
  if (typeof(variance)=="number") variance = [variance, variance];
  var r1 = Math.random();
  var r2 = Math.random();
- var z1 = Math.pow(-2.0*Math.log(r1),0.5)*Math.cos(2.0*Pi*r2);
- var z2 = Math.pow(-2.0*Math.log(r1),0.5)*Math.sin(2.0*Pi*r2);
+ var z1 = Math.pow(-2.0*Math.log(r1),0.5)*Math.cos(2.0*Math.PI*r2);
+ var z2 = Math.pow(-2.0*Math.log(r1),0.5)*Math.sin(2.0*Math.PI*r2);
  var R1 = mean[0]+z1*Math.pow(variance[0],0.5);
  var R2 = mean[1]+z2*Math.pow(variance[1],0.5);
  return [R1, R2];
@@ -395,12 +393,12 @@ function easeOutQuint(x){  // https://easings.net
 
 function easeInSine(x){  // https://easings.net
  // x is the proportion of the way along the curve from 0 to 1 (start to finish)
- return 1 - Math.cos((x * Pi) / 2);
+ return 1 - Math.cos((x * Math.PI) / 2);
 }
 
 function easeOutElastic(x){  // https://easings.net
  // x is the proportion of the way along the curve from 0 to 1 (start to finish)
- const c4 = (2 * Pi) / 3;
+ const c4 = (2 * Math.PI) / 3;
  return (x === 0)
   ? 0
   : (x === 1)
