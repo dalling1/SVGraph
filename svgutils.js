@@ -152,10 +152,10 @@ function linearPosition(from,to,percent){
 }
 */
 
-function randomCircleLocation(centre,radius){
- var angle = Math.random()*2*Math.PI;
- var x = Math.round(centre[0] + radius*Math.sin(angle));
- var y = Math.round(centre[1] + radius*Math.cos(angle));
+function randomCircleLocation(centre,radius,angleMin=0,angleMax=2*Math.PI){
+ var angle = Math.random()*(angleMax-angleMin);
+ var x = Math.round(centre[0] + radius*Math.sin(angleMin+angle));
+ var y = Math.round(centre[1] + radius*Math.cos(angleMin+angle));
  return [x,y];
 }
 
@@ -259,12 +259,13 @@ function circleLocation(centre,radius,angle){
  return [x,y];
 }
 
-function spacedCircleLocation(centre,radius,valency,depth,n){
+function spacedCircleLocation(centre,radius,valency,depth,n,angleMin=0,angleMax=2*Math.PI){
  // Place nodes around a circle, evenly spaced; number is determined by valency and depth
  // Return the nth of those positions
  // if n is zero-indexed, n=0 will give the position at angle=0, otherwise n=N will be angle=2*Pi==0
- var angleSpacing = 2*Math.PI/treeShellCount(valency,depth);
- var angle = angleSpacing*(n+0.5);
+// var angleSpacing = 2*Math.PI/treeShellCount(valency,depth);
+ var angleSpacing = (angleMax-angleMin)/treeShellCount(valency,depth);
+ var angle = angleMin+angleSpacing*(n+0.5);
  return circleLocation(centre,radius,angle);
 }
 
