@@ -180,7 +180,7 @@
     <select id="graphanimation" onchange="thegraph.layout.setAnimation(document.getElementById('graphanimation').value);">
      <option value="none">none</option>
      <option value="default">default</option>
-     <option value="linear" selected>linear</option>
+     <option value="linear">linear</option>
      <option value="easeInOutBack">ease in-out-back</option>
      <option value="easeInSine">ease in-sine</option>
      <option value="easeOutBack">ease out-back</option>
@@ -219,7 +219,7 @@
   <div class="controlwrapper" style="pointer:initial;" title="Applies to new vertices only">
    <span class="wrappertext">Layout</span>
    <select id="graphlayout" onchange="thegraph.setLayout(document.getElementById('graphlayout').value);">
-    <option value="default" selected>default</option>
+    <option value="default">default</option>
     <option value="randomRectangle">random inside rectangle</option>
     <option value="randomCircle">random on circle</option>
     <option value="randomGrid">random on grid</option>
@@ -256,7 +256,9 @@
     document.getElementById('edgestyle').checked = thegraph.alwaysUseBezier;
     document.getElementById('selfedges').checked = !thegraph.allowSelfEdges;
     document.getElementById('graphlayout').selectedIndex=1;
-    document.getElementById('graphanimation').selectedIndex=2;
+    document.getElementById('graphanimation').selectedIndex=7;
+    thegraph.setLayout(document.getElementById('graphlayout').value);
+    thegraph.layout.setAnimation(document.getElementById('graphanimation').value);
    }
   </script>
  </body>
