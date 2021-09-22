@@ -259,13 +259,22 @@ function circleLocation(centre,radius,angle){
  return [x,y];
 }
 
-function spacedCircleLocation(centre,radius,valency,depth,n,angleMin=0,angleMax=2*Math.PI){
+function spacedCircleLocation(centre,radius,valency,depth,n){
  // Place nodes around a circle, evenly spaced; number is determined by valency and depth
  // Return the nth of those positions
  // if n is zero-indexed, n=0 will give the position at angle=0, otherwise n=N will be angle=2*Pi==0
-// var angleSpacing = 2*Math.PI/treeShellCount(valency,depth);
- var angleSpacing = (angleMax-angleMin)/treeShellCount(valency,depth);
- var angle = angleMin+angleSpacing*(n+0.5);
+ var angleSpacing = 2*Math.PI/treeShellCount(valency,depth);
+ var angle = angleSpacing*(n+0.5);
+ return circleLocation(centre,radius,angle);
+}
+
+function spacedSectorLocation(centre,radius,Ntotal,n,angleMin=0,angleMax=2*Math.PI){
+ // Place nodes around a the boundary of a sector defined by the min and max angle, evenly spaced;
+ // the total number is given by Ntotal, and the first and last locations will be at the min and max angle, respectively
+ // (this is different to the spacedCircleLocation, where we don't want the first and last to overlap)
+ // Return the nth of those positions.
+ var angleSpacing = (angleMax-angleMin)/(Ntotal-1);
+ var angle = angleMin+angleSpacing*n;
  return circleLocation(centre,radius,angle);
 }
 

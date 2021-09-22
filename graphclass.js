@@ -865,7 +865,7 @@ class Layout {
   return randomCircleLocation([X,Y],R*s);
  }
 
- spacedCircleLocation(C,s=1.0,valency,depth,n,angleMin=0,angleMax=2*Math.PI){
+ spacedCircleLocation(C,s=1.0,valency,depth,n){
   // generate an incremental location on the circle centred on the page and which fits within the graph's border,
   // scaled by the factor s (ie. scale the circle's diameter)
   // ie. work out the even spacing of nodes on the required circle, and return the coordinates of the nth of those locations
@@ -876,7 +876,21 @@ class Layout {
   var W = X - this.border[0];
   var H = Y - this.border[0];
   var R = Math.min(W,H);
-  return spacedCircleLocation([X,Y],R*s,valency,depth,n,angleMin,angleMax);
+  return spacedCircleLocation([X,Y],R*s,valency,depth,n);
+ }
+
+ spacedSectorLocation(C,s=1.0,Ntotal,n,angleMin=0,angleMax=2*Math.PI){
+  // generate an incremental location on the sector centred on the page and which fits within the
+  // graph's border and defined by the given angles, with radius scaled by the factor s
+  // ie. work out the even spacing of nodes on the required sector, and return the coordinates of the nth of those locations
+//  var X = 0.5*window.innerWidth;
+//  var Y = 0.5*window.innerHeight;
+  var X = C[0];
+  var Y = C[1];
+  var W = X - this.border[0];
+  var H = Y - this.border[0];
+  var R = Math.min(W,H);
+  return spacedSectorLocation([X,Y],R*s,Ntotal,n,angleMin,angleMax);
  }
 
  randomGridLocations(n=1){
@@ -1100,21 +1114,25 @@ class Layout {
     this.focus.to.setAltLocation(this.centralLocation([20,0,0]));    // right of centre
 
     // for each node, check which end of the focus edge it is closest to, and position it accordingly,
-    // using the spacedCircleLocation function with restricted angle, to make two sides
+    // using the spacedSectorLocation function with restricted angle, to make two sides
 
     var dmaxFrom = maxFiniteElement(this.graph.distanceMatrix[this.focus.from.n]); // this could be limited to the focus object's connected component...
     var dmaxTo = maxFiniteElement(this.graph.distanceMatrix[this.focus.to.n]); // this could be limited to the focus object's connected component...
     var dmax = Math.max(dmaxFrom,dmaxTo) - 1;
-    var Q = 1/(valency+1); // for offsetting angles, to make the layout vertically symmetrical
+
+    // set up the range of angles on each side of the focus edge
+    var angleMin = 0.5;
+    var angleMax = Math.PI-0.5;
 
     // loop over the distances moving away from the focus edge
     for (var r=1;r<=dmax;r++){
      // s is the scale of the location radius (distance from the centre) for nodes at distance r
-     var s = r/dmax;
+     var s = (r+0.5)/dmax; // make it a little bigger than just r/dmax, to fit in the focus edge...
 
      // PART 1: nodes closer to the "from" end of the focus edge:
      // find the indices of nodes at distance r from the focus edge's "from" node AND distance greater than r from the "to" node
      var distRnodes = this.graph.distanceMatrix[this.focus.from.n].map((val,indx) => val == r ? indx : undefined).filter(x => x !== undefined);
+     var angleOffset = Math.PI; // put these nodes on the opposite side of the focus edge from the ones closest to the "to" node
      // work through them backwards and omit those which are closer to the "to" node:
      for (var i=distRnodes.length;i>0;i--){
       if (this.graph.distanceMatrix[this.focus.from.n][distRnodes[i-1]] > this.graph.distanceMatrix[this.focus.to.n][distRnodes[i-1]]){
@@ -1124,7 +1142,7 @@ class Layout {
      // loop over the remaining distance r nodes and set their alt locations
      for (var i=0;i<distRnodes.length;i++){
       // these nodes belong on a circle of radius s from the centre, with position angles determined by the valency, r and their "n"
-      this.graph.nodes[distRnodes[i]].setAltLocation(   this.spacedCircleLocation(this.focus.from.getAltLocation(),s,valency,r,i,(1+Q)*Math.PI,2*Math.PI)  );
+      this.graph.nodes[distRnodes[i]].setAltLocation(   this.spacedSectorLocation(this.focus.from.getAltLocation(),s,distRnodes.length,i,angleMin+angleOffset,angleMax+angleOffset)  );
      }
 
      // PART 2: nodes closer to the "to" end of the focus edge:
@@ -1139,7 +1157,7 @@ class Layout {
      // loop over the remaining distance r nodes and set their alt locations
      for (var i=0;i<distRnodes.length;i++){
       // these nodes belong on a circle of radius s from the centre, with position angles determined by the valency, r and their "n"
-      this.graph.nodes[distRnodes[i]].setAltLocation(   this.spacedCircleLocation(this.focus.to.getAltLocation(),s,valency,r,i,Q*Math.PI,Math.PI)  );
+      this.graph.nodes[distRnodes[i]].setAltLocation(   this.spacedSectorLocation(this.focus.to.getAltLocation(),s,distRnodes.length,i,angleMin,angleMax)  );
      }
 
     } // loop over r
