@@ -1009,11 +1009,10 @@ class Layout {
 
   } else if (this.layoutName=="vertexFocused") { // vertexFocused
    if (this.focus.type!="Node" || this.graph.findNode(this.focus.name).length==0){ // test type and presence in the graph
-    console.log("Focus object not set");
-    alert("Vertex-focused layout requested but the focus vertex is not set");
-    this.setFocus(); // if there was an invalid (eg. removed) entry, unset it as the focus object
-    return false;
-   } else {
+    console.log("Focus object not set: using first node of the graph");
+    this.setFocus(this.graph.nodes[0]); // if there was an invalid entry, use the first node as the focus object
+   }
+   if (true){
     // 1. put the focus object at the centre
     // 2. loop through the other nodes:
     //    - place each node on a concentric circle about the focus
@@ -1043,11 +1042,10 @@ class Layout {
 
   } else if (this.layoutName=="treeVertexFocused") { // treeVertexFocused
    if (this.focus.type!="Node" || this.graph.findNode(this.focus.name).length==0){ // test type and presence in the graph
-    console.log("Focus object not set");
-    alert("Vertex-focused tree layout requested but the focus vertex is not set");
-    this.setFocus(); // if there was an invalid (eg. removed) entry, unset it as the focus object
-    return false;
-   } else {
+    console.log("Focus object not set: using first node of the graph");
+    this.setFocus(this.graph.nodes[0]); // if there was an invalid entry, use the first node as the focus object
+   }
+   if (true){
     // 1. put the focus node at the centre,
     // 2. compute dmax, the maximum distance of any connected node from the focus node
     // 3. find the Nd nodes at distance d from the focus node
@@ -1088,11 +1086,10 @@ class Layout {
 
   } else if (this.layoutName=="treeEdgeFocused") { // treeEdgeFocused
    if (this.focus.type!="Edge" || this.graph.findEdge(this.focus.name).length==0){ // test type and presence in the graph
-    console.log("Focus object not set");
-    alert("edge-focused tree layout requested but the focus edge is not set");
-    this.setFocus(); // if there was an invalid (eg. removed) entry, unset it as the focus object
-    return false;
-   } else {
+    console.log("Focus object not set: using first edge of the graph");
+    this.setFocus(this.graph.edges[0]); // if there was an invalid entry, use the first edge as the focus object
+   }
+   if (true){
     // 1. put the edge's nodes either side of the centre
     // 2. compute dmax, the maximum distance of any connected node from the focus edge
     //    ie. the minimum distance to either of the focus edge's endpoints
