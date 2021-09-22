@@ -170,6 +170,7 @@
  <tr><td>showDetails</td><td>-</td><td>-</td><td>Prints the node's name and position in the console.</td></tr>
  <tr><td>getLocation</td><td>-</td><td>Array of 3 integers</td><td>Returns the node's <tt>x</tt>, <tt>y</tt> and <tt>z</tt> attributes.</td></tr>
  <tr><td>setLocation</td><td>position [Array of 3 integers]</td><td>-</td><td>Sets the node's <tt>x</tt>, <tt>y</tt> and <tt>z</tt> attributes.</td></tr>
+ <tr><td>getAltLocation</td><td>-</td><td>Array of 3 integers</td><td>Returns the node's <tt>altx</tt>, <tt>alty</tt> and <tt>altz</tt> attributes.</td></tr>
  <tr><td>setAltLocation</td><td>position [Array of 3 integers]</td><td>-</td><td>Sets the node's <tt>altx</tt>, <tt>alty</tt> and <tt>altz</tt> attributes.</td></tr>
  <tr><td>setOldLocation</td><td>position [Array of 3 integers]</td><td>-</td><td>Sets the node's <tt>oldx</tt>, <tt>oldy</tt> and <tt>oldz</tt> attributes.</td></tr>
  <tr><td>moveToAlt</td><td>-</td><td>-</td><td>Move the node's SVG object to the node's alternative location, given by the <tt>x</tt>, <tt>y</tt> and <tt>z</tt> attributes.</td></tr>
@@ -271,7 +272,7 @@
  <tr><td>removeFocus</td><td>-</td><td>-</td><td>Sets the <tt>focusObject</tt> attribute of the Layout object to "none", and removes the focus CSS class from any existing focus object.</td></tr>
  <tr><td>randomRectangleLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns a random location within a rectangle defined by the HTML window and the layout's <tt>border</tt> attribute.</td></tr>
  <tr><td>randomCircleLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns a random location on the circle within the HTML window bounded by the layout's <tt>border</tt> attribute.</td></tr>
- <tr><td>spacedCircleLocation</td><td>s [Float]<br/>valency [Integer]<br/>depth [Integer]<br/>n [Integer]</td><td>Array of 3 Integers</td><td>Returns the nth location on a circle, containing the number of nodes at distance <tt>depth</tt> from the focus node, assuming that the graph is a tree with valency <tt>valency</tt>, whose radius is scaled by <tt>s</tt> and <tt>s=1</tt> corresponds to the circle which just fits within the HTML window bounded by the layout's <tt>border</tt> attribute.</td></tr>
+ <tr><td>spacedCircleLocation</td><td>C [Array of 3 Integers]<br/>s [Float]<br/>valency [Integer]<br/>depth [Integer]<br/>n [Integer]</td><td>Array of 3 Integers</td><td>Returns the nth location on a circle, centred at <tt>C</tt>, containing the number of nodes at distance <tt>depth</tt> from the focus node, assuming that the graph is a tree with valency <tt>valency</tt>, whose radius is scaled by <tt>s</tt> and <tt>s=1</tt> corresponds to the circle which just fits within the HTML window bounded by the layout's <tt>border</tt> attribute.</td></tr>
  <tr><td>randomGridLocations</td><td>n [Integer]</td><td>Array of Arrays of 3 Integers</td><td>Returns n locations, each close to points on an N-by-M grid within the layout's border, jittered to reduce co-incidence of the locations. Default n = 1; N and M are currently fixed.</td></tr>
  <tr><td>centralLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns the coordinates of the centre of the HTML window.</td></tr>
  <tr><td>nodeLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns coordinates for one node, dependant on the graph's <tt>layout</tt> attribute.</td></tr>
