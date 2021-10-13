@@ -91,7 +91,7 @@
  <tr><td>hide</td><td>-</td><td>-</td><td>Applies the CSS class "hidden" to the graph's SVG object.</td></tr>
  <tr><td>show</td><td>-</td><td>-</td><td>Removes the CSS class "hidden" from the graph's SVG object.</td></tr>
  <tr><td>addNode</td><td>name [String]<br/>position [Array of 3 Integers]<br/>radius [Integer]</td><td>Boolean</td><td>Creates a new Node object and adds it to the graph's <tt>nodes</tt> attribute.</td></tr>
- <tr><td>addNodes</td><td>n [Integer]</td><td>Integer</td><td>Adds n nodes to the graph, with random names, locations and radii; default n = 1.  Returns the number of nodes created.</td></tr>
+ <tr><td>addNodes</td><td>n [Integer]<br/>r [Array of 2 Integers]<br/>name [String]</td><td>Integer</td><td>Adds n nodes to the graph, with random names (unless n=1 and a name string is supplied), locations and radii (in the range specified by R, default [4,10]); default n = 1.  Returns the number of nodes created.</td></tr>
  <tr><td>removeNode</td><td>node [Node] <em>or</em> name [String]</td><td>Boolean</td><td>Removes the given Node object from the graph; the node name can be given instead. All nodes are renumbered following the removal.</td></tr>
  <tr><td>removeNewestNode</td><td>-</td><td>Boolean</td><td>Removes the most recently added node from the graph.</td></tr>
  <tr><td>removeOldestNode</td><td>-</td><td>Boolean</td><td>Removes the earliest added node from the graph.</td></tr>

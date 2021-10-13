@@ -92,9 +92,9 @@ class Graph {
   return true;
  }
 
- addNodes(n=1,radiusRange=[4,10]){
+ addNodes(n=1,radiusRange=[4,10],name=randomName()){
   var counter = 0;
-  for (var i=0;i<n;i++) if (this.addNode(randomName(),this.layout.nodeLocation(),randomRadius(radiusRange))) counter++;
+  for (var i=0;i<n;i++) if (this.addNode((n==1?name:randomName()),this.layout.nodeLocation(),randomRadius(radiusRange))) counter++;
   return counter;
  }
 
