@@ -425,9 +425,11 @@ class Graph {
   var existingN = this.nodes.length;
   var treeNodeRadiusRange = [3,3];
 
-  this.addNodes(1,treeNodeRadiusRange);
+  this.addNodes(1,treeNodeRadiusRange,'\u{d8}'); // label the root node with the O-slash symbol
   var root = this.nodes[this.nodes.length-1];
   var counter = 1; // for keeping track of how many nodes we have added
+
+  var alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
   for (var i=0;i<N;i++){ // actually we will stop when the number of nodes added is N
    // add V-1 children to each node and connect them to their parent with a new edge
@@ -435,8 +437,10 @@ class Graph {
    // stop when we have the complete tree (ie. have N ndoes)
    var branch = this.nodes[existingN+i]; // the "parent" of the tree (the node added above to start the tree)
    for (var v=0;v<valency;v++){
-    if (counter==1 || v>0){ // skip v=0 unless this is the root node
-     this.addNodes(1,treeNodeRadiusRange);
+    var branchColour = branch.name[branch.name.length-1]; // last letter of the branch node address
+    if (v!=alphabet.indexOf(branchColour)){ // do not add an edge which is the same "colour" as the parent (branch) node
+     var nodeAddress = branch.name + alphabet[v];
+     this.addNodes(1,treeNodeRadiusRange,nodeAddress);
      counter++;
      var leaf = this.nodes[this.nodes.length-1]
      this.addEdge(randomName(),branch,leaf);
