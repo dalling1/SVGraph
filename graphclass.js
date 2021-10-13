@@ -317,6 +317,7 @@ class Graph {
  }
 
  updateDistanceMatrix(forceUpdate=false){
+
   // test whether the adjacency matrix is valid:
   if (this.validAdjacencyMatrix() && !forceUpdate){
    // yes, so assume the distance matrix is okay, unless we are forcing an update
@@ -433,17 +434,15 @@ class Graph {
    // root node is a special case: it needs V children
    // stop when we have the complete tree (ie. have N ndoes)
    var branch = this.nodes[existingN+i]; // the "parent" of the tree (the node added above to start the tree)
-   if (this.findEdgesTo(branch).length==0){ // needed?
-    for (var v=0;v<valency;v++){
-     if (counter==1 || v>0){ // skip v=0 unless this is the root node
-      this.addNodes(1,treeNodeRadiusRange);
-      counter++;
-      var leaf = this.nodes[this.nodes.length-1]
-      this.addEdge(randomName(),branch,leaf);
-     }
+   for (var v=0;v<valency;v++){
+    if (counter==1 || v>0){ // skip v=0 unless this is the root node
+     this.addNodes(1,treeNodeRadiusRange);
+     counter++;
+     var leaf = this.nodes[this.nodes.length-1]
+     this.addEdge(randomName(),branch,leaf);
     }
-    if (counter>=N) break; // stop when enough nodes have been added
    }
+   if (counter>=N) break; // stop when enough nodes have been added
   }
 
 //  this.layout.setLayout('treeVertexFocused');
