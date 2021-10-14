@@ -64,6 +64,7 @@ class Graph {
    updateConnectedComponents
    draw
    addTree
+   updateTreeMatrices
    validAdjacencyMatrix
 
  */
@@ -317,7 +318,6 @@ class Graph {
  }
 
  updateDistanceMatrix(forceUpdate=false){
-
   // test whether the adjacency matrix is valid:
   if (this.validAdjacencyMatrix() && !forceUpdate){
    // yes, so assume the distance matrix is okay, unless we are forcing an update
@@ -388,7 +388,6 @@ class Graph {
    console.log("... in " + (t1 - t0) + " milliseconds")
    return true; // we DID update the distance matrix
   }
-
  }
 
  updateConnectedComponents(){
@@ -418,7 +417,7 @@ class Graph {
   this.layout.draw();
  }
 
- addTree(valency=0,depth=0){
+ addTree(valency=0,depth=0,updateMatrices=true){
   this.allowSelfEdges = false;
   this.alwaysUseBezier = false;
   var N = treeSize(valency,depth);
@@ -444,14 +443,50 @@ class Graph {
      counter++;
      var leaf = this.nodes[this.nodes.length-1]
      this.addEdge(randomName(),branch,leaf);
+
+//     this.distanceMatrix[counter][this.nodes[
     }
    }
    if (counter>=N) break; // stop when enough nodes have been added
   }
 
-//  this.layout.setLayout('treeVertexFocused');
   this.layout.setFocus(root); // set the root node as the focus for now
+
+  // update the distance and adjacency matrices (unless asked not to): note that this assumes that the whole graph is a tree
+  if (updateMatrices){
+   this.updateTreeMatrices();
+   // might as well draw it sensibly, since we have already assumed that the graph is a tree...
+   this.layout.setLayout('treeVertexFocused');
+   this.draw();
+  }
+
   return N;
+ }
+
+ updateTreeMatrices(){
+  // assumes that the graph is a tree, and constructs the distance and adjacency matrices
+  var t0 = performance.now();
+
+  // initialise the matrices and fill them with zeros/false
+  var Nnodes = this.nodes.length;
+  this.distanceMatrix = new Array(Nnodes);
+  for (var i=0;i<Nnodes;i++) this.distanceMatrix[i] = new Array(Nnodes).fill(0);
+  this.adjacencyMatrix = new Array(Nnodes);
+  for (var i=0;i<Nnodes;i++) this.adjacencyMatrix[i] = new Array(Nnodes).fill(false);
+
+  // loop through the nodes and calculate their distances, based on their addresses
+  for (var i=0;i<Nnodes;i++){
+   for (var j=i+1;j<Nnodes;j++){
+    this.distanceMatrix[i][j] = treeDistance(this.nodes[i].name,this.nodes[j].name);
+    this.distanceMatrix[j][i] = treeDistance(this.nodes[i].name,this.nodes[j].name);
+    // and check for adjacency as we go
+    this.adjacencyMatrix[i][j] = (this.distanceMatrix[i][j]==1);
+    this.adjacencyMatrix[j][i] = (this.distanceMatrix[j][i]==1);
+   }
+  }
+
+  var t1 = performance.now();
+  console.log("... updated tree matrices " + (t1 - t0) + " milliseconds")
  }
 
  validAdjacencyMatrix(){
