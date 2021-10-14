@@ -405,3 +405,19 @@ function easeOutElastic(x){  // https://easings.net
   ? 1
   : Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * c4) + 1;
 }
+
+function treeDistance(v,w){
+ // calculates the distance between nodes (given their addresses eg 'abababc') assuming that they form a tree
+ // remove common prefix:
+ if (v.length>0 && w.length>0){
+  while (v[0]==w[0]){
+   v=v.slice(1);
+   w=w.slice(1);
+   if (v.length==0 | w.length==0){
+    break;
+   }
+  }
+ }
+ // then count the remaining path length
+ return v.length + w.length;
+}
