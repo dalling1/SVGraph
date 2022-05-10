@@ -123,7 +123,8 @@
  <tr><td>updateDistanceMatrix</td><td>forceUpdate [Boolean]</td><td>Boolean</td><td>Tests whether the stored adjacency matrix is valid (compared to the nodes and edges) and, if not, or if forceUpdate is true, calls the updateAdjacencyMatrix() method and then calculates the graph's distance matrix, storing it in the <tt>distanceMatrix</tt> attribute. The return value is true if the distance matrix was actually computed; default forceUpdate = false.</td></tr>
  <tr><td>updateConnectedComponents</td><td>-</td><td>-</td><td>Computes an array of the graph's connected components and stores it in the <tt>connectedComponents</tt> attribute. The graph's adjacency, distance and connectivity matrices are updated in the process.</td></tr>
  <tr><td>draw</td><td>-</td><td>-</td><td>Positions the graph's nodes and edges using the graph's layout (calls the draw() method for the Layout object).</td></tr>
- <tr><td>addTree</td><td>valency [Integer]<br/>depth [Integer]<br/>updateMatrices [Boolean]</td><td>Integer</td><td>Addes nodes and edges forming a tree to the graph, unconnected to any existing nodes. The root node is set as the graph's layout focus object.  The graph's adjacency and distance matrices are updated if requested (default updateMatrices = true); if the matrices are updated, the tree is subsequently drawn in a vertex-focused layout.</td></tr>
+ <tr><td>addTree</td><td>valency [Integer]<br/>depth [Integer]<br/>updateMatrices [Boolean]</td><td>Integer</td><td>Adds nodes and edges forming a tree to the graph, unconnected to any existing nodes. The root node is set as the graph's layout focus object.  The graph's adjacency and distance matrices are updated if requested (default updateMatrices = true); if the matrices are updated, the tree is subsequently drawn in a vertex-focused layout.</td></tr>
+ <tr><td>balanceTree</td><td>-</td><td>-</td><td>Adds nodes and edges to one side of the tree so that the edge-focused layout is balanced (equal number of nodes on the left and the right).</td></tr>
  <tr><td>updateTreeMatrices</td><td>-</td><td>-</td><td>Calculates the graph's adjacency and distance matrices, with the assumption that the graph is a tree and that the node names are addresses in that tree (distances are calculated using these addresses, which is orders of magnitude times faster than the standard approach using matrix powers).</td></tr>
  <tr><td>validAdjacencyMatrix</td><td>-</td><td>Boolean</td><td>Tests whether the current adjacency matrix is correct by comparing it to the number of nodes and the list of edges in the graph.</td></tr>
 </table>
@@ -251,6 +252,8 @@
  <tr><th>Argument</th><th>Default value</th><th>Notes</th></tr>
  <tr><td>name</td><td></td><td>The Layout object's name.</td></tr>
  <tr><td>layoutName</td><td></td><td>The name of the layout style.</td></tr>
+ <tr><td>graph</td><td></td><td>The graph object which this layout object belongs to.</td></tr>
+ <tr><td>animation</td><td>"default"</td><td>The SVG animation style to use when moving nodes (determines the animation curve).</td></tr>
  <tr><td>focusObject</td><td>""</td><td>Optional object for use in determining node positions.</td></tr>
 </table>
 
@@ -266,16 +269,21 @@
 <h3>Methods</h3>
 <table>
  <tr><th>Method</th><th>Arguments</th><th>Return class</th><th>Notes</th></tr>
- <tr><td>allowedLayouts</td><td>-</td><td>Array of Strings</td><td>Returns an array containing the legal layout names.</td></tr>
- <tr><td>isAllowed</td><td>layoutName [String]</td><td>Boolean</td><td>Returns true if the given name is a legal layout name.</td></tr>
+ <tr><td>allowedLayouts</td><td>-</td><td>Array of Strings</td><td>Returns an array containing the legal layout names:<br/>
+  <tt>"default"</tt>, <tt>"randomRectangle"</tt>, <tt>"randomCircle"</tt>, <tt>"randomGrid"</tt>, <tt>"vertexFocused"</tt>, <tt>"treeVertexFocused"</tt>, <tt>"treeEdgeFocused"</tt></td></tr>
+ <tr><td>isAllowedLayout</td><td>layoutName [String]</td><td>Boolean</td><td>Returns true if the given name is a legal layout name.</td></tr>
+ <tr><td>allowedAnimations</td><td>-</td><td>Array of Strings</td><td>Returns an array containing the legal animation names:<br/>
+  <tt>"none"</tt>, <tt>"default"</tt>, <tt>"linear"</tt>, <tt>"easeInOutBack"</tt>, <tt>"easeInSine"</tt>, <tt>"easeOutBack"</tt>, <tt>"easeOutQuint"</tt>, <tt>"easeOutElastic"</tt></td></tr>
+ <tr><td>isAllowedAnimation</td><td>animationName [String]</td><td>Boolean</td><td>Returns true if the given name is a legal animation name.</td></tr>
  <tr><td>setLayout</td><td>layoutName [String]</td><td>Boolean</td><td>Sets the Layout object's layout to the given one.</td></tr>
+ <tr><td>setAnimation</td><td>animationName [String]</td><td>Boolean</td><td>Sets the Layout object's animation style to the given one.</td></tr>
  <tr><td>setFocus</td><td>focusObject [Edge <em>or</em> Node]</td><td>-</td><td>Sets the <tt>focusObject</tt> attribute of the Layout object.</td></tr>
  <tr><td>removeFocus</td><td>-</td><td>-</td><td>Sets the <tt>focusObject</tt> attribute of the Layout object to "none", and removes the focus CSS class from any existing focus object.</td></tr>
  <tr><td>randomRectangleLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns a random location within a rectangle defined by the HTML window and the layout's <tt>border</tt> attribute.</td></tr>
  <tr><td>randomCircleLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns a random location on the circle within the HTML window bounded by the layout's <tt>border</tt> attribute.</td></tr>
+ <tr><td>randomGridLocations</td><td>n [Integer]</td><td>Array of Arrays of 3 Integers</td><td>Returns n locations, each close to points on an N-by-M grid within the layout's border, jittered to reduce co-incidence of the locations. Default n = 1; N and M are currently fixed.</td></tr>
  <tr><td>spacedCircleLocation</td><td>C [Array of 3 Integers]<br/>s [Float]<br/>valency [Integer]<br/>depth [Integer]<br/>n [Integer]</td><td>Array of 3 Integers</td><td>Returns the nth location on a circle, centred at <tt>C</tt>, containing the number of nodes at distance <tt>depth</tt> from the focus node, assuming that the graph is a tree with valency <tt>valency</tt>, whose radius is scaled by <tt>s</tt> and <tt>s=1</tt> corresponds to the circle which just fits within the HTML window bounded by the layout's <tt>border</tt> attribute.</td></tr>
  <tr><td>spacedSectorLocation</td><td>C [Array of 3 Integers]<br/>s [Float]<br/>Ntotal [Integer]<br/>n [Integer]<br/>angleMin [Float]<br/>angleMax [Float]</td><td>Array of 3 Integers</td><td>Returns the nth location on the boundary of a sector, centred at <tt>C</tt> and defined by the given angles, containing <tt>Ntotal</tt> evenly-spaced nodes, whose radius is scaled by <tt>s</tt> and <tt>s=1</tt> corresponds to the circle which just fits within the HTML window bounded by the layout's <tt>border</tt> attribute.</td></tr>
- <tr><td>randomGridLocations</td><td>n [Integer]</td><td>Array of Arrays of 3 Integers</td><td>Returns n locations, each close to points on an N-by-M grid within the layout's border, jittered to reduce co-incidence of the locations. Default n = 1; N and M are currently fixed.</td></tr>
  <tr><td>centralLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns the coordinates of the centre of the HTML window.</td></tr>
  <tr><td>nodeLocation</td><td>-</td><td>Array of 3 Integers</td><td>Returns coordinates for one node, dependant on the graph's <tt>layout</tt> attribute.</td></tr>
  <tr><td>shuffleNodePositions</td><td>-</td><td>-</td><td>Moves SVG objects representing nodes to new positions based on the graph Layout. The existing position is stored in the node's alternative coordinates.</td></tr>

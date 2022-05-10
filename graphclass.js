@@ -64,6 +64,7 @@ class Graph {
    updateConnectedComponents
    draw
    addTree
+   balanceTree
    updateTreeMatrices
    validAdjacencyMatrix
 
@@ -443,8 +444,6 @@ class Graph {
      counter++;
      var leaf = this.nodes[this.nodes.length-1]
      this.addEdge(randomName(),branch,leaf);
-
-//     this.distanceMatrix[counter][this.nodes[
     }
    }
    if (counter>=N) break; // stop when enough nodes have been added
@@ -461,6 +460,38 @@ class Graph {
   }
 
   return N;
+ }
+
+ balanceTree(){
+  // only balance a tree with the edge-focused layout AND a not-undefined focus edge:
+  if (this.layout.layoutName=='treeEdgeFocused' && this.layout.focus.type=='Edge'){
+   // test whether the graph is already balanced:
+   var Nleft = this.findNodes(this.layout.focus.from.name+'.*').length;
+   var Nright = this.findNodes(this.layout.focus.to.name+'.*').length;
+   if (Nleft != 2*Nright && Nright != 2*Nleft){
+
+    var alphabet = 'abcdefghijklmnopqrstuvwxyz';
+    // add nodes to one side of the tree so that the edge-focused layout is balanced
+    var valency = this.findNodes('\u{d8}.').length;
+    var depth = maxFiniteElement(this.nodes.map(x=>x.name.length)) - 1; // longest name minus one character (the root node label)
+    var sideNodes = this.findNodes('\u{d8}'+alphabet[0]+'.{'+(depth-1)+'}'); // assumes that the focus edge is the first edge
+    var treeNodeRadiusRange = [3,3];
+    for (var i=0;i<sideNodes.length;i++){
+     var branch = sideNodes[i]; // add leaves to each "side node"
+     for (var v=0;v<valency;v++){
+      var branchColour = branch.name[branch.name.length-1]; // last letter of the branch node address
+      if (v!=alphabet.indexOf(branchColour)){ // do not add an edge which is the same "colour" as the parent (branch) node
+       var nodeAddress = branch.name + alphabet[v];
+       this.addNodes(1,treeNodeRadiusRange,nodeAddress);
+       var leaf = this.nodes[this.nodes.length-1]
+       this.addEdge(randomName(),branch,leaf);
+      }
+     }
+    }
+    this.updateTreeMatrices();
+
+   }
+  }
  }
 
  updateTreeMatrices(){
@@ -795,7 +826,7 @@ class Layout {
   this.name = name;
   this.setFocus(focusObject);
   this.setLayout(layoutName);
-  this.setAnimation(layoutName);
+  this.setAnimation(animation);
   this.graph = graph;
   this.border = [100,100,0]; // keep the centres of nodes this far from the boundary of the page
  }
@@ -805,18 +836,23 @@ class Layout {
 
    allowedLayouts
    isAllowedLayout
+   allowedAnimations
+   isAllowedAnimation
    setLayout
+   setAnimation
    setFocus
+   removeFocus
    randomRectangleLocation
    randomCircleLocation
    randomGridLocations
+   spacedCircleLocation
+   spacedSectorLocation
    centralLocation
    nodeLocation
    shuffleNodePositions
    toggleNodePositions
    permuteNodePositions
    draw
-   setAnimation
 
  */
 
@@ -903,34 +939,6 @@ class Layout {
   return randomCircleLocation([X,Y],R*s);
  }
 
- spacedCircleLocation(C,s=1.0,valency,depth,n){
-  // generate an incremental location on the circle centred on the page and which fits within the graph's border,
-  // scaled by the factor s (ie. scale the circle's diameter)
-  // ie. work out the even spacing of nodes on the required circle, and return the coordinates of the nth of those locations
-//  var X = 0.5*window.innerWidth;
-//  var Y = 0.5*window.innerHeight;
-  var X = C[0];
-  var Y = C[1];
-  var W = X - this.border[0];
-  var H = Y - this.border[0];
-  var R = Math.min(W,H);
-  return spacedCircleLocation([X,Y],R*s,valency,depth,n);
- }
-
- spacedSectorLocation(C,s=1.0,Ntotal,n,angleMin=0,angleMax=2*Math.PI){
-  // generate an incremental location on the sector centred on the page and which fits within the
-  // graph's border and defined by the given angles, with radius scaled by the factor s
-  // ie. work out the even spacing of nodes on the required sector, and return the coordinates of the nth of those locations
-//  var X = 0.5*window.innerWidth;
-//  var Y = 0.5*window.innerHeight;
-  var X = C[0];
-  var Y = C[1];
-  var W = X - this.border[0];
-  var H = Y - this.border[0];
-  var R = Math.min(W,H);
-  return spacedSectorLocation([X,Y],R*s,Ntotal,n,angleMin,angleMax);
- }
-
  randomGridLocations(n=1){
   // generate a random location on a grid (within the border of this graph), jittered
   var Ncols = 8; //make a 10x6 grid (this could be user-selected later on)
@@ -960,6 +968,34 @@ class Layout {
    P[i] = [Math.round(tmp[0]), Math.round(tmp[1]), 0];
   }
   return P;
+ }
+
+ spacedCircleLocation(C,s=1.0,valency,depth,n){
+  // generate an incremental location on the circle centred on the page and which fits within the graph's border,
+  // scaled by the factor s (ie. scale the circle's diameter)
+  // ie. work out the even spacing of nodes on the required circle, and return the coordinates of the nth of those locations
+//  var X = 0.5*window.innerWidth;
+//  var Y = 0.5*window.innerHeight;
+  var X = C[0];
+  var Y = C[1];
+  var W = X - this.border[0];
+  var H = Y - this.border[0];
+  var R = Math.min(W,H);
+  return spacedCircleLocation([X,Y],R*s,valency,depth,n);
+ }
+
+ spacedSectorLocation(C,s=1.0,Ntotal,n,angleMin=0,angleMax=2*Math.PI){
+  // generate an incremental location on the sector centred on the page and which fits within the
+  // graph's border and defined by the given angles, with radius scaled by the factor s
+  // ie. work out the even spacing of nodes on the required sector, and return the coordinates of the nth of those locations
+//  var X = 0.5*window.innerWidth;
+//  var Y = 0.5*window.innerHeight;
+  var X = C[0];
+  var Y = C[1];
+  var W = X - this.border[0];
+  var H = Y - this.border[0];
+  var R = Math.min(W,H);
+  return spacedSectorLocation([X,Y],R*s,Ntotal,n,angleMin,angleMax);
  }
 
  centralLocation(offset=[0,0,0]){
@@ -1128,6 +1164,9 @@ class Layout {
     this.setFocus(this.graph.edges[0]); // if there was an invalid entry, use the first edge as the focus object
    }
    if (true){
+    // 0. balance the tree so that the layout is symmetrical
+    this.graph.balanceTree();
+
     // 1. put the edge's nodes either side of the centre
     // 2. compute dmax, the maximum distance of any connected node from the focus edge
     //    ie. the minimum distance to either of the focus edge's endpoints
