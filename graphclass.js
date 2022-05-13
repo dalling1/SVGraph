@@ -807,10 +807,59 @@ class Edge {
 class Automorphism {
  constructor(
   name,
+  automorphismName,
  ){
   this.type = this.constructor.name;
   this.name = name;
+  this.automorphismName = automorphismName;
  }
+
+ /* Automorphism methods */
+ allowedAutomorphisms(){
+  var layoutList = ["localactions","listtolist"];
+  return layoutList;
+ }
+
+ isAllowedAutomorphism(automorphismName){
+  return (this.allowedAutomorphisms().indexOf(automorphismName)!=-1);
+ }
+
+}
+
+// action class /////////////////////////////////////////////////////////////////////////////
+class Action {
+ constructor(
+  name,
+  actionType,
+  isReference = false,
+  from,
+  to = null, // need a good way to specify an undefined node (empty address is a valid address...)
+  localaction = [],
+ ){
+  this.type = this.constructor.name;
+  this.name = name;
+  this.actionType = actionType;
+  if (isReference){
+   this.isReference = true;
+  }
+  this.from = from;
+  if (actionType=="listtolist"){
+   this.to = to;
+  } else if (actionType=="localaction"){
+   this.localaction = localaction;
+  }
+ }
+
+ /* Action methods */
+ allowedActions(){
+  var actionList = ["localactions","listtolist"];
+  return actionList;
+ }
+
+ isAllowedAction(actionName){
+  return (this.allowedActions().indexOf(actionName)!=-1);
+ }
+
 }
 
 // layout class ///////////////////////////////////////////////////////////////////////////////////

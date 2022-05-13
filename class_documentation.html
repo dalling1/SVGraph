@@ -70,7 +70,9 @@
 </head>
 <body>
 
-<div class="classSpecification" id="graph_class">
+<h1>Click on a class heading to expand/collapse it.</h1>
+
+<div class="classSpecification rolledUp" id="graph_class">
  <div class="h2wrapper" onclick="toggleDiv(this);"><h2><tt>Graph</tt> class</h2></div>
  <div class="constructorTable">
   <h3>Constructor</h3>
@@ -152,7 +154,7 @@
 </div>
 
 
-<div class="classSpecification" id="node_class">
+<div class="classSpecification rolledUp" id="node_class">
  <div class="h2wrapper" onclick="toggleDiv(this);"><h2><tt>Node</tt> class</h2></div>
  <div class="constructorTable">
   <h3>Constructor</h3>
@@ -209,7 +211,7 @@
 
 
 
-<div class="classSpecification" id="edge_class">
+<div class="classSpecification rolledUp" id="edge_class">
  <div class="h2wrapper" onclick="toggleDiv(this);"><h2><tt>Edge</tt> class</h2></div>
  <div class="constructorTable">
   <h3>Constructor</h3>
@@ -255,13 +257,17 @@
 
 
 
-<div class="classSpecification" id="automorphism_class">
+<div class="classSpecification rolledUp" id="automorphism_class">
  <div class="h2wrapper" onclick="toggleDiv(this);"><h2><tt>Automorphism</tt> class</h2></div>
  <div class="constructorTable">
   <h3>Constructor</h3>
   <table>
    <tr><th>Argument</th><th>Default value</th><th>Notes</th></tr>
    <tr><td>name</td><td></td><td>The automorphism's name.</td></tr>
+   <tr><td>actions</td><td></td><td>An array of the automorphism's actions, which are either
+a node and its local action or a node and its destination.</td></tr>
+   <tr><td>automorphismName</td><td></td><td>The type of automorphism:<br/>
+           <tt>"localaction"</tt>, <tt>"listtolist"</tt></td></tr>
   </table>
  </div>
 
@@ -271,6 +277,7 @@
    <tr><th>Attribute</th><th>Class</th><th>Default value</th><th>Notes</th></tr>
    <tr><td>type</td><td>String</td><td>"Automorphism"</td><td>The class name.</td></tr>
    <tr><td>name</td><td>String</td><td></td><td>The Automorphism object's name.</td></tr>
+   <tr><td>automorphismName</td><td>String</td><td></td><td>The type of automorphism.</td></tr>
   </table>
  </div>
 
@@ -286,7 +293,51 @@
 
 
 
-<div class="classSpecification" id="layout_class">
+
+<div class="classSpecification rolledUp" id="action_class">
+ <div class="h2wrapper" onclick="toggleDiv(this);"><h2><tt>Action</tt> class</h2></div>
+ <div class="constructorTable">
+  <h3>Constructor</h3>
+  <table>
+   <tr><th>Argument</th><th>Default value</th><th>Notes</th></tr>
+   <tr><td>name</td><td></td><td>The action's name.</td></tr>
+   <tr><td>actionType</td><td></td><td>The type of action.</td></tr>
+   <tr><td>isReference</td><td></td><td>Flag for the reference action (only used for <tt>"localaction"</tt>-type actions).</td></tr>
+   <tr><td>from</td><td></td><td>The address of the node for which this action is defined.</td></tr>
+   <tr><td>to</td><td></td><td>The destination address of the <tt>"from"</tt> node (only used for <tt>"listtolist"</tt>-type actions).</td></tr>
+   <tr><td>localaction</td><td></td><td>The local action permutation for the <tt>"from"</tt> node (only used for <tt>"localaction"</tt>-type actions).</td></tr>
+  </table>
+ </div>
+
+ <div class="attributesTable">
+  <h3>Attributes</h3>
+  <table>
+   <tr><th>Attribute</th><th>Class</th><th>Default value</th><th>Notes</th></tr>
+   <tr><td>type</td><td>String</td><td>"Action"</td><td>The class name.</td></tr>
+   <tr><td>actionType</td><td>String</td><td></td><td>The type of local action.</td></tr>
+   <tr><td>isReference</td><td>Boolean</td><td>False</td><td>True if this is the reference action (only used for <tt>"localaction"</tt>-type actions).</td></tr>
+   <tr><td>name</td><td>String</td><td></td><td>The Action object's name.</td></tr>
+   <tr><td>***from</td><td>Address</td><td></td><td>The address of the node at which this action acts.</td></tr>
+   <tr><td>***to</td><td>Address</td><td></td><td>The destination address of the <tt>"from"</tt> address.</td></tr>
+   <tr><td>localaction</td><td>Array of Integers</td><td></td><td>The local action permutation at the <tt>"from"</tt> address.</td></tr>
+  </table>
+ </div>
+
+ <div class="methodsTable">
+  <h3>Methods</h3>
+  <table>
+   <tr><th>Method</th><th>Arguments</th><th>Return class</th><th>Notes</th></tr>
+   <tr><td>allowedActions</td><td>-</td><td>Array of Strings</td><td>Returns an array containing the legal actions:<br/>
+           <tt>"listtolist"</tt>, <tt>"localaction"</tt></td></tr>
+   <tr><td>isAllowedAction</td><td>actionName [String]</td><td>Boolean</td><td>Returns true if the given name is a legal action.</td></tr>
+  </table>
+ </div>
+</div>
+
+
+
+
+<div class="classSpecification rolledUp" id="layout_class">
  <div class="h2wrapper" onclick="toggleDiv(this);"><h2><tt>Layout</tt> class</h2></div>
  <div class="constructorTable">
   <h3>Constructor</h3>
