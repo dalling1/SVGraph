@@ -27,6 +27,7 @@ class Graph {
  /*
    Methods for the Graph class:
 
+   toString
    createSvg
    createLayout
    hide
@@ -69,6 +70,11 @@ class Graph {
    validAdjacencyMatrix
 
  */
+
+ toString(){
+  // overridden method to return a string unique to the graph (the graph's name)
+  return this.name;
+ }
 
  createSvg(){
   // make an SVG group for the graph, and then append groups for the nodes and edges
@@ -733,6 +739,7 @@ class Edge {
  /*
    Methods for the Edge class:
 
+   toString
    showDetails
    createSvg
    addToSvgGraph
@@ -740,6 +747,11 @@ class Edge {
    movingUpdate
 
  */
+
+ toString(){
+  // overridden method to return a string unique to the edge (the edge's name)
+  return this.name;
+ }
 
  showDetails(){
   console.log("The edge \""+this.name+"\" goes from "+this.from.name+" to "+this.to.name);
@@ -820,7 +832,20 @@ class Automorphism {
   this.automorphismName = automorphismName;
  }
 
- /* Automorphism methods */
+ /*
+   Methods for the Automorphism class:
+
+   toString
+   allowedAutomorphisms
+   isAllowedAutomorphism
+
+ */
+
+ toString(){
+  // overridden method to return a string unique to the automorphism (the automorphism's name)
+  return this.name;
+ }
+
  allowedAutomorphisms(){
   var layoutList = ["localactions","listtolist"];
   return layoutList;
