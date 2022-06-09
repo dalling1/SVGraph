@@ -591,6 +591,7 @@ class Node {
  /*
    Methods for the Node class:
 
+   toString
    createSvg
    addToSvgGraph
    showDetails
@@ -603,6 +604,11 @@ class Node {
    neighbours
 
  */
+
+ toString(){
+  // overridden method to return a string unique to the node (the node's name, which may also be its address)
+  return this.name;
+ }
 
  createSvg(){
   var c = Circle({
