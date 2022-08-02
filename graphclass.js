@@ -1300,7 +1300,7 @@ class Layout {
      }
 
      // PART 2: nodes closer to the "to" end of the focus edge:
-     // find the indices of nodes at distance r from the focus edge's "from" node AND distance greater than r from the "to" node
+     // find the indices of nodes at distance r from the focus edge's "to" node AND distance greater than r from the "from" node
      var distRnodes = this.graph.distanceMatrix[this.focus.to.n].map((val,indx) => val == r ? indx : undefined).filter(x => x !== undefined);
      // work through them backwards and discard those which are closer to the "from" node:
      for (var i=distRnodes.length;i>0;i--){
